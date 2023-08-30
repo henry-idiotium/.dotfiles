@@ -1,6 +1,5 @@
-set -gx EDITOR      nvim
-set -gx VISUAL      nvim
-set -g -x CONFIG_PATH "$HOME/.config"
+set -gx EDITOR         nvim
+set -gx CONFIG_PATH  "$HOME/.config"
 
 # Init path
 fish_add_path -g \
@@ -22,4 +21,8 @@ set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if [ -z "$(string match -ra $PNPM_HOME $PATH)" ]
 	fish_add_path -g $PNPM_HOME
 end
+
+
+# disable Less history file
+set -gx LESSHISTFILE '-'
 
