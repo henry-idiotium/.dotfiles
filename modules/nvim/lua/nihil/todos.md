@@ -1,0 +1,9 @@
+-   [-] Fix `cmp` overflow
+-   [-] Add page movement j/k to telescope
+-   [x] Research a lil bit more on `aerial` navigation
+-   [ ] Research a lil bit more on `spider-nvim` navigation
+-   [x] Which-key missing descriptions
+    -   [x] Refactor current `keymap` api to mainly depend on which-key
+-   [-] Add Undercurl
+-   [x] Add explorer tree (lazy)
+-   [ ] Add Tmux

@@ -1,38 +1,27 @@
--- NOTE: Code in init.lua run before dirs: plugin, after
-pcall(require, 'impatient')
+require 'nihil'
 
+-- vim.api.nvim_set_keymap('n', '<leader>[]', ':echo "foooooooo"<cr>', { mode = 'n' })
 
--------------------------------------
--- Init global configurations
-----------------
+-- local run = nihil.utils.cmd.callbackRun
 
---- Global variable for nihil user
-_G.nihil = {
-    safe_quit_mode = vim.env.NVIM_SAFE_QUIT_MODE,
-    --- Env about current os
-    os = {
-        darwin = vim.fn.has "macunix" == 1,
-        linux  = vim.fn.has "unix" == 1 and vim.fn.has "wsl" == 0,
-        wsl    = vim.fn.has "wsl" == 1,
-        win    = vim.fn.has "win32" == 1,
+--[[ nihil.utils.keymap.map_keys {
+    ['<leader>['] = {
+        desc = 'TEST leader first',
+        { 'f', ':echo "work 1"<cr>', desc = 'is fooo 1' },
+        { 'j', ':echo "work 2"<cr>', desc = 'is fooo 2' },
+        f = { ':echo "work 3"<cr>', desc = 'is fooo 3', mode = 'v' },
+        j = { ':echo "work 4"<cr>', desc = 'is fooo 4' },
     },
-
-    user = {},  --- User configurations
-    utils = {}, --- Utility
-}
-
-
--------------------------------------
--- Load user configurations
-----------------
-
---- User configurations
-_G.config = {
-    theme = 'catppuccin', --- Specify theme for user, default is "catppuccin".
-    plugins = {},         --- User plugins.
-    log_error = true,     --- Specify whether to log error or not.
-}
-
-pcall(require, 'config')
-
-nihil.user = config
+    ['<leader>]'] = {
+        desc = 'TEST leader second',
+        { '<c-l>', ':echo "work 5"<cr>', desc = 'is fooo 5' },
+        ['<c-f>'] = { ':echo "work 6"<cr>', desc = 'is fooo 6' },
+        ['<c-l>'] = { ':echo "work 7"<cr>', desc = 'is fooo 7' },
+        ['<c-o>'] = {
+            desc = 'ctrl + o hierarchy',
+            ['<c-f>'] = { ':echo "work 8"<cr>', desc = 'is fooo 8' },
+            ['<c-q>'] = { ':echo "work 9"<cr>', desc = 'is fooo 9' },
+        },
+        ['<c-l><c-l>'] = { run 'echo "easy to break function"', desc = 'scream' },
+    },
+} ]]
