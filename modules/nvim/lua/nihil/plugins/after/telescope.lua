@@ -5,8 +5,6 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-        'nvim-telescope/telescope-file-browser.nvim',
-        'LukasPietzschmann/telescope-tabs',
     },
     config = function()
         local telescope = require 'telescope'
@@ -147,19 +145,6 @@ return {
                         },
                     },
                 },
-                ['telescope-tabs'] = {
-                    initial_mode = 'normal',
-                    show_preview = false,
-
-                    close_tab_shortcut_i = '<c-x>',
-                    close_tab_shortcut_n = '<c-x>',
-
-                    ---@diagnostic disable-next-line: unused-local
-                    entry_formatter = function(tab_id, buffer_ids, file_names, file_paths, is_current)
-                        local entry_string = table.concat(file_names, ', ')
-                        return string.format('%d -  %s%s', tab_id, entry_string, is_current and ' ' or '')
-                    end,
-                },
             },
         }
 
@@ -168,31 +153,20 @@ return {
             telescope.load_extension(ext)
         end
 
-        local tele_tabs = require 'telescope-tabs'
-
         local function run(after) return nihil.utils.cmd.callbackRun('Telescope ' .. after) end
 
-        map_keys {
-            ['<leader><leader>'] = { run 'resume', desc = 'Open previous telescope action' },
-            ['<c-s-e>'] = { tele_tabs.go_to_previous, desc = 'Go to previous opened tab' },
-
-            ['<c-f>'] = { run 'current_buffer_fuzzy_find', desc = 'Search words in active document/buffer' },
-            ['<c-s-f>'] = { run 'live_grep', desc = 'Search words in workspace' },
-
-            ['<c-e>'] = { 'telescope-tabs list_tabs', desc = 'List current buffer tabs' },
-
-            ['<leader>f'] = {
+        map_keys({
+            ['<leader>'] = { run 'resume', desc = 'Open previous telescope action' },
+            f = {
                 desc = 'Telescope find',
-                f = { builtin.find_files, desc = 'Find files in workspace' },
-                o = { builtin.oldfiles, desc = 'Show recent files' },
-                b = { telescope.extensions.file_browser.file_browser, desc = 'Browse files of current cwd' },
-                d = { builtin.diagnostics, desc = 'Show diagnostics in document' },
-                s = {
-                    desc = 'Find symbols',
-                    w = { builtin.lsp_dynamic_workspace_symbols, desc = 'List symbols in workspace' },
-                    d = { builtin.lsp_document_symbols, desc = 'List symbols in docyment' },
+                f = { run 'find_files', desc = 'Find files in workspace' },
+                b = { run 'file_browser', desc = 'Browse files of current cwd' },
+                g = {
+                    desc = 'Search words',
+                    f = { run 'current_buffer_fuzzy_find', desc = 'Search words in active document/buffer' },
+                    w = { run 'live_grep', desc = 'Search words in workspace' },
                 },
             },
-        }
+        }, { prefix = '<leader>' })
     end,
 }
