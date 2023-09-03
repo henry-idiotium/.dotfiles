@@ -18,7 +18,7 @@ module_path="$config_path/dotfiles/modules"
 shopt -s dotglob
 for entry in "$module_path"/*; do
     printf "Set symlink: $entry --> $config_path/$(basename ${entry})\n"
-    ln -sf $entry $config_dir
+    ln -sf $entry $config_path
 done
 shopt -u dotglob
 
