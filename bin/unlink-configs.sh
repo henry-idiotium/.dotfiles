@@ -9,7 +9,7 @@ module_path="$config_path/dotfiles/modules"
 shopt -s dotglob
 for entry in "$module_path"/*; do
     printf "Remove symlink: $config_path/$(basename ${entry})\n"
-	echo "$config_path/$(basename ${entry})"
+	command rm "$config_path/$(basename ${entry})"
 done
 shopt -u dotglob
 
