@@ -26,3 +26,8 @@ end
 # disable Less history file
 set -gx LESSHISTFILE '-'
 
+
+# `pj` plugins config
+set -gx PROJECT_PATHS \
+	'/mnt/c/Users/Henry/Documents/.main/personal/projects'
+

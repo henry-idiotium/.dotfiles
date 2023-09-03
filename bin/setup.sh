@@ -9,17 +9,15 @@ if ! command -v fish &> /dev/null; then
 fi
 
 
-config_dir="$HOME/.config"
-dotfile_dir="$config_dir/dotfiles"
-module_dir="$dotfile_dir/modules"
-
+config_path=${XDG_CONFIG_PATH-$HOME/.config}
+module_path="$config_path/dotfiles/modules"
 
 # ------------------------
 # Symlink modules
 
 shopt -s dotglob
-for entry in "$module_dir"/*; do
-    printf "Set symlink: $entry --> $config_dir/$(basename ${entry})\n"
+for entry in "$module_path"/*; do
+    printf "Set symlink: $entry --> $config_path/$(basename ${entry})\n"
     ln -sf $entry $config_dir
 done
 shopt -u dotglob

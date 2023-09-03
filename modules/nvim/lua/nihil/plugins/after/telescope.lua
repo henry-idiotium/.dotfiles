@@ -5,13 +5,13 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+        'nvim-telescope/telescope-file-browser.nvim',
     },
     config = function()
         local telescope = require 'telescope'
         local actions = require 'telescope.actions'
         local fb_actions = telescope.extensions.file_browser.actions
         local layout = require 'telescope.actions.layout'
-        local builtin = require 'telescope.builtin'
         local map_keys = nihil.utils.keymap.map_keys
 
         local function get_buffer_dir() return vim.fn.expand '%:p:h' end
