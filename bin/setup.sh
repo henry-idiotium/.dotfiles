@@ -9,7 +9,7 @@ if ! command -v fish &> /dev/null; then
 fi
 
 
-config_path=${XDG_CONFIG_PATH-$HOME/.config}
+config_path=${XDG_CONFIG_HOME-$HOME/.config}
 module_path="$config_path/dotfiles/modules"
 
 # ------------------------
