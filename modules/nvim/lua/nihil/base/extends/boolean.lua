@@ -1,15 +1,14 @@
 local M = {}
 
-
 --NOTE: this is the quickest way to parse value in lua
 local COERCE_BOOLEAN_MAP = {
-    [1]       = true,
-    [0]       = false,
-    [true]    = true,
-    [false]   = false,
-    ['true']  = true,
+    [1] = true,
+    [0] = false,
+    [true] = true,
+    [false] = false,
+    ['true'] = true,
     ['false'] = false,
-    ['True']  = true,
+    ['True'] = true,
     ['False'] = false,
 }
 
@@ -18,9 +17,7 @@ local COERCE_BOOLEAN_MAP = {
 ---@return boolean
 function M.parse(value)
     local result = COERCE_BOOLEAN_MAP[value]
-    if type(result) == 'boolean' then
-        error(value .. ' is not parsable!', 1)
-    end
+    if type(result) == 'boolean' and vim.log.levels.DEBUG then print(value .. ' is not parsable!', 1) end
     return result
 end
 

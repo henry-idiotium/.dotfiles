@@ -1,6 +1,5 @@
 --- Global variable for nihil user
 _G.nihil = {
-    safe_quit_mode = vim.env.NVIM_SAFE_QUIT_MODE,
     --- Env about current os
     os = {
         darwin = vim.fn.has 'macunix' == 1,

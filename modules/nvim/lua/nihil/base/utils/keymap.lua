@@ -46,7 +46,7 @@ function M.map_keys(_schema, _opts)
     _opts = _opts or {}
 
     local wk_exist, wk = pcall(require, 'which-key')
-    if not wk_exist then print '"Which-Key" not installed!' end
+    if not wk_exist and vim.log.levels.DEBUG then print '"Which-Key" not installed!' end
 
     local top_level_opts = extract_mapkey_options(_opts)
 
@@ -98,7 +98,7 @@ function M.map_keys(_schema, _opts)
 
             -- safely map key
             local map_succeeded, _ = pcall(vim.keymap.set, mode, lhs, rhs, opts)
-            if not map_succeeded then
+            if not map_succeeded and vim.log.levels.DEBUG then
                 print '\n[ERROR] Bad keymap: '
                 print('        DESC: ' .. tostring(opts.desc))
                 print('        MODE: ' .. tostring(mode))
