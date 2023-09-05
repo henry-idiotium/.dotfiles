@@ -9,15 +9,17 @@ aka h      history
 # Externals
 aka ls  exa --icons --group-directories-first
 aka l   ls -l
-aka ll  l -a
-aka la  ll
+aka la  l -a
 
-aka vi    nvim
-aka g     git
+aka   vi    nvim
+aka   g     git
 alias cat   bat
-
 alias n     npm
 alias pn    pnpm
+alias code  code-insiders
+alias pwsh  '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
+
+abbr -a  pjo  pj open
 
 # Functions
 aka ofe open-file-explorer
