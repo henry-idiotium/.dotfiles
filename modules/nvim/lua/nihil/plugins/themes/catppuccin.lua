@@ -1,11 +1,12 @@
 return {
     'catppuccin/nvim',
     name = 'catppuccin',
+    enabled = true,
     priority = 1000,
-    lazy = true,
+    lazy = false,
     config = function()
         local cat = require 'catppuccin'
-        local mocha_colors = require('catppuccin.palettes').get_palette 'mocha'
+        local mocha_colors = require('catppuccin.palettes').get_palette 'mocha' or error 'Missing `catppuccin.palettes`'
         local override_highlight = nihil.utils.highlight.add_on_colorscheme
 
         cat.setup {
@@ -13,7 +14,6 @@ return {
             transparent_background = true,
             term_colors = true,
             integrations = { --: For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
-                cmp = true,
                 gitsigns = true,
                 nvimtree = true,
                 telescope = true,
@@ -67,5 +67,7 @@ return {
             Folded = { bg = mocha_colors.base },
             Visual = { bg = mocha_colors.surface0 },
         }
+
+        vim.cmd.colorscheme 'catppuccin'
     end,
 }

@@ -1,16 +1,18 @@
+local _, helper = pcall(require, 'nihil.helpers.lsp')
+
 return {
     'neovim/nvim-lspconfig',
+    ft = helper.FILE_TYPES,
+    event = 'VeryLazy',
     config = function()
         local nvim_lsp = require 'lspconfig'
         local api = vim.api
-        local helpers = require 'nihil.helpers.lsp'
 
         ---@diagnostic disable-next-line: unused-local
         local function on_attach(client, bufnr)
             -- helpers.auto_format.lsp(client, bufnr)
             -- helpers.user_cmds.toggle_auto_format(client, bufnr)
             -- helpers.user_cmds.toggle_diagnostic(client, bufnr)
-
             if vim.g.logging_level == 'debug' then
                 local msg = string.format('Language server %s started!', client.name)
                 vim.notify(msg, vim.log.levels.DEBUG, { title = 'Nvim-Lsp-Config' })
@@ -19,12 +21,11 @@ return {
 
         ------------------
         --: Lsp kinds (icons)
-        --
         -- NOTE: maybe useless ¯\_(ツ)_/¯
         ------
 
         local protocol = require 'vim.lsp.protocol'
-        local item_kinds = helpers.LSP_ITEM_KINDS
+        local item_kinds = helper.LSP_ITEM_KINDS
 
         protocol.CompletionItemKind = {}
         for _, icon_kind in ipairs(item_kinds) do
@@ -55,20 +56,18 @@ return {
                 filetypes = {
                     'javascript',
                     'javascriptreact',
-                    'javascript.tsx',
                     'typescript',
                     'typescriptreact',
-                    'typescript.tsx',
                 },
             },
             emmet_language_server = {
                 on_attach = on_attach,
                 capabilities = capabilities,
-                filetypes = { 'html', 'css', 'sass', 'scss', 'less', 'typescriptreact', 'javascriptreact' },
+                filetypes = { 'html', 'typescriptreact', 'javascriptreact' },
                 init_options = {
                     html = {
+                        -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
                         options = {
-                            -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
                             ['bem.enabled'] = true,
                         },
                     },
@@ -91,7 +90,6 @@ return {
             },
         }
 
-        --: Language settings
         for key, value in pairs(language_lsp_configs) do
             if type(value) == 'string' then
                 nvim_lsp[value].setup { on_attach = on_attach, capabilities = capabilities }
@@ -119,7 +117,7 @@ return {
             float = { source = 'always' }, -- Or 'if_many'
         }
 
-        --: border
+        -- -- Border
         -- local DOC_HANDLERS = {
         --     'diagnostic',
         --     'hover',

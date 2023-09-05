@@ -4,6 +4,7 @@ local function arr_join(langs) return table.concat(langs, ',') end
 ---@type LazySpec
 return {
     'nvimdev/guard.nvim',
+    dependencies = 'neovim/nvim-lspconfig',
     config = function()
         local guard_ft = require 'guard.filetype'
         local map_keys = nihil.utils.keymap.map_keys

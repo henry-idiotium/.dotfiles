@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-field
 return {
     'hrsh7th/nvim-cmp',
+    event = 'VeryLazy',
     dependencies = {
         'L3MON4D3/LuaSnip',
         'onsails/lspkind-nvim',
@@ -13,7 +14,6 @@ return {
         local cmp = require 'cmp'
         local lspkind = require 'lspkind'
         local luasnip = require 'luasnip'
-        -- local sort_compare = cmp.config
 
         local function format_for_tailwind(entry, vim_item)
             if vim_item.kind == 'Color' and entry.completion_item.documentation then
@@ -74,8 +74,8 @@ return {
             ---@diagnostic disable-next-line: undefined-field
             sources = cmp.config.sources {
                 { name = 'nvim_lsp' },
-                { name = 'luasnip' },
                 { name = 'buffer' },
+                { name = 'luasnip' },
             },
 
             formatting = {

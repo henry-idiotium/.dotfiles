@@ -1,17 +1,9 @@
-local lspconfig_exist, _ = pcall(require, 'lspconfig')
-local lsp_sig_exist, lsp_sig = pcall(require, 'lsp_signature')
-if not lspconfig_exist or not lsp_sig_exist then
-    print '[ERROR] Missing Lsp-Config --> Lsp mappings will not work!!'
-    return {}
-end
-
 local map_keys = nihil.utils.keymap.map_keys
 
 map_keys {
     ['<s-k>'] = { '<cmd>Lspsaga hover_doc<cr>', desc = 'Show documentation' },
-    ['<c-s-k>'] = { vim.lsp.buf.signature_help, desc = 'Toggle signature', mode = { 'i', 'n' } },
 
-    -- ['<a-s-f>'] = { vim.lsp.buf.format, desc = 'Lsp built-in formatter' },
+    -- ['<a-s-f>'] = { vim.lsp.buf.format, desc = 'Lsp built-in formatter' }, -- use guard.nvim
     ['<c-.>'] = { '<cmd>Lspsaga code_action<cr>', desc = 'Show code actions' },
 
     gi = { vim.lsp.buf.implementation, desc = 'Go to Implementation' },
@@ -33,9 +25,8 @@ map_keys {
 
     ['<space>t'] = {
         desc = 'Toggle things',
-        f = { lsp_sig.toggle_float_win, desc = 'Toggle signature float window' },
         l = {
-            desc = 'Toggle Lsp',
+            desc = 'Toggle LSP',
             d = { '<cmd>LspDiagnosticToggle<cr>', desc = 'Toggle diagnostic' },
             f = { '<cmd>LspAutoFormatToggle<cr>', desc = 'Toggle format on save' },
         },
