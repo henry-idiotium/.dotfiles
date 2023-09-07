@@ -26,43 +26,28 @@ unmap_keys {
     '<c-u>',
     'gt',
     'g<s-t>',
+
+    '<a-n>',
 }
 
------------------------
--- Editor
 map_keys {
-    ['<c-q>'] = { run 'QuitPromptIfLast', desc = 'Quit document savely' },
-    { '<c-q>', '<c-c>', desc = 'Exit command mode', mode = 'c' },
+    -----------------------
+    -- Editor
     ['<c-s>'] = { run 'write', desc = 'Save document', mode = { 'n', 'i' } },
-    ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents savely' },
+    ['<c-q>'] = { '<c-c>', desc = 'Exit command mode', mode = 'c' },
+    { '<c-q>', run 'QuitPromptIfLast', desc = 'Quit documents safely' },
+    ['<a-z>'] = { run 'set wrap!', desc = 'Toggle text wrap' },
+    ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents safely' },
 
     ['<leader>h'] = { run 'nohl', desc = 'Turn off search highlight' },
-    ['<a-z>'] = { run 'set wrap!', desc = 'Toggle text wrap' },
-
-    -----------------------
-    -- Split pane
-    -- ['<c-w>'] = {
-    --     desc = 'Split document/buffer',
-    --     ['v'] = { '<c-w>v<c-w>w', desc = 'Split document vertically' },
-    --     ['<c-v>'] = { '<c-w><c-v><c-w><c-w>', desc = 'Split document vertically' },
-    --     ['s'] = { '<c-w>s<c-w>w', desc = 'Split document horizontally' },
-    --     ['<c-s>'] = { '<c-w><c-s><c-w><c-w>', desc = 'Split document horizontally' },
-    -- },
-
-    ['<c-a-up>'] = { '<c-w>+', desc = 'Resize split document' },
-    ['<c-a-down>'] = { '<c-w>-', desc = 'Resize split document' },
-    ['<c-a-left>'] = { '<c-w><', desc = 'Resize split document' },
-    ['<c-a-right>'] = { '<c-w>>', desc = 'Resize split document' },
 
     -----------------------
     -- Editability
-    ['jj'] = { '<esc>', desc = 'Exit insert mode', mode = 'i' },
-
     ['<c-z>'] = { '<cmd>undo<cr>', desc = 'Undo document', mode = { 'n', 'i', 'v' } },
     ['<c-y>'] = { '<cmd>redo<cr>', desc = 'Redo document', mode = { 'n', 'i', 'v' } },
 
-    ['o'] = { 'o<esc>0"_<s-d>', desc = 'New line after' },
-    ['<s-o>'] = { '<s-o><esc>0"_<s-d>', desc = 'New line before' },
+    ['o'] = { 'o<esc>', desc = 'New line after' },
+    ['<s-o>'] = { '<s-o><esc>', desc = 'New line before' },
 
     ['<'] = { '<gv', desc = 'Outdent', mode = 'v' },
     ['>'] = { '>gv', desc = 'Indent', mode = 'v' },
@@ -89,15 +74,8 @@ map_keys {
 
     -----------------------
     -- Maneuvering
-
-    ['<c-k>'] = { '5k', desc = 'Go  5 lines', mode = { 'n', 'v' } },
-    ['<c-j>'] = { '5j', desc = 'Go  5 lines', mode = { 'n', 'v' } },
-
     ['<s-h>'] = { '^', desc = 'Go to sol', mode = { 'n', 'v', 'o' } },
     ['<s-l>'] = { '$', desc = 'Go to eol', mode = { 'n', 'v', 'o' } },
-
-    ['<tab>'] = { run 'tabnext', desc = 'Go to next tab' },
-    ['<s-tab>'] = { run 'tabprevious', desc = 'Go to previous tab' },
 
     -----------------------
     -- Macros
@@ -117,5 +95,15 @@ map_keys {
         ['<s-c>'] = { '"_<s-c>', desc = 'Void yank C' },
     },
 }
+
+
+-- Find and replace/delete selected/under-cusor characters
+--NOTE: use vanilla to avoid neovim api bug
+vim.cmd [[
+    nmap cg* *<s-n>"_cgn
+    vmap cg  *<s-n>"_cgn
+    nmap dg* *<s-n>"_dgn
+    vmap dg  *<s-n>"_dgn
+]]
 
 return {}

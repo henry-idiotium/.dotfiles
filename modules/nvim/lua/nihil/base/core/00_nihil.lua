@@ -1,5 +1,7 @@
---- Global variable for nihil user
+--- Global variables for nihil user
 _G.nihil = {
+    debug = not vim.g.vscode,
+
     --- Env about current os
     os = {
         darwin = vim.fn.has 'macunix' == 1,

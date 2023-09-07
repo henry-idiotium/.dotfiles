@@ -17,7 +17,7 @@ local COERCE_BOOLEAN_MAP = {
 ---@return boolean
 function M.parse(value)
     local result = COERCE_BOOLEAN_MAP[value]
-    if type(result) == 'boolean' and vim.log.levels.DEBUG then print(value .. ' is not parsable!', 1) end
+    if type(result) == 'boolean' and nihil.debug then print(value .. ' is not parsable!', 1) end
     return result
 end
 
