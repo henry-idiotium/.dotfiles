@@ -1,0 +1,38 @@
+[user]
+	email = quocdat.381872@gmail.com
+	name = henry
+
+[core]
+	autocrlf = false
+    askpass = # disable credential manager
+
+[alias]
+	st = status
+	sth = stash
+	co = checkout
+    com = commit
+	br = branch
+	confl = diff --name-only --diff-filter=U
+
+	# lastest commit branches
+	rc = "!r() { refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)|%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|';}; r"
+
+    # commits graph
+	lg-default = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(bold magenta)%an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    lg-alt = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(magenta)%an%C(reset)' --all
+	lg = !"git lg-default"
+  
+	# lastest-commits-diff-files
+	lcdf = diff --stat HEAD~1 HEAD~2
+
+[color]
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+
+[init]
+	defaultBranch = main
+
+[credential]
+	helper = store
