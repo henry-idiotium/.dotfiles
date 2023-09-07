@@ -10,7 +10,9 @@ aka h      history
 aka ls  exa --icons --group-directories-first
 aka l   ls -l
 aka la  l -a
+aka lg  la --git --git-ignore
 
+alias j      z
 aka   vi     nvim
 aka   g      git
 alias cat    bat
