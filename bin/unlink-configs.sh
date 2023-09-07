@@ -1,15 +1,12 @@
 #!/bin/bash
 
-config_path=${XDG_CONFIG_HOME-$HOME/.config}
-module_path="$config_path/dotfiles/modules"
+. __share_params.sh ## import capture params
+. __var.sh ## import variables
 
-# ------------------------
-# Symlink modules
+while IFS= read -r symlink_path; do
+	printf "Remove symlink: $symlink_path\n"
+	if $test_output; then continue; fi
 
-shopt -s dotglob
-for entry in "$module_path"/*; do
-    printf "Remove symlink: $config_path/$(basename ${entry})\n"
-	command rm "$config_path/$(basename ${entry})"
-done
-shopt -u dotglob
+	command rm $symlink_path
+done < $symlink_logfile_path
 

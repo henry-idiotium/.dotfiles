@@ -1,6 +1,6 @@
 [user]
 	email = quocdat.381872@gmail.com
-	name = henry
+	name = N. Quoc Dat
 
 [core]
 	autocrlf = false
@@ -21,7 +21,7 @@
 	lg-default = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(bold magenta)%an%C(reset)%C(bold yellow)%d%C(reset)' --all
     lg-alt = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(magenta)%an%C(reset)' --all
 	lg = !"git lg-default"
-  
+
 	# lastest-commits-diff-files
 	lcdf = diff --stat HEAD~1 HEAD~2
 
@@ -36,3 +36,4 @@
 
 [credential]
 	helper = store
+

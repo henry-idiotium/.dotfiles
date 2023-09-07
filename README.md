@@ -1,7 +1,11 @@
+> [NOTE] NOTE:
+>
+> Remember to install `fish` shell.
+
 # Setup
 
 Go to **dotfiles directry path** then,
 
-```bash
+```fish
 $ ./bin/setup.sh
 ```

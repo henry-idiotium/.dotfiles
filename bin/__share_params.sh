@@ -1,0 +1,12 @@
+#!/bin/bash
+
+test_output=false
+
+while getopts ':o' flag; do
+	case $flag in
+		o)
+			test_output=true
+			echo -e "Test outputs: ON\n"
+		;;
+	esac
+done
