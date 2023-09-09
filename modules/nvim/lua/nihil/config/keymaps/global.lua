@@ -34,10 +34,6 @@ map_keys {
     -----------------------
     -- Editor
     ['<c-s>'] = { run 'write', desc = 'Save document', mode = { 'n', 'i' } },
-    ['<c-q>'] = { '<c-c>', desc = 'Exit command mode', mode = 'c' },
-    { '<c-q>', run 'QuitPromptIfLast', desc = 'Quit documents safely' },
-    ['<a-z>'] = { run 'set wrap!', desc = 'Toggle text wrap' },
-    ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents safely' },
 
     ['<leader>h'] = { run 'nohl', desc = 'Turn off search highlight' },
 
@@ -54,18 +50,6 @@ map_keys {
 
     ['+'] = { '<c-a>', desc = 'Increment' },
     ['-'] = { '<c-x>', desc = 'Decrement' },
-
-    -- Move lines
-    ['<a-j>'] = { '<cmd>m +1<cr>', desc = 'Move line down', mode = { 'n', 'i' } },
-    { '<a-j>', ":m '>+1<cr>gv", desc = 'Move lines down', mode = 'v' },
-    ['<a-k>'] = { '<cmd>m -2<cr>', desc = 'Move line up', mode = { 'n', 'i' } },
-    { '<a-k>', ":m '<-2<cr>gv", desc = 'Move lines up', mode = 'v' },
-
-    -- Duplicate lines
-    ['<s-a-j>'] = { "<s-v>:'<,'>t'><cr>gv<esc>", desc = 'Duplicate lines' },
-    { '<s-a-j>', ":'<,'>t'><cr>gv", desc = 'Duplicate lines', mode = 'v' },
-    ['<s-a-k>'] = { "<s-v>:'<,'>t'><cr>gv<esc>", desc = 'Duplicate lines' },
-    { '<s-a-k>', ":'<,'>t'><cr>gv", desc = 'Duplicate lines', mode = 'v' },
 
     -- Avoid copy on paste in Visual mode
     ['p'] = { '<s-p>', desc = 'Paste', mode = 'v' },

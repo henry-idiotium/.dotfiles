@@ -8,16 +8,16 @@ vim.opt.background = 'dark'
 
 local api = vim.api
 
---: Highlight yanked text via the 'visual' highlight group
+-- Highlight yanked text via the 'visual' highlight group
 --api.nvim_set_hl(0, 'CursorLineNr', { bg = '#1a1b24', fg = '#84b9fa' })
 api.nvim_create_autocmd('TextYankPost', {
-    group = api.nvim_create_augroup('highlight_yank', { clear = false }),
-    callback = function() vim.highlight.on_yank { higroup = 'visual', timeout = 500 } end,
+    group = api.nvim_create_augroup('highlight_yank', { clear = true }),
+    callback = function()
+        vim.highlight.on_yank {
+            higroup = vim.g.vscode and 'IncSearch' or 'Visual',
+            timeout = 250,
+        }
+    end,
 })
 
---: Turn off paste mode when leaving insert
-api.nvim_create_autocmd('InsertLeave', {
-    pattern = '*',
-    callback = function() pcall(vim.cmd, 'set nopaste') end,
-})
 return {}

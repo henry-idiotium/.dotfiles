@@ -5,8 +5,11 @@ function run_if_program_exist
     set command $argv[2..-1]
 
     set RED '\033[0;31m'
-    set error_message (printf $RED"> $program is not installed!!")
+    set error_message (printf $RED"> $program not found!!")
 
-    type -q $program && $command || echo $error_message
+    if type -q $program
+        $command
+    else if [ "$LOG_DEBUG" = true ]
+        echo $error_message
+    end
 end
-

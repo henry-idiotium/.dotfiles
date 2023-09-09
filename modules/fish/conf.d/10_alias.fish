@@ -12,17 +12,16 @@ aka l   ls -l
 aka la  l -a
 aka lg  la --git --git-ignore
 
-alias j      z
-aka   vi     nvim
-aka   g      git
-alias cat    bat
-alias n      npm
-alias pn     pnpm
-alias sp	 supabase
-alias code   code-insiders
-alias pwsh   '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
-
-abbr -a  pjo  pj open
+aka vi     nvim
+aka g      git
+aka pn     pnpm
+aka j      z
+aka cat    bat
+aka n      npm
+aka b      bun
+aka bunx   bun x # v1.0.0 miss shiping bunx
+aka bx     bunx
+aka pwsh   '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
 
 # Functions
 aka ofe open-file-explorer

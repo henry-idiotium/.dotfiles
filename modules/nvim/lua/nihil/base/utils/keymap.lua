@@ -52,7 +52,7 @@ function M.map_keys(_schema, _opts)
 
     ---Recursive mapping
     local function set_mapping(schema, prefix, sub_level_opts)
-        if not prefix then prefix = '' end
+        prefix = prefix or ''
         if top_level_opts then sub_level_opts = extract_mapkey_options(sub_level_opts, top_level_opts) end
 
         for keymap, sub_schema in pairs(schema) do
@@ -66,8 +66,15 @@ function M.map_keys(_schema, _opts)
 
             -- key-as-index schema
             if type(keymap) == 'number' and type(sub_schema) == 'table' then
-                lhs = prefix .. sub_schema[1]
-                rhs = sub_schema[2]
+                -- check if left-hand-side is a map
+                if type(sub_schema[1]) ~= 'string' then
+                    if wk_exist then wk.register { [prefix] = { name = opts.desc } } end
+                    set_mapping(sub_schema, prefix, opts)
+                    goto continue
+                end
+
+                lhs = prefix .. (sub_schema[1] or '')
+                rhs = (sub_schema[2] or '')
             end
 
             -- key-as-name schema
@@ -81,7 +88,7 @@ function M.map_keys(_schema, _opts)
                     -- if sub schema is a `hierarchy schema`
                     if type(sub_schema[1]) ~= 'string' and type(sub_schema[1]) ~= 'function' then
                         local next_keymap = prefix .. keymap
-                        if wk_exist then wk.register({ [next_keymap] = { name = opts.desc } }, {}) end
+                        if wk_exist then wk.register { [next_keymap] = { name = opts.desc } } end
 
                         set_mapping(sub_schema, next_keymap, opts)
                         goto continue -- escape current loop
@@ -170,6 +177,7 @@ return {}
 ---| 'i'
 ---| 'o'
 ---| 'c'
+---| 'x'
 
 --- Remark: hacky workarround for negated all type (similiar to `never` in TS)
 ---@alias Never __never__
