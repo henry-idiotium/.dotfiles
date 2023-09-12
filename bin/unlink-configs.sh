@@ -1,7 +1,9 @@
 #!/bin/bash
 
-. __share_params.sh ## import capture params
-. __var.sh ## import variables
+SCRIPT_DIR=$(dirname "$0")
+
+source $SCRIPT_DIR/__params.sh ## import capture params
+source $SCRIPT_DIR/__var.sh ## import variables
 
 while IFS= read -r symlink_path; do
 	printf "Remove symlink: $symlink_path\n"

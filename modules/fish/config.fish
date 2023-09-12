@@ -15,3 +15,4 @@ set fish_cursor_visual       block
 # Set vi mode as default key binding
 fish_vi_key_bindings
 
+type -q nitch && nitch

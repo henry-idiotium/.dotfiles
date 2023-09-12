@@ -1,6 +1,8 @@
 #!/bin/bash
 
-. __share_params.sh ## import capture params
+SCRIPT_DIR=$(dirname "$0")
+
+source $SCRIPT_DIR/__params.sh ## import capture params
 
 # ------------------------
 # Require FISH to continue
@@ -9,7 +11,7 @@ if ! command -v fish &> /dev/null; then
     exit 64
 fi
 
-. __var.sh ## import variables
+source $SCRIPT_DIR/__var.sh ## import variables
 
 # ------------------------
 # Symlink modules
@@ -39,5 +41,8 @@ done
 shopt -u dotglob
 
 ## gitconfig
-symlink_config $externals_path/.gitconfig ~
+symlink_config $externals_path/.gitconfig $HOME
+
+## bash-shell
+symlink_config $externals_path/bash/.bashrc $HOME
 

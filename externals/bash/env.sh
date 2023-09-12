@@ -8,6 +8,14 @@ export LESSHISTFILE='-' # disable Less history file
 BIN_DIR="$HOME/bin"              && [ -d "$BIN_DIR" ]       && PATH="$BIN_DIR:$PATH"
 LOCAL_BIN_DIR="$HOME/.local/bin" && [ -d "$LOCAL_BIN_DIR" ] && PATH="$LOCAL_BIN_DIR:$PATH"
 
+# Fast Node Manager
+FNM_HOME="$HOME/.fnm"
+if [ -d "$FNM_HOME" ]; then
+	export FNM_HOME
+	PATH="$FNM_HOME:$PATH"
+	eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
+fi
+
 # PNPM
 PNPM_HOME="$HOME/.local/share/pnpm"
 if [ -d "$PNPM_HOME" ]; then

@@ -3,7 +3,7 @@ return {
     'ray-x/lsp_signature.nvim',
     dependencies = 'neovim/nvim-lspconfig',
     keys = {
-        { '<c-s-k>', vim.lsp.buf.signature_help, desc = 'Toggle signature', mode = { 'i', 'n' } },
+        { '<c-a-k>', vim.lsp.buf.signature_help, desc = 'Toggle signature', mode = { 'i', 'n' } },
     },
     opts = {
         bind = true,

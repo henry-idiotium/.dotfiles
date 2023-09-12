@@ -1,4 +1,4 @@
-local lazy = require 'nihil.lazy'
+local lazy = require('nihil.lazy')
 
 -------------------------------------
 -- Load configs and plugins using `Lazy.nvim`

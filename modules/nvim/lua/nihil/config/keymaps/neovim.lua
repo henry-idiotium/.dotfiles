@@ -8,7 +8,7 @@ map_keys {
     ['<c-q>'] = { run 'QuitPromptIfLast', desc = 'Quit documents safely' },
     { '<c-q>', '<c-c>', desc = 'Exit command mode', mode = 'c' },
     ['<a-z>'] = { run 'set wrap!', desc = 'Toggle text wrap' },
-    ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents safely' },
+    -- ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents safely' },
 
     -----------------------
     -- Split pane

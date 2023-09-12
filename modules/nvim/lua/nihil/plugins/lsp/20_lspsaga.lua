@@ -1,37 +1,10 @@
--- local wk_exist, wk = pcall(require, 'which-key')
--- if wk_exist then
---     wk.register {
---         gp = { name = 'Peek LSP' },
---         ['<leader>'] = {
---             r = { name = 'Rename stuffs' },
---             t = {
---                 name = 'Toggle things',
---                 l = { name = 'Toggle LSP' },
---                 g = { name = 'Toggle diagnostic' },
---             },
---         },
---     }
--- end
-
 return {
     'nvimdev/lspsaga.nvim',
     dependencies = 'neovim/nvim-lspconfig',
-    -- keys = {
-    --     { 'gi', vim.lsp.buf.implementation, desc = 'Go to Implementation' },
-    --     { '<s-k>', '<cmd>Lspsaga hover_doc<cr>', desc = 'Show documentation' },
-    --     { '<c-.>', '<cmd>Lspsaga code_action<cr>', desc = 'Show code actions' },
-    --     { 'gd', '<cmd>Lspsaga goto_definition<cr>', desc = 'Go to definition' },
-    --     { 'gpd', '<cmd>Lspsaga peek_definition<cr>', desc = 'Peek definition' },
-    --     { 'gpf', '<cmd>Lspsaga finder<cr>', desc = 'Show definition and references' },
-    --     { ']d', '<cmd>Lspsaga diagnostic_jump_next<cr>', desc = 'Go to next diagnostics' },
-    --     { '[d', '<cmd>Lspsaga diagnostic_jump_prev<cr>', desc = 'Go to previous diagnostics' },
-    --     { '<leader>rn', '<cmd>Lspsaga rename<cr>', desc = 'Rename symbol' },
-    --     { '<leader>tld', '<cmd>LspDiagnosticToggle<cr>', desc = 'Toggle diagnostic' },
-    --     { '<leader>tlf', '<cmd>LspAutoFormatToggle<cr>', desc = 'Toggle format on save' },
-    --     { '<leader>tgd', '<cmd>Lspsaga show_cursor_diagnostics<cr>', desc = 'Show diagnostics of current line' },
-    --     { '<leader>tg<s-d>', '<cmd>Lspsaga show_buf_diagnostics<cr>', desc = 'Show diagnostics of active file' },
-    -- },
     config = function()
+        local C = require('catppuccin.palettes').get_palette() or error 'Missing `catppuccin.palettes`'
+        vim.api.nvim_set_hl(0, 'SagaWinbarSep', { fg = C.subtext1 })
+
         require('lspsaga').setup {
             lightbulb = { enable = false },
             finder = {
@@ -113,7 +86,29 @@ return {
             },
         }
 
-        local C = require('catppuccin.palettes').get_palette() or error 'Missing `catppuccin.palettes`'
-        vim.api.nvim_set_hl(0, 'SagaWinbarSep', { fg = C.subtext1 })
+        local map_keys = nihil.utils.keymap.map_keys
+        local run = nihil.utils.cmd.callbackRun
+        map_keys {
+            {
+                gi = { vim.lsp.buf.implementation, desc = 'Go to Implementation' },
+                gd = { run 'Lspsaga goto_definition', desc = 'Go to definition' },
+                ['<s-k>'] = { run 'Lspsaga hover_doc', desc = 'Show documentation' },
+                ['<c-.>'] = { run 'Lspsaga code_action', desc = 'Show code actions' },
+
+                gp = {
+                    desc = 'Peek lsp',
+                    d = { run 'Lspsaga peek_definition', desc = 'Peek definition' },
+                    f = { run 'Lspsaga finder', desc = 'Show definition and references' },
+                },
+
+                [']d'] = { run 'Lspsaga diagnostic_jump_next', desc = 'Go to next diagnostics' },
+                ['[d'] = { run 'Lspsaga diagnostic_jump_prev', desc = 'Go to previous diagnostics' },
+
+                ['<space>r'] = {
+                    desc = 'Rename stuffs',
+                    ['n'] = { run 'Lspsaga rename', desc = 'Rename symbol' },
+                },
+            },
+        }
     end,
 }

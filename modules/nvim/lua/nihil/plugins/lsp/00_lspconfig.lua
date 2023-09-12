@@ -1,5 +1,4 @@
 local _, helper = pcall(require, 'nihil.helpers.lsp')
-
 return {
     'neovim/nvim-lspconfig',
     ft = helper.FILE_TYPES,
@@ -19,22 +18,8 @@ return {
             end
         end
 
-        ------------------
-        --: Lsp kinds (icons)
-        -- NOTE: maybe useless ¯\_(ツ)_/¯
-        ------
-
-        local protocol = require 'vim.lsp.protocol'
-        local item_kinds = helper.LSP_ITEM_KINDS
-
-        protocol.CompletionItemKind = {}
-        for _, icon_kind in ipairs(item_kinds) do
-            table.insert(protocol.CompletionItemKind, icon_kind)
-        end
-
-        ------------------
-        --: Lsp settings
-        ------
+        -- Kinds (icons)
+        require('vim.lsp.protocol').CompletionItemKind = helper.LSP_ITEM_KINDS
 
         -- Set up completion using nvim_cmp with LSP source
         local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -90,23 +75,20 @@ return {
             },
         }
 
+        -- local default_config = { on_attach = on_attach, capabilities = capabilities }
         for key, value in pairs(language_lsp_configs) do
-            if type(value) == 'string' then
-                nvim_lsp[value].setup { on_attach = on_attach, capabilities = capabilities }
-            else
-                nvim_lsp[key].setup(value)
-            end
+            local is_custom = type(value) ~= 'string'
+            local name = is_custom and key or value
+            local config = is_custom and value or { on_attach = on_attach, capabilities = capabilities }
+            nvim_lsp[name].setup(config)
         end
 
-        ------------------
-        --: Neovim Lsp UI settings
-        ------
-
-        --: Diagnostic symbols in the sign column (gutter)
+        -- UI settings
+        -- Diagnostic symbols in the sign column (gutter)
         local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
         for type, icon in pairs(signs) do
             local hl = 'DiagnosticSign' .. type
-            vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '', icon = icon })
+            vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
         end
 
         vim.diagnostic.config {
@@ -116,17 +98,5 @@ return {
             virtual_text = { spacing = 4, prefix = '●' },
             float = { source = 'always' }, -- Or 'if_many'
         }
-
-        -- -- Border
-        -- local DOC_HANDLERS = {
-        --     'diagnostic',
-        --     'hover',
-        -- }
-        -- for _, handler in pairs(DOC_HANDLERS) do
-        --     vim.lsp.handlers['textDocument/' .. handler] = vim.lsp.with(
-        --         vim.lsp.handlers[handler],
-        --         { border = 'rounded' }
-        --     )
-        -- end
     end,
 }

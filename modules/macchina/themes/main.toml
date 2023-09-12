@@ -1,0 +1,41 @@
+# main
+
+spacing            = 1
+padding            = 0
+separator_color    = "green"
+hide_ascii         = true
+prefer_small_ascii = true
+separator          = "=>  "
+
+
+[palette]
+type="Dark"
+visible=true
+glyph=" ⬤ "
+
+[box]
+title=" Cucumber "
+border="single"
+visible=true
+
+[bar]
+glyph="▮ "
+hide_delimiters=true
+visible=true
+
+[randomize]
+key_color=false
+separator_color=false
+
+[keys]
+host=" host"
+kernel=" kernel"
+distro=" distro"
+packages=" packages"
+terminal=" terminal"
+shell=" shell"
+cpu=" cpu"
+cpu_load=" cpu"
+memory=" memory"
+battery=" battery"
+

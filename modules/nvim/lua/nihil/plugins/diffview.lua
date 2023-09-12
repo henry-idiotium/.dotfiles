@@ -1,5 +1,8 @@
-return {
+return {}
+
+--[[ return {
     'sindrets/diffview.nvim',
+    enabled = false,
     config = function()
         local diffview = require 'diffview'
         local actions = require 'diffview.actions'
@@ -206,4 +209,4 @@ return {
             },
         }
     end,
-}
+} ]]
