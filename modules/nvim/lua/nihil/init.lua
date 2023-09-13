@@ -1,4 +1,4 @@
-local lazy = require('nihil.lazy')
+local lazy = require 'nihil.lazy'
 
 -------------------------------------
 -- Load configs and plugins using `Lazy.nvim`
@@ -19,4 +19,7 @@ lazy.setup(lazy.parse_modules(not vim.g.vscode and base_modules or vscode_module
     install = { colorscheme = { 'catppuccin' } },
     checker = { enabled = true, notify = false },
     change_detection = { notify = false },
+    ui = {
+        border = 'rounded',
+    },
 })

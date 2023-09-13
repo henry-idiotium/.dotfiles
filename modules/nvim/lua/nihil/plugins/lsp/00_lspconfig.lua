@@ -1,28 +1,17 @@
-local _, helper = pcall(require, 'nihil.helpers.lsp')
 return {
     'neovim/nvim-lspconfig',
-    ft = helper.FILE_TYPES,
+    ft = (require 'nihil.helpers.lsp' or {}).FILE_TYPES,
     event = 'VeryLazy',
     config = function()
+        local helper = require 'nihil.helpers.lsp'
         local nvim_lsp = require 'lspconfig'
-        local api = vim.api
 
-        ---@diagnostic disable-next-line: unused-local
-        local function on_attach(client, bufnr)
-            -- helpers.auto_format.lsp(client, bufnr)
-            -- helpers.user_cmds.toggle_auto_format(client, bufnr)
-            -- helpers.user_cmds.toggle_diagnostic(client, bufnr)
-            if vim.g.logging_level == 'debug' then
-                local msg = string.format('Language server %s started!', client.name)
-                vim.notify(msg, vim.log.levels.DEBUG, { title = 'Nvim-Lsp-Config' })
-            end
-        end
-
-        -- Kinds (icons)
-        require('vim.lsp.protocol').CompletionItemKind = helper.LSP_ITEM_KINDS
+        -- Icons (LspKinds)
+        require('vim.lsp.protocol').CompletionItemKind = vim.tbl_values(helper.LSP_ITEM_KINDS)
 
         -- Set up completion using nvim_cmp with LSP source
         local capabilities = require('cmp_nvim_lsp').default_capabilities()
+        local on_attach = helper.on_attach
         local language_lsp_configs = {
             'flow',
             'tailwindcss',
@@ -41,18 +30,20 @@ return {
                 filetypes = {
                     'javascript',
                     'javascriptreact',
+                    'javascript.tsx',
                     'typescript',
                     'typescriptreact',
+                    'typescript.tsx',
                 },
             },
             emmet_language_server = {
                 on_attach = on_attach,
                 capabilities = capabilities,
-                filetypes = { 'html', 'typescriptreact', 'javascriptreact' },
+                filetypes = { 'html', 'css', 'sass', 'scss', 'less', 'typescriptreact', 'javascriptreact' },
                 init_options = {
                     html = {
-                        -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
                         options = {
+                            -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
                             ['bem.enabled'] = true,
                         },
                     },
@@ -67,7 +58,7 @@ return {
                         diagnostics = { globals = { 'vim' } },
                         workspace = {
                             -- Make the server aware of Neovim runtime files
-                            library = api.nvim_get_runtime_file('', true),
+                            library = vim.api.nvim_get_runtime_file('', true),
                             checkThirdParty = false,
                         },
                     },
@@ -75,11 +66,11 @@ return {
             },
         }
 
-        -- local default_config = { on_attach = on_attach, capabilities = capabilities }
+        local default_config = { on_attach = on_attach, capabilities = capabilities }
         for key, value in pairs(language_lsp_configs) do
             local is_custom = type(value) ~= 'string'
             local name = is_custom and key or value
-            local config = is_custom and value or { on_attach = on_attach, capabilities = capabilities }
+            local config = is_custom and value or default_config
             nvim_lsp[name].setup(config)
         end
 

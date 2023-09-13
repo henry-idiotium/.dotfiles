@@ -18,7 +18,8 @@ aka cat   bat
 alias pwsh      '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
 alias explorer  '/mnt/c/Windows/system32/explorer.exe'
 
-aka j     z
+alias j   z
+
 aka n     npm
 aka pn    pnpm
 aka b     bun
@@ -29,3 +30,4 @@ aka bx    bunx
 aka ofe open-file-explorer
 aka mkcd make-then-cd-into-dir
 
+command -vq cargo && alias cargo-update 'cargo install-update -a'
