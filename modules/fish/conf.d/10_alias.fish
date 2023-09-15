@@ -25,6 +25,7 @@ aka pn    pnpm
 aka b     bun
 aka bunx  bun x # v1.0.0 miss shiping bunx
 aka bx    bunx
+aka sp    supabase
 
 # Functions
 aka ofe open-file-explorer
