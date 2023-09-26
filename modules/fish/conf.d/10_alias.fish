@@ -23,6 +23,7 @@ alias j   z
 
 aka n     npm
 aka pn    pnpm
+aka y     yarn
 aka b     bun
 aka bunx  bun x # v1.0.0 miss shiping bunx
 aka bx    bunx
