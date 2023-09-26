@@ -259,6 +259,7 @@ return {
 
                 ['<s-r>'] = { 'refresh', nowait = false },
                 -- ['q'] = 'close_window',
+                ['n'] = 'add',
                 ['o'] = 'open',
                 ['l'] = 'open',
                 ['h'] = 'close_node',

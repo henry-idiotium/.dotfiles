@@ -87,26 +87,29 @@ return {
         }
 
         local map_keys = nihil.utils.keymap.map_keys
-        local run = nihil.utils.cmd.callbackRun
+        local _run = nihil.utils.cmd.callbackRun
+        local function run(cmd) _run('Lspsaga ' .. cmd) end
+
         map_keys {
             {
                 gi = { vim.lsp.buf.implementation, desc = 'Go to Implementation' },
-                gd = { run 'Lspsaga goto_definition', desc = 'Go to definition' },
-                ['<s-k>'] = { run 'Lspsaga hover_doc', desc = 'Show documentation' },
-                ['<c-.>'] = { run 'Lspsaga code_action', desc = 'Show code actions' },
+                gd = { run 'goto_definition', desc = 'Go to definition' },
+                ['<s-k>'] = { run 'hover_doc', desc = 'Show documentation' },
+                ['<c-.>'] = { run 'code_action', desc = 'Show code actions' },
+                ['<a-.>'] = { run 'code_action', desc = 'Show code actions' },
 
                 gp = {
                     desc = 'Peek lsp',
-                    d = { run 'Lspsaga peek_definition', desc = 'Peek definition' },
-                    f = { run 'Lspsaga finder', desc = 'Show definition and references' },
+                    d = { run 'peek_definition', desc = 'Peek definition' },
+                    f = { run 'finder', desc = 'Show definition and references' },
                 },
 
-                [']d'] = { run 'Lspsaga diagnostic_jump_next', desc = 'Go to next diagnostics' },
-                ['[d'] = { run 'Lspsaga diagnostic_jump_prev', desc = 'Go to previous diagnostics' },
+                [']d'] = { run 'diagnostic_jump_next', desc = 'Go to next diagnostics' },
+                ['[d'] = { run 'diagnostic_jump_prev', desc = 'Go to previous diagnostics' },
 
                 ['<space>r'] = {
-                    desc = 'Rename stuffs',
-                    ['n'] = { run 'Lspsaga rename', desc = 'Rename symbol' },
+                    desc = 'Rename',
+                    ['n'] = { run 'rename', desc = 'Rename symbol' },
                 },
             },
         }
