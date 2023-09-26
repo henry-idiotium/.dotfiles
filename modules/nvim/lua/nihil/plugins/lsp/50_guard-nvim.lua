@@ -4,7 +4,7 @@ local function arr_join(langs) return table.concat(langs, ',') end
 ---@type LazySpec
 return {
     'nvimdev/guard.nvim',
-    dependencies = 'neovim/nvim-lspconfig',
+    dependencies = { 'nvimdev/guard-collection', 'neovim/nvim-lspconfig' },
     config = function()
         local guard_ft = require 'guard.filetype'
         local map_keys = nihil.utils.keymap.map_keys
@@ -17,7 +17,7 @@ return {
             'yaml', 'yml',
             'markdown',
             'json',
-        })):fmt 'prettierd'
+        })):fmt 'prettier'
 
         guard_ft('lua'):fmt 'stylua'
         guard_ft('fish'):fmt 'fish_indent'

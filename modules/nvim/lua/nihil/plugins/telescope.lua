@@ -5,16 +5,16 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-        'nvim-telescope/telescope-file-browser.nvim',
+        -- 'nvim-telescope/telescope-file-browser.nvim',
     },
     config = function()
         local telescope = require 'telescope'
         local actions = require 'telescope.actions'
-        local fb_actions = telescope.extensions.file_browser.actions
+        -- local fb_actions = telescope.extensions.file_browser.actions
         local layout = require 'telescope.actions.layout'
         local map_keys = nihil.utils.keymap.map_keys
 
-        local function get_buffer_dir() return vim.fn.expand '%:p:h' end
+        -- local function get_buffer_dir() return vim.fn.expand '%:p:h' end
 
         local configs = {
             defaults = {
@@ -59,7 +59,6 @@ return {
                 },
             },
             pickers = {
-                diagnostics = { initial_mode = 'normal' },
                 find_files = {
                     theme = 'dropdown',
                     cwd = vim.g.documentos,
@@ -81,6 +80,8 @@ return {
                         },
                     },
                 },
+
+                --[[ diagnostics = { initial_mode = 'normal' },
                 colorscheme = {
                     theme = 'dropdown',
                     enable_preview = true,
@@ -103,7 +104,7 @@ return {
                             ['<c-x>'] = actions.delete_buffer,
                         },
                     },
-                },
+                }, ]]
             },
             extensions = {
                 fzf = {
@@ -112,7 +113,7 @@ return {
                     override_file_sorter = true, -- override the file sorter
                     case_mode = 'smart_case', -- or "ignore_case" or "respect_case", default case_mode is "smart_case"
                 },
-                file_browser = {
+                --[[ file_browser = {
                     theme = 'dropdown',
                     initial_mode = 'normal',
                     cwd = get_buffer_dir(),
@@ -144,7 +145,7 @@ return {
                             ['<c-s-h>'] = fb_actions.toggle_hidden,
                         },
                     },
-                },
+                }, ]]
             },
         }
 
@@ -160,7 +161,6 @@ return {
             f = {
                 desc = 'Telescope find',
                 f = { run 'find_files', desc = 'Find files in workspace' },
-                b = { run 'file_browser', desc = 'Browse files of current cwd' },
                 g = {
                     desc = 'Search words',
                     f = { run 'current_buffer_fuzzy_find', desc = 'Search words in active document/buffer' },

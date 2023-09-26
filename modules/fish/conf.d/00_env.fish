@@ -4,6 +4,8 @@ set -gx XDG_CONFIG_HOME "$HOME/.config" # config dir
 set -gx BAT_CONFIG_PATH "$XDG_CONFIG_HOME/bat/bat.conf" # custom `bat` config path
 set -gx LESSHISTFILE - # disable Less history file
 
+set -gx WINDOW_HOME /mnt/c/Users/Henry
+
 fish_add_path -g \
 	$HOME/bin $HOME/.local/bin \
 	$HOME/.cargo/bin \

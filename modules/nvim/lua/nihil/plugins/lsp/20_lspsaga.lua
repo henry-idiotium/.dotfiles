@@ -52,7 +52,7 @@ return {
                 separator = '  ',
                 hide_keyword = true,
                 show_file = true,
-                folder_level = 0,
+                folder_level = 1,
                 color_mode = true,
                 delay = 300,
             },

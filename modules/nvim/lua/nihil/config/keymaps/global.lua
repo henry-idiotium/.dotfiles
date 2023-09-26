@@ -51,6 +51,8 @@ map_keys {
     ['+'] = { '<c-a>', desc = 'Increment' },
     ['-'] = { '<c-x>', desc = 'Decrement' },
 
+    -- ['cgn'] = { '"_cg*', desc = 'Decrement' },
+
     -- Avoid copy on paste in Visual mode
     ['p'] = { '<s-p>', desc = 'Paste', mode = 'v' },
 
@@ -80,13 +82,12 @@ map_keys {
     },
 }
 
-
 -- Find and replace/delete selected/under-cusor characters
 --NOTE: use vanilla to avoid neovim api bug
 vim.cmd [[
-    nmap cg* *<s-n>"_cgn
+    nmap cgw *<s-n>"_cgn
     vmap cg  *<s-n>"_cgn
-    nmap dg* *<s-n>"_dgn
+    nmap dgw *<s-n>"_dgn
     vmap dg  *<s-n>"_dgn
 ]]
 
