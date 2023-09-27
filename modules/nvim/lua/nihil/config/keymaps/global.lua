@@ -51,8 +51,6 @@ map_keys {
     ['+'] = { '<c-a>', desc = 'Increment' },
     ['-'] = { '<c-x>', desc = 'Decrement' },
 
-    -- ['cgn'] = { '"_cg*', desc = 'Decrement' },
-
     -- Avoid copy on paste in Visual mode
     ['p'] = { '<s-p>', desc = 'Paste', mode = 'v' },
 

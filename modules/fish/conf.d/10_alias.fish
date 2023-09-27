@@ -19,8 +19,6 @@ alias pwsh      '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
 alias explorer  '/mnt/c/Windows/system32/explorer.exe'
 aka   code      code-insiders
 
-alias j   z
-
 aka n     npm
 aka pn    pnpm
 aka y     yarn

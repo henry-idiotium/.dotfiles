@@ -129,8 +129,9 @@ function M.unmap_keys(keys_to_disable)
         local key = is_tbl and args[1] or args
         local mode = is_tbl and (args.mode or '') or ''
 
-        pcall(vim.keymap.set, mode, key, '')
-        pcall(vim.keymap.del, mode, key)
+        pcall(vim.api.nvim_set_keymap, mode, key, '<nop>', {})
+        -- pcall(vim.keymap.set, mode, key, '')
+        -- pcall(vim.keymap.del, mode, key)
     end
 end
 

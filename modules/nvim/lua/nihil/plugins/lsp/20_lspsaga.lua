@@ -87,9 +87,7 @@ return {
         }
 
         local map_keys = nihil.utils.keymap.map_keys
-        local _run = nihil.utils.cmd.callbackRun
-        local function run(cmd) _run('Lspsaga ' .. cmd) end
-
+        local function run(cmd) return ('<cmd>Lspsaga ' .. cmd .. '<cr>') end
         map_keys {
             {
                 gi = { vim.lsp.buf.implementation, desc = 'Go to Implementation' },
