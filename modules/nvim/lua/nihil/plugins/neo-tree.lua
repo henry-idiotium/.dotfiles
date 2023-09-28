@@ -40,6 +40,7 @@ return {
                 ['l'] = 'open',
                 ['h'] = 'close_node',
                 ['<c-o>'] = 'open_tabnew',
+                ['<c-l>'] = 'open_tabnew',
 
                 ['<cr>'] = 'open_drop',
 
@@ -47,7 +48,6 @@ return {
                 ['<s-z>'] = 'expand_all_nodes',
                 ['<s-s>'] = 'open_split',
                 ['s'] = 'open_vsplit',
-                ['t'] = 'open_tabnew',
 
                 ['<'] = { 'prev_source', nowait = false },
                 ['>'] = { 'next_source', nowait = false },

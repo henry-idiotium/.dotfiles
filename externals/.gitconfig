@@ -1,6 +1,6 @@
 [user]
 	email = quocdat.381872@gmail.com
-	name = N. Quoc Dat
+	name = henry-idiotium
 
 [core]
 	autocrlf = false
@@ -33,9 +33,6 @@
 
 [init]
 	defaultBranch = main
-
-[credential]
-	helper = store
 
 [merge]
 	tool = nvimdiff

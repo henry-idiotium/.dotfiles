@@ -18,6 +18,6 @@ fish_vi_key_bindings
 # type -q nitch && nitch
 
 if type -q zoxide
-	zoxide init fish | source
+	zoxide init fish --cmd j | source
 end
 
