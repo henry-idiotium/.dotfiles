@@ -26,7 +26,7 @@ return {
         use_default_mappings = false,
 
         window = {
-            position = 'left', -- float, left, right
+            position = 'right', -- float, left, right
             width = 40,
             mapping_options = { noremap = true, nowait = true },
             mappings = {
