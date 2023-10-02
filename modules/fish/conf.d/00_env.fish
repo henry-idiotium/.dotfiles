@@ -21,3 +21,10 @@ if status is-interactive && type -q fnm
 	| source
 end
 
+set -gx FZF_DEFAULT_COMMAND \
+	'fd --type f --strip-cwd-prefix --hidden --follow
+		--exclude .git
+		--exclude .next
+		--exclude node_modules
+		--exclude dist
+	'
