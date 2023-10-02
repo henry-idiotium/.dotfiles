@@ -10,16 +10,6 @@ map_keys {
     ['<a-z>'] = { run 'set wrap!', desc = 'Toggle text wrap' },
     -- ['<c-s-q>'] = { run 'QuitAllPromptIfLast', desc = 'Quit all documents safely' },
 
-    -----------------------
-    -- Split pane
-    -- ['<c-w>'] = {
-    --     desc = 'Split document/buffer',
-    --     ['v'] = { '<c-w>v<c-w>w', desc = 'Split document vertically' },
-    --     ['<c-v>'] = { '<c-w><c-v><c-w><c-w>', desc = 'Split document vertically' },
-    --     ['s'] = { '<c-w>s<c-w>w', desc = 'Split document horizontally' },
-    --     ['<c-s>'] = { '<c-w><c-s><c-w><c-w>', desc = 'Split document horizontally' },
-    -- },
-
     ['<c-a-up>'] = { '<c-w>+', desc = 'Resize split document' },
     ['<c-a-down>'] = { '<c-w>-', desc = 'Resize split document' },
     ['<c-a-left>'] = { '<c-w><', desc = 'Resize split document' },

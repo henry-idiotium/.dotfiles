@@ -2,13 +2,12 @@ return {
     'folke/todo-comments.nvim',
     config = function()
         local todo_comments = require 'todo-comments'
-        local map_keys = nihil.utils.keymap.map_keys
-        local run = nihil.utils.cmd.callbackRun
+        local cat_mocha_colors = require('catppuccin.palettes').get_palette 'mocha' or error 'missing catppuccin modules'
 
-        map_keys {
+        nihil.utils.keymap.map_keys {
             [']t'] = { todo_comments.jump_next, desc = 'Next todo comment' },
             ['[t'] = { todo_comments.jump_prev, desc = 'Previous todo comment' },
-            ['<leader>ft'] = { run 'TodoTelescope', desc = 'Search highlighted comments in telescope' },
+            ['<leader>ft'] = { ':TodoLocList<cr>', desc = 'Search highlighted comments in telescope' },
         }
 
         todo_comments.setup {
@@ -18,24 +17,15 @@ return {
 
             -- list of named colors where we try to extract the guifg from the
             -- list of highlight groups or use the hex color if hl not found as a fallback
-            colors = (function()
-                local cat_mocha_colors = require('catppuccin.palettes').get_palette 'mocha' or error 'missing catppuccin modules'
-                -- local color_error = cat_mocha_colors.red or '#F38BA8'
-                -- local color_warn = cat_mocha_colors.yellow or '#F9E2AF'
-                -- local color_info = cat_mocha_colors.green or '#A6E3A1'
-                -- local color_hint = cat_mocha_colors.blue or '#94E2D5'
-                -- local color_default = cat_mocha_colors.mauve or '#CBA6F7'
-                -- local color_test = cat_mocha_colors.lavender or '#F5C2E7'
-                return {
-                    info = { cat_mocha_colors.green, 'DiagnosticInfo' },
-                    hint = { cat_mocha_colors.blue, 'DiagnosticHint' },
-                    warn = { 'DiagnosticWarn', 'WarningMsg', cat_mocha_colors.red },
-                    error = { 'DiagnosticError', 'ErrorMsg', cat_mocha_colors.red },
-                    depr = { 'DiagnosticError', 'ErrorMsg', cat_mocha_colors.red },
-                    test = { 'Identifier', cat_mocha_colors.lavender },
-                    default = { 'Identifier', cat_mocha_colors.mauve },
-                }
-            end)(),
+            colors = {
+                info = { cat_mocha_colors.green, 'DiagnosticInfo' },
+                hint = { cat_mocha_colors.blue, 'DiagnosticHint' },
+                warn = { 'DiagnosticWarn', 'WarningMsg', cat_mocha_colors.red },
+                error = { 'DiagnosticError', 'ErrorMsg', cat_mocha_colors.red },
+                depr = { 'DiagnosticError', 'ErrorMsg', cat_mocha_colors.red },
+                test = { 'Identifier', cat_mocha_colors.lavender },
+                default = { 'Identifier', cat_mocha_colors.mauve },
+            },
 
             keywords = {
                 TODO = { icon = ' ', color = 'info' },
@@ -69,7 +59,7 @@ return {
                 pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
                 comments_only = true, -- uses treesitter to match keywords in comments only
                 max_line_len = 400, -- ignore lines longer than this
-                exclude = { 'todo-comments.rc.lua' }, -- list of file types to exclude highlighting
+                exclude = { 'todo-comments.lua' }, -- list of file types to exclude highlighting
             },
 
             search = {

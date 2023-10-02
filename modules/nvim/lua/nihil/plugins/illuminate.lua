@@ -1,9 +1,7 @@
 return {
     'RRethy/vim-illuminate',
     config = function()
-        local illuminate = require 'illuminate'
-
-        illuminate.configure {
+        require('illuminate').configure {
             -- providers: provider used to get references in the buffer, ordered by priority
             providers = {
                 'treesitter',
@@ -14,5 +12,5 @@ return {
             delay = 100,
             min_count_to_highlight = 2,
         }
-    end
+    end,
 }

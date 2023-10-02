@@ -1,5 +1,5 @@
 return {
     'norcalli/nvim-colorizer.lua',
-    opts = { '*', }
+    ft = (require 'nihil.helpers.lsp' or {}).FILE_TYPES,
+    opts = { '*' },
 }
-

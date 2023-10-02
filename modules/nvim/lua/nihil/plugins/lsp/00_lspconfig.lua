@@ -14,11 +14,11 @@ return {
         local on_attach = helper.on_attach
         local language_lsp_configs = {
             'flow',
-            'tailwindcss',
+            'pyright',
             'cssls',
             'jsonls',
             'marksman',
-            'pyright',
+            'tailwindcss',
             eslint = {
                 root_dir = nvim_lsp.util.root_pattern('yarn.lock', 'lerna.json', '.git'),
                 on_attach = on_attach,
@@ -34,6 +34,9 @@ return {
                     'typescript',
                     'typescriptreact',
                     'typescript.tsx',
+                },
+                settings = {
+                    diagnostics = { ignoredCodes = { 80001 } },
                 },
             },
             emmet_language_server = {

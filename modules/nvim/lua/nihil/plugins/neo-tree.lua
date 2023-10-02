@@ -5,7 +5,10 @@ return {
         'nvim-tree/nvim-web-devicons',
         'MunifTanjim/nui.nvim',
     },
-    keys = { { '<c-p><c-s>', '<cmd>Neotree toggle<cr>', desc = 'NeoTree' } },
+    keys = {
+        { '<c-p><c-s>', '<cmd>Neotree toggle<cr>', desc = 'NeoTree toggle' },
+        { '<c-p><c-o>', '<cmd>Neotree reveal<cr>', desc = 'NeoTree reveal' },
+    },
 
     init = function()
         vim.g.loaded_netrw = 1
@@ -23,12 +26,14 @@ return {
         use_default_mappings = false,
 
         window = {
-            position = 'float',
-            -- width = 40,
+            position = 'left', -- float, left, right
+            width = 40,
             mapping_options = { noremap = true, nowait = true },
             mappings = {
+                ['<bs>'] = { 'navigate_up', nowait = false },
                 ['.'] = { 'set_root', nowait = false },
                 ['?'] = 'show_help',
+                ['/'] = 'fuzzy_finder',
                 ['<esc>'] = 'cancel',
                 ['q'] = 'cancel',
                 ['<c-q>'] = 'cancel',
@@ -52,12 +57,13 @@ return {
                 ['<s-s>'] = 'open_split',
                 ['s'] = 'open_vsplit',
 
-                ['<'] = { 'prev_source', nowait = false },
-                ['>'] = { 'next_source', nowait = false },
+                ['<'] = 'prev_source',
+                ['>'] = 'next_source',
                 ['i'] = 'show_file_details',
 
                 ['p'] = 'focus_preview',
-                ['<leader><c-e>'] = 'toggle_hidden',
+                ['P'] = 'toggle_preview',
+                ['<s-h>'] = 'toggle_hidden',
 
                 ['<s-o>'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = '<c-o>' } },
                 ['<s-o>c'] = { 'order_by_created', nowait = false },
@@ -67,6 +73,15 @@ return {
                 ['<s-o>n'] = { 'order_by_name', nowait = false },
                 ['<s-o>s'] = { 'order_by_size', nowait = false },
                 ['<s-o>t'] = { 'order_by_type', nowait = false },
+            },
+
+            fuzzy_finder_mappings = {
+                -- ['<c-o>'] = 'open',
+                -- ['<c-l>'] = 'open',
+                ['<down>'] = 'move_cursor_down',
+                ['<up>'] = 'move_cursor_up',
+                ['<c-j>'] = 'move_cursor_down',
+                ['<c-k>'] = 'move_cursor_up',
             },
         },
 
@@ -79,6 +94,7 @@ return {
                     ['bd'] = 'buffer_delete',
                     ['<bs>'] = 'navigate_up',
                     ['.'] = 'set_root',
+                    ['<s-h>'] = 'toggle_hidden',
                     -- ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
                     -- ['oc'] = { 'order_by_created', nowait = false },
                     -- ['od'] = { 'order_by_diagnostics', nowait = false },
@@ -100,6 +116,7 @@ return {
                     ['gc'] = 'git_commit',
                     ['gp'] = 'git_push',
                     ['gg'] = 'git_commit_and_push',
+                    ['<s-h>'] = 'toggle_hidden',
                     -- ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
                     -- ['oc'] = { 'order_by_created', nowait = false },
                     -- ['od'] = { 'order_by_diagnostics', nowait = false },

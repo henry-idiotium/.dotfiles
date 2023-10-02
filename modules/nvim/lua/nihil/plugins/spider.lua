@@ -1,4 +1,6 @@
-local function run(key) return nihil.utils.cmd.callbackRun("lua require('spider').motion('" .. key .. "')") end
+local function run(key)
+    return function() require('spider').motion(key) end
+end
 
 return {
     'chrisgrieser/nvim-spider',
