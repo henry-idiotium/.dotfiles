@@ -7,12 +7,10 @@ return {
             .. vim.fn.expand '~'
             .. '/documents/notes/**.md',
     },
-    dependencies = {
-        'nvim-lua/plenary.nvim',
-    },
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
         local obs = require 'obsidian'
-        local obs_map = require 'obsidian.mapping'
+        -- local obs_map = require 'obsidian.mapping'
 
         obs.setup {
             dir = '~/documents/notes', -- no need to call 'vim.fn.expand' here
@@ -21,9 +19,11 @@ return {
                 date_format = '%Y-%m-%d-%a',
                 time_format = '%H:%M',
             },
-            mappings = {
-                ['kkl'] = obs_map.gf_passthrough(),
-            },
+
+            disable_frontmatter = true,
+
+            mappings = {},
+            overwrite_mappings = true,
         }
     end,
 }

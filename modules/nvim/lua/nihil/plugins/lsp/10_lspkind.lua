@@ -1,10 +1,8 @@
-local _, helper = pcall(require, 'nihil.helpers.lsp')
-
 --- Vscode-like pictograms
 return {
     'onsails/lspkind-nvim',
-    ft = helper.FILE_TYPES,
-    -- dependencies = 'neovim/nvim-lspconfig',
+    ft = (require 'nihil.helpers.lsp' or {}).FILE_TYPES,
+    dependencies = 'neovim/nvim-lspconfig',
     config = function()
         local lspkind = require 'lspkind'
         local helpers = require 'nihil.helpers.lsp'

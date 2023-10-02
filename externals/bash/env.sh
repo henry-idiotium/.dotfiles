@@ -1,5 +1,5 @@
 export EDITOR='nvim'
-export XDG_CONFIG_HOME="$HOME/.config" # config dir
+# export XDG_CONFIG_HOME="$HOME/.config" # config dir
 export BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/bat.conf" # custom `bat` config path
 
 export LESSHISTFILE='-' # disable Less history file

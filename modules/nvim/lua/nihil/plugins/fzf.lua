@@ -1,7 +1,18 @@
 return {
     'junegunn/fzf.vim',
     dependencies = { 'junegunn/fzf', build = ':call fzf#install()' },
-    init = function() vim.g.fzf_nvim_statusline = 0 end,
+    init = function()
+        vim.g.fzf_nvim_statusline = 0
+        vim.cmd [[
+            let $FZF_DEFAULT_COMMAND='fd
+                \ --type f --strip-cwd-prefix --hidden --follow
+                \ --exclude .git
+                \ --exclude .next
+                \ --exclude node_modules
+                \ --exclude dist
+                \'
+        ]]
+    end,
     config = function()
         nihil.utils.keymap.map_keys {
             ['<c-e>'] = ':Files<cr>',

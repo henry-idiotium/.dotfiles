@@ -1,10 +1,11 @@
-set -gx LOG_DEBUG false
+set -gx XDG_CONFIG_HOME "$HOME/.config"
+set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -gx XDG_DATA_HOME "$HOME/.local/share"
+set -gx XDG_STATE_HOME "$HOME/.local/state"
+
 set -gx EDITOR nvim
-set -gx XDG_CONFIG_HOME "$HOME/.config" # config dir
 set -gx BAT_CONFIG_PATH "$XDG_CONFIG_HOME/bat/bat.conf" # custom `bat` config path
 set -gx LESSHISTFILE - # disable Less history file
-
-set -gx WINDOW_HOME /mnt/c/Users/Henry
 
 fish_add_path -g \
 	$HOME/bin $HOME/.local/bin \
@@ -20,11 +21,3 @@ if status is-interactive && type -q fnm
 			--version-file-strategy=recursive \
 	| source
 end
-
-set -gx FZF_DEFAULT_COMMAND \
-	'fd --type f --strip-cwd-prefix --hidden --follow
-		--exclude .git
-		--exclude .next
-		--exclude node_modules
-		--exclude dist
-	'

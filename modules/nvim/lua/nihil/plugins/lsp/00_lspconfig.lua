@@ -15,13 +15,19 @@ return {
         local language_lsp_configs = {
             'flow',
             'pyright',
-            'cssls',
             'jsonls',
             'marksman',
             'tailwindcss',
             eslint = {
                 root_dir = nvim_lsp.util.root_pattern('yarn.lock', 'lerna.json', '.git'),
                 on_attach = on_attach,
+            },
+            cssls = {
+                settings = {
+                    css = { validate = true, lint = { unknownAtRules = 'ignore' } },
+                    scss = { validate = true, lint = { unknownAtRules = 'ignore' } },
+                    less = { validate = true, lint = { unknownAtRules = 'ignore' } },
+                },
             },
             tsserver = {
                 on_attach = on_attach,
