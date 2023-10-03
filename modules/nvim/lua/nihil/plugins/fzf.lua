@@ -5,6 +5,7 @@ return {
         vim.g.fzf_nvim_statusline = 0
         vim.cmd [[
             let g:fzf_action = {
+            \    'alt-l': 'tab split',
             \    'ctrl-s': 'split',
             \    'ctrl-v': 'vsplit',
             \ }

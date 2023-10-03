@@ -20,6 +20,11 @@ return {
                 time_format = '%H:%M',
             },
 
+            daily_notes = {
+                folder = '1-inbox',
+                template = 'daily-note.md',
+            },
+
             disable_frontmatter = true,
 
             mappings = {},

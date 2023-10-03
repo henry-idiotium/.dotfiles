@@ -7,6 +7,10 @@ set -gx EDITOR nvim
 set -gx BAT_CONFIG_PATH "$XDG_CONFIG_HOME/bat/bat.conf" # custom `bat` config path
 set -gx LESSHISTFILE - # disable Less history file
 
+## WSL
+set -gx WINDOW_CLIPBOARD '/mnt/c/Windows/System32/clip.exe'
+
+
 fish_add_path -g \
     $HOME/bin $HOME/.local/bin \
     $HOME/.cargo/bin \
@@ -19,20 +23,23 @@ if status is-interactive && type -q fnm
     fnm env --use-on-cd \
         --shell=fish \
         --version-file-strategy=recursive \
-        | source
+	| source
 end
 
 ## -------------------------
-set CLIPBOARD '/mnt/c/Windows/System32/clip.exe'
 ## FZF configs
+
 set -gx FZF_DEFAULT_COMMAND "rg --files --follow"
 set -gx FZF_DEFAULT_OPTS "
 	--height 80%
 	--reverse
+	--border
 
-    --preview 'bat --style=numbers --color=always --line-range :500 {}'
-    --preview-window right:50%:hidden
 	--color header:italic
+	--color gutter:-1
+	--color bg+:#313244,spinner:#f5e0dc,hl:#f38ba8
+	--color fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+	--color marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
 
 	--bind ctrl-p:toggle-preview
     --bind ctrl-l:accept,ctrl-o:accept
@@ -40,23 +47,26 @@ set -gx FZF_DEFAULT_OPTS "
 	--bind ctrl-alt-j:preview-page-down,ctrl-alt-k:preview-page-up
 "
 
-set -gx FZF_CTRL_T_COMMAND "
-    $FZF_DEFAULT_COMMAND \
-    --hidden \
+set -l FZF_FILE_DISPLAY_OPTS "
+    --preview 'bat --style=numbers --color=always --line-range :500 {}'
+    --preview-window right:50%:hidden
+"
+
+set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND \
+    --glob '!.git' \
     --glob '!**/node_modules' \
     --glob '!.next' \
-    --glob '!.git' \
 "
 set -gx FZF_CTRL_T_OPTS "
-    $FZF_DEFAULT_OPTS
-	--bind 'ctrl-y:execute-silent(echo -n {} | $CLIPBOARD)+abort'
+	$FZF_FILE_DISPLAY_OPTS
+	--bind 'ctrl-y:execute-silent(echo -n {} | $WINDOW_CLIPBOARD)+abort'
 	--header 'Press CTRL-Y to copy relative path into clipboard'
 "
 
-set -gx FZF_CTRL_R_COMMAND "$FZF_DEFAULT_COMMAND"
+# set -gx FZF_CTRL_R_COMMAND "$FZF_DEFAULT_COMMAND"
 set -gx FZF_CTRL_R_OPTS "
-    $FZF_DEFAULT_OPTS
-	--bind 'ctrl-y:execute-silent(echo -n {2..} | $CLIPBOARD)+abort'
+	$FZF_FILE_DISPLAY_OPTS
+	--bind 'ctrl-y:execute-silent(echo -n {2..} | $WINDOW_CLIPBOARD)+abort'
 	--header 'Press CTRL-Y to copy command into clipboard'
 "
 
@@ -68,5 +78,6 @@ set -gx FZF_ALT_C_COMMAND "fd \
     --exclude 'node_modules' \
 "
 set -gx FZF_ALT_C_OPTS "
+	$FZF_FILE_DISPLAY_OPTS
     --preview 'tree -C {}'
 "
