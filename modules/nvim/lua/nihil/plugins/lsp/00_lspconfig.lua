@@ -44,6 +44,18 @@ return {
                 settings = {
                     diagnostics = { ignoredCodes = { 80001 } },
                 },
+                commands = {
+                    OrganizeImports = {
+                        desc = 'Organize Imports',
+                        function()
+                            vim.lsp.buf.execute_command {
+                                command = '_typescript.organizeImports',
+                                arguments = { vim.api.nvim_buf_get_name(0) },
+                                title = '',
+                            }
+                        end,
+                    },
+                },
             },
             emmet_language_server = {
                 on_attach = on_attach,

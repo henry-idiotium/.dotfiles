@@ -36,10 +36,9 @@ return {
                 ['/'] = 'fuzzy_finder',
                 ['<esc>'] = 'cancel',
                 ['q'] = 'cancel',
-                ['<c-q>'] = 'cancel',
+                ['<c-q>'] = 'close_window',
 
                 ['<s-r>'] = { 'refresh', nowait = false },
-                -- ['q'] = 'close_window',
                 ['n'] = 'add',
                 ['m'] = 'move',
                 ['r'] = 'rename',
@@ -95,6 +94,7 @@ return {
                     ['<bs>'] = 'navigate_up',
                     ['.'] = 'set_root',
                     ['<s-h>'] = 'toggle_hidden',
+                    ['<c-q>'] = 'clear_filter',
                     -- ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
                     -- ['oc'] = { 'order_by_created', nowait = false },
                     -- ['od'] = { 'order_by_diagnostics', nowait = false },
@@ -138,7 +138,7 @@ return {
                     '**/.eslint*',
                     '**/.prettier*',
 
-                    '**/.editorconfig,next',
+                    '**/.editorconfig',
                     '**/.gitignore',
                     '**/.vscode',
                     '**/.next',
