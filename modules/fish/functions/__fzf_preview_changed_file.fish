@@ -3,7 +3,7 @@
 # MM functions/_fzf_preview_changed_file.fish
 #  D README.md
 # R  LICENSE -> "New License"
-function _fzf_preview_changed_file --argument-names path_status --description "Show the git diff of the given file."
+function __fzf_preview_changed_file --argument-names path_status --description "Show the git diff of the given file."
     # remove quotes because they'll be interpreted literally by git diff
     # no need to requote when referencing $path because fish does not perform word splitting
     # https://fishshell.com/docs/current/fish_for_bash_users.html
@@ -16,17 +16,17 @@ function _fzf_preview_changed_file --argument-names path_status --description "S
     set -f diff_opts --color=always
 
     if test $index_status = '?'
-        _fzf_report_diff_type Untracked
-        _fzf_preview_file $path
+        __fzf_report_diff_type Untracked
+        __fzf_preview_file $path
     else if contains {$index_status}$working_tree_status DD AU UD UA DU AA UU
         # Unmerged statuses taken directly from git status help's short format table
         # Unmerged statuses are mutually exclusive with other statuses, so if we see
         # these, then safe to assume the path is unmerged
-        _fzf_report_diff_type Unmerged
+        __fzf_report_diff_type Unmerged
         git diff $diff_opts -- $path
     else
         if test $index_status != ' '
-            _fzf_report_diff_type Staged
+            __fzf_report_diff_type Staged
 
             # renames are only detected in the index, never working tree, so only need to test for it here
             # https://stackoverflow.com/questions/73954214
@@ -42,7 +42,7 @@ function _fzf_preview_changed_file --argument-names path_status --description "S
         end
 
         if test $working_tree_status != ' '
-            _fzf_report_diff_type Unstaged
+            __fzf_report_diff_type Unstaged
             git diff $diff_opts -- $path
         end
     end

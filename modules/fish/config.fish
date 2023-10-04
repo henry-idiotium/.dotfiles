@@ -6,7 +6,7 @@ set -U fish_cursor_replace_one  underscore
 set -U fish_cursor_visual       block
 
 function fish_mode_prompt; end
-fish_vi_key_bindings # use vi mode key binding
+fish_vi_key_bindings
 
 # type -q nitch && nitch
 if type -q zoxide

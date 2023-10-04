@@ -1,34 +1,29 @@
-# Natives
-aka cp     cp -iv
-aka mv     mv -iv
-aka rm     rm -Iv
-aka mkdir  mkdir -pv
-aka which  type -a
-aka h      history
+## Natives
+alias cp 'cp -iv'
+alias mv 'mv -iv'
+alias rm 'rm -Iv'
+alias mkdir 'mkdir -pv'
+alias which 'type -a'
+alias h history
+alias l 'ls -l'
+alias la 'l -a'
 
-# Externals
-aka ls    exa --icons --group-directories-first
-aka l     ls -l
-aka la    l -a
-aka lg    la --git --git-ignore
-aka vi    nvim
-aka g     git
-aka cat   bat
+## Externals
+alias ls 'exa --icons --group-directories-first'
+alias lg 'la --git --git-ignore'
+alias vi nvim
+alias g git
+alias cat bat
 
-alias pwsh      '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
-alias explorer  '/mnt/c/Windows/system32/explorer.exe'
-aka   code      code-insiders
+alias n npm
+alias pn pnpm
+alias y yarn
+alias b bun
+alias sp supabase
 
-aka n     npm
-aka pn    pnpm
-aka y     yarn
-aka b     bun
-aka bunx  bun x  # v1.0.0 miss shiping bunx
-aka bx    bunx
-aka sp    supabase
+## WSL
+alias pwsh '/mnt/c/Program\ Files/PowerShell/7/pwsh.exe'
 
-# Functions
-aka ofe open-file-explorer
-aka mkcd make-then-cd-into-dir
-
-command -vq cargo && alias cargo-update 'cargo install-update -a'
+## Functions
+alias ofe open-file-explorer
+alias mkcd make-then-cd-into-dir
