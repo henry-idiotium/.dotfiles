@@ -1,6 +1,12 @@
-# NOTE: only have logic window explorer.
+if ! string match -q "*WSL*" (uname -r)
+    exit 0
+end
+
+set -gx WINDOW_CLIPBOARD '/mnt/c/Windows/System32/clip.exe'
+
+alias ofe open-file-explorer
 function open-file-explorer
-    set explorer '/mnt/c/Windows/System32/explorer.exe'
+    set explorer '/mnt/c/Windows/explorer.exe'
 
     if ! command -vq "$explorer"
         printf '\n Not found window explorer\n\n'
