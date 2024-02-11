@@ -3,6 +3,7 @@ fish_variables
 fishd.tmp*
 functions/
 conf.d/_*
+themes/
 
 # custom tide elements
 !functions/_tide_item_custom_*
