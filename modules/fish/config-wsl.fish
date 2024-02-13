@@ -1,7 +1,3 @@
-if ! string match -q "*WSL*" (uname -r)
-    exit 0
-end
-
 set -gx WINDOW_CLIPBOARD '/mnt/c/Windows/System32/clip.exe'
 
 alias ofe open-file-explorer
