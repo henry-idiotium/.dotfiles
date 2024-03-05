@@ -10,7 +10,7 @@
 	st = status
 	sth = stash
 	co = checkout
-    com = commit
+    comm = commit
 	br = branch
 	confl = diff --name-only --diff-filter=U
 
@@ -36,6 +36,7 @@
 
 [merge]
 	tool = nvimdiff
+
 [diff]
 	tool = nvimdiff
 
