@@ -1,3 +1,47 @@
+readonly CONF_DIR=${XDG_CONFIG_HOME:="$HOME/.config"}
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+    *) return;;
+esac
+
+# make less more friendly for non-text input files
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+
+# for setting history length
+HISTSIZE=1000
+HISTFILESIZE=2000
+HISTCONTROL=ignoreboth # don't put duplicate lines or lines starting with space in the history.
+
+shopt -s histappend # append to the history file, don't overwrite it
+shopt -s checkwinsize # check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
+shopt -s globstar # If set, the pattern "**" used in a pathname expansion context will match all files and zero or more directories and subdirectories.
+
+
+export EDITOR='nvim'
+# export XDG_CONFIG_HOME="$HOME/.config" # config dir
+export BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/bat.conf" # custom `bat` config path
+
+export LESSHISTFILE='-' # disable Less history file
+
+BIN_DIR="$HOME/bin" && [ -d "$BIN_DIR" ] && PATH=$BIN_DIR:$PATH
+LOCAL_BIN_DIR="$HOME/.local/bin" && [ -d "$LOCAL_BIN_DIR" ] && PATH=$LOCAL_BIN_DIR:$PATH
+
+export FNM_HOME="$HOME/.fnm" && PATH=$FNM_HOME:$PATH &&\
+	[ -d "$FNM_HOME" ] && eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
+export PNPM_HOME="$HOME/.local/share/pnpm" && PATH=$PNPM_HOME:$PATH
+export BUN_INSTALL="$HOME/.bun" && PATH=$BUN_INSTALL/bin:$PATH
+export CARGO_HOME="$HOME/.cargo" &&\
+	[ -d "$CARGO_HOME" ] && source "$CARGO_HOME/env"
+
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
@@ -58,3 +102,10 @@ alias l='ls -CF'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+
+# ## Init fish
+# if [ -t 1 ] && command -v fish &> /dev/null; then exec fish; fi
+
+#NOTE: for .bash_logout
+# when leaving the console clear the screen to increase privacy
+if [ "$SHLVL" = 1 ] && [ -x /usr/bin/clear_console ]; then /usr/bin/clear_console -q; fi

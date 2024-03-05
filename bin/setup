@@ -1,8 +1,9 @@
 #!/bin/bash
+# vim:ft=bash
 
 SCRIPT_DIR=$(dirname "$0")
 
-source $SCRIPT_DIR/__params.sh ## import capture params
+source $SCRIPT_DIR/__params ## import capture params
 
 # ------------------------
 # Require FISH to continue
@@ -11,12 +12,13 @@ if ! command -v fish &> /dev/null; then
     exit 64
 fi
 
-source $SCRIPT_DIR/__var.sh ## import variables
+source $SCRIPT_DIR/__var ## import variables
 
 # ------------------------
 # Symlink modules
 
-if ! $test_output; then
+mkdir -pv "$log_path"
+if [ -f $symlink_logfile_path ]; then
 	: > "$symlink_logfile_path" # empty symlink log file
 fi
 
@@ -26,8 +28,10 @@ symlink_config() {
 	dest_path=${2-$config_path}
 	symlink_path="$dest_path/$(basename $item_path)"
 
-    printf "Set symlink: $entry --> $symlink_path\n"
-	if $test_output; then return; fi
+    printf "Set symlink: $item_path --> $symlink_path\n"
+
+	if [ -d "$symlink_path" ]; then rm -rf $symlink_path &> /dev/null;
+	elif [ -f "$symlink_path" ]; then rm $symlink_path &> /dev/null; fi
 
 	ln -sf $item_path $dest_path
 	echo $symlink_path >> "$symlink_logfile_path"
@@ -35,14 +39,9 @@ symlink_config() {
 
 ## configs in `modules` dir
 shopt -s dotglob
-for entry in "$modules_path"/*; do
-	symlink_config $entry
-done
+for entry in "$modules_path"/*; do symlink_config $entry; done
 shopt -u dotglob
 
-## gitconfig
-symlink_config $externals_path/.gitconfig $HOME
-
-## bash-shell
-symlink_config $externals_path/bash/.bashrc $HOME
+symlink_config $dotfiles_path/.gitconfig $HOME # gitconfig
+symlink_config $dotfiles_path/.bashrc $HOME # bash-shell
 

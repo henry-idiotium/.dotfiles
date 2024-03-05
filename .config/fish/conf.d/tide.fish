@@ -71,3 +71,4 @@ set -U tide_git_color_staged green
 set -U tide_git_color_stash white
 set -U tide_git_color_untracked brwhite
 set -U tide_git_color_upstream brmagenta
+set -U tide_git_icon 

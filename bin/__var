@@ -1,0 +1,9 @@
+#!/bin/bash
+# vim:ft=bash
+
+config_path=${XDG_CONFIG_HOME-$HOME/.config}
+dotfiles_path="$config_path/dotfiles"
+modules_path="$dotfiles_path/.config"
+log_path="$dotfiles_path/.log"
+symlink_logfile_path="$log_path/config_symlinks"
+
