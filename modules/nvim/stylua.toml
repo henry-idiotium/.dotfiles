@@ -1,0 +1,10 @@
+column_width = 200
+indent_type = 'Spaces'
+indent_width = 4
+quote_style = 'AutoPreferSingle' # AutoPreferDouble, AutoPreferSingle, ForceDouble, ForceSingle
+call_parentheses = 'None' # Always, NoSingleString, NoSingleTable, None, Input
+collapse_simple_statement = 'Always' # Never, FunctionOnly, ConditionalOnly, Always
+
+[sort_requires]
+enabled = true
+

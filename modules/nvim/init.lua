@@ -1,1 +1,1 @@
-require 'nihil'
+require 'config.lazy'
