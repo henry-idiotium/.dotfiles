@@ -4,9 +4,9 @@ fishd.tmp*
 functions/
 conf.d/_*
 themes/
+completions/
 
 # custom tide elements
 !functions/_tide_item_custom_*
 # my functions
-!functions/make-then-cd-into-dir.fish
 !functions/bash.fish

@@ -1,5 +1,5 @@
 set -U fish_greeting ""
-set -gx TERM xterm-256color
+# set -gx TERM xterm-256color
 
 # theme
 set -g theme_color_scheme "Catppuccin Mocha"
@@ -21,7 +21,8 @@ set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
-set -gx EDITOR nvim
+set -gx EDITOR /usr/bin/nvim
+set -gx LIBGL_ALWAYS_INDIRECT 1
 
 fish_add_path -g ~/.local/bin
 fish_add_path -g ~/.cargo/bin
@@ -63,9 +64,9 @@ bind -M visual H beginning-of-line
 
 ## configs
 set FISH_CONF_D (dirname (status --current-filename))
-switch "$(uname) $(uname -r)"
+switch "$(uname -sr)"
     case Darwin
-        source $FISH_CONF_D/config-darwin.fish
+        source $FISH_CONF_D/config-macos.fish
     case Linux
         source $FISH_CONF_D/config-linux.fish
     case 'Linux*WSL*'
