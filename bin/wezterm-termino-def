@@ -1,5 +1,5 @@
 #!/bin/bash
-# vim:ft=bash
+# vim:ft=sh
 
 # Setting up undercurl in wezterm terminal for most system.
 # For more detail: https://wezfurlong.org/wezterm/config/lua/config/term.html

@@ -1,47 +1,47 @@
 #!/bin/bash
-# vim:ft=bash
+# vim:ft=sh
 
-SCRIPT_DIR=$(dirname "$0")
-
-source $SCRIPT_DIR/__params ## import capture params
-
-# ------------------------
-# Require FISH to continue
-if ! command -v fish &> /dev/null; then
-    echo "Error: Fish could not be found! Please install." 1>&2
-    exit 64
+if ! command -v fish &>/dev/null; then
+	echo "Error: Fish could not be found! Please install." 1>&2
+	exit 64
 fi
 
-source $SCRIPT_DIR/__var ## import variables
+## prerequisites
+script_dir=$(dirname "$0")
+source $script_dir/__params
+source $script_dir/__var
 
-# ------------------------
-# Symlink modules
+## symlink modules
+mkdir -pv "$log_dir"
+[ -f $symlink_logfile_file ] && : >"$symlink_logfile_file" # empty symlink log file
 
-mkdir -pv "$log_path"
-if [ -f $symlink_logfile_path ]; then
-	: > "$symlink_logfile_path" # empty symlink log file
-fi
-
-
+mkdir -pv "$backup_dir"
 symlink_config() {
-	item_path=$1
-	dest_path=${2-$config_path}
-	symlink_path="$dest_path/$(basename $item_path)"
+	target=$1
+	dest=${2-$config_dir}
+	symlink_path="$dest/$(basename $target)"
 
-    printf "Set symlink: $item_path --> $symlink_path\n"
+	# remove exist symlinks
+	if [ -L $symlink_path ]; then
+		echo "Remove old symlink: $symlink_path"
+		rm $symlink_path &>/dev/null
 
-	if [ -d "$symlink_path" ]; then rm -rf $symlink_path &> /dev/null;
-	elif [ -f "$symlink_path" ]; then rm $symlink_path &> /dev/null; fi
+	# remove/backup exist configs
+	elif ([ -d $symlink_path ] || [ -f $symlink_path ]); then
+		echo "Backup: $symlink_path --> $backup_dir"
+		mv -v $symlink_path $backup_dir
+		rm -rf $symlink_path &>/dev/null
+	fi
 
-	ln -sf $item_path $dest_path
-	echo $symlink_path >> "$symlink_logfile_path"
+	echo "Set symlink: $target --> $symlink_path"
+	ln -sf $target $dest
+	echo $symlink_path >>"$symlink_logfile_file"
 }
 
 ## configs in `modules` dir
-shopt -s dotglob
-for entry in "$modules_path"/*; do symlink_config $entry; done
-shopt -u dotglob
+for entry in $(find $module_dir/ -maxdepth 1 ! -path $module_dir/); do
+	symlink_config $entry
+done
 
-symlink_config $dotfiles_path/.gitconfig $HOME # gitconfig
-symlink_config $dotfiles_path/.bashrc $HOME # bash-shell
-
+symlink_config $extern_dir/.gitconfig $HOME # gitconfig
+symlink_config $extern_dir/.bashrc $HOME    # bash-shell

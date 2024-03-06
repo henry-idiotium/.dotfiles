@@ -4,7 +4,7 @@ fishd.tmp*
 functions/
 conf.d/_*
 themes/
-completions/
+completions/*
 
 # custom tide elements
 !functions/_tide_item_custom_*

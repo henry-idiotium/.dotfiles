@@ -1,15 +1,17 @@
 #!/bin/bash
-# vim:ft=bash
+# vim:ft=sh
 
-SCRIPT_DIR=$(dirname "$0")
+script_dir=$(dirname "$0")
+source $script_dir/__var
 
-source $SCRIPT_DIR/__params ## import capture params
-source $SCRIPT_DIR/__var ## import variables
+if [ ! -f $symlink_logfile_file ]; then
+	echo "Symlink log file not found  [[ $symlink_logfile_file ]]"
+	exit 69
+fi
 
 while IFS= read -r symlink_path; do
-	printf "Remove symlink: $symlink_path\n"
-	if $test_output; then continue; fi
-
+	echo "Remove symlink: $symlink_path"
 	command rm $symlink_path
-done < $symlink_logfile_path
+done <$symlink_logfile_file
 
+: >"$symlink_logfile_file" # empty symlink log file
