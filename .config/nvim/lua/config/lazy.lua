@@ -12,6 +12,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
     spec = {
         -- add LazyVim and import its plugins
+        -- NOTE: each LazyVim updates do remember to MANUALLY modify LazyVim's keymaps config
         {
             'LazyVim/LazyVim',
             import = 'lazyvim.plugins',
@@ -44,7 +45,14 @@ require('lazy').setup {
         version = false, -- always use the latest git commit
         keymaps = false,
     },
-    checker = { enabled = true }, -- automatically check for plugin updates
+    -- automatically check for plugin updates
+    checker = {
+        enabled = true,
+        concurrency = 1, ---@type number? set to 1 to check for updates very slowly
+        notify = true, -- get a notification when new updates are found
+        frequency = 86400, -- check for updates every hour
+        check_pinned = false, -- check for pinned packages that can't be updated
+    },
     performance = {
         cache = { enabled = true },
         rtp = {
@@ -60,5 +68,8 @@ require('lazy').setup {
                 'zipPlugin',
             },
         },
+    },
+    ui = {
+        border = 'rounded',
     },
 }

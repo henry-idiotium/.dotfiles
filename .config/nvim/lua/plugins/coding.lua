@@ -8,10 +8,10 @@ return {
         'chrisgrieser/nvim-spider',
         lazy = true,
         keys = {
-            { '<leader>w', "<cmd>lua require('spider').motion('w')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider w' },
-            { '<leader>e', "<cmd>lua require('spider').motion('e')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider e' },
-            { '<leader>b', "<cmd>lua require('spider').motion('b')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider b' },
-            { '<leader>ge', "<cmd>lua require('spider').motion('ge')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider ge' },
+            { ';w', "<cmd>lua require('spider').motion('w')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider w' },
+            { ';e', "<cmd>lua require('spider').motion('e')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider e' },
+            { ';b', "<cmd>lua require('spider').motion('b')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider b' },
+            { ';ge', "<cmd>lua require('spider').motion('ge')<cr>", silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider ge' },
         },
     },
 

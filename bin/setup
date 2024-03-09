@@ -45,3 +45,4 @@ done
 
 symlink_config $extern_dir/.gitconfig $HOME # gitconfig
 symlink_config $extern_dir/.bashrc $HOME    # bash-shell
+symlink_config $extern_dir/.terminfo $HOME  # bash-shell

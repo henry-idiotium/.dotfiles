@@ -1,89 +1,76 @@
-local map = vim.keymap.set
+local set = vim.keymap.set
+local nomap = function(key, mode) set(mode or { 'n', 'v', 'i', 'x' }, key, '<nop>', { remap = true }) end
 
 ----- Unbindings
-local all_modes = { 'i', 'x', 'n', 's' }
-local function disable_keymap(key, modes) pcall(map, modes or all_modes, key, '<Nop>', { remap = true }) end
-local function del_keymap(key) pcall(vim.keymap.del, all_modes, key) end
-
-disable_keymap '<s-z><s-z>'
-disable_keymap('zj', { 'n', 'v' })
-disable_keymap('zk', { 'n', 'v' })
-disable_keymap '<c-b>'
-disable_keymap '<c-f>'
-del_keymap '<leader>cf'
-del_keymap '<leader>ww'
-del_keymap '<leader>wd'
-del_keymap '<leader>w-'
-del_keymap '<leader>w|'
-del_keymap '<leader>-'
-del_keymap '<leader>|'
+nomap '<s-z><s-z>'
 
 ----- Bindings
 local Util = require 'lazyvim.util'
-local opts = { noremap = true, silent = true }
+local dopts = { noremap = true, silent = true } -- default options
+local eopts = function(opts) return vim.tbl_extend('force', dopts, opts) end -- overwrite/extend default options
 
-map('i', 'jj', '<esc>', opts)
-map({ 'n', 'v' }, '<c-k>', '5k', opts)
-map({ 'n', 'v' }, '<c-j>', '5j', opts)
-map('c', '<c-q>', '<c-c>', opts)
-map({ 'n', 'v', 'o' }, '<s-h>', '^', opts)
-map({ 'n', 'v', 'o' }, '<s-l>', '$', opts)
+set('i', 'jj', '<esc>', dopts)
+set({ 'n', 'v' }, '<c-k>', '5k', dopts)
+set({ 'n', 'v' }, '<c-j>', '5j', dopts)
+set('c', '<c-q>', '<c-c>', dopts)
+set({ 'n', 'v', 'o' }, '<s-h>', '^', dopts)
+set({ 'n', 'v', 'o' }, '<s-l>', '$', dopts)
 
 ---- Editor
-map({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>', opts)
-map({ 'n', 'i', 'v' }, '<c-y>', '<cmd>redo<cr>', opts)
+set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>', dopts)
+set({ 'n', 'i', 'v' }, '<c-y>', '<cmd>redo<cr>', dopts)
 
-map('n', 'o', 'o<esc>', opts)
-map('n', '<s-o>', '<s-o><esc>', opts)
-map('v', 'p', '<s-p>', opts) -- Avoid copy on paste in Visual mode
+set('n', 'o', 'o<esc>', dopts)
+set('n', '<s-o>', '<s-o><esc>', dopts)
+set('v', 'p', '<s-p>', dopts) -- Avoid copy on paste in Visual mode
 
 -- formatting
-map({ 'n', 'v' }, '<a-s-f>', function() Util.format { force = true } end, opts)
+set({ 'n', 'v' }, '<a-s-f>', function() Util.format { force = true } end, dopts)
 
 -- move lines
-map({ 'n', 'i' }, '<a-j>', '<cmd>m +1<cr>', opts)
-map({ 'n', 'i' }, '<a-k>', '<cmd>m -2<cr>', opts)
-map('v', '<a-j>', ":m '>+1<cr>gv", opts)
-map('v', '<a-k>', ":m '<-2<cr>gv", opts)
+set({ 'n', 'i' }, '<a-j>', '<cmd>m +1<cr>', dopts)
+set({ 'n', 'i' }, '<a-k>', '<cmd>m -2<cr>', dopts)
+set('v', '<a-j>', ":m '>+1<cr>gv", dopts)
+set('v', '<a-k>', ":m '<-2<cr>gv", dopts)
 
 -- indent
-map('v', '<', '<gv', opts)
-map('v', '>', '>gv', opts)
-map('n', '+', '<c-a>', opts)
-map('n', '-', '<c-x>', opts)
-map('n', 'z<s-c>', 'set foldlevel=00', opts)
-map('n', 'z<s-o>', 'set foldlevel=99', opts)
+set('v', '<', '<gv', dopts)
+set('v', '>', '>gv', dopts)
+set('n', '+', '<c-a>', dopts)
+set('n', '-', '<c-x>', dopts)
+set('n', 'z<s-c>', 'set foldlevel=00', dopts)
+set('n', 'z<s-o>', 'set foldlevel=99', dopts)
 
 -- duplication
-map('n', '<s-a-j>', "<s-v>:'<,'>t'><cr>gv<esc>", opts)
-map('n', '<s-a-k>', "<s-v>:'<,'>t'><cr>gv<esc>", opts)
-map('v', '<s-a-j>', ":'<,'>t'><cr>gv", opts)
-map('v', '<s-a-k>', ":'<,'>t'><cr>gv", opts)
+set('n', '<s-a-j>', "<s-v>:'<,'>t'><cr>gv<esc>", dopts)
+set('n', '<s-a-k>', "<s-v>:'<,'>t'><cr>gv<esc>", dopts)
+set('v', '<s-a-j>', ":'<,'>t'><cr>gv", dopts)
+set('v', '<s-a-k>', ":'<,'>t'><cr>gv", dopts)
 
 -- Void yanks
-map('n', 'x', '"_x')
-map({ 'n', 'v' }, ';d', '"_d', opts)
-map({ 'n', 'v' }, ';c', '"_c', opts)
-map({ 'n', 'v' }, ';x', '"_x', opts)
-map({ 'n', 'v' }, ';<s-d>', '"_<s-d>', opts)
-map({ 'n', 'v' }, ';<s-c>', '"_<s-c>', opts)
+set('n', 'x', '"_x')
+set('n', ';<s-d>', '"_<s-d>', eopts { desc = 'Void delete D' })
+set('n', ';<s-c>', '"_<s-c>', eopts { desc = 'Void delete C' })
+set({ 'n', 'v' }, ';d', '"_d', eopts { desc = 'Void delete d' })
+set({ 'n', 'v' }, ';c', '"_c', eopts { desc = 'Void delete c' })
+set({ 'n', 'v' }, ';x', '"_x', eopts { desc = 'Void delete x' })
 
 ---- Tab
-map('n', '<a-z>', ':set wrap!<cr>')
-map('n', '<c-a-up>', '<c-w>+')
-map('n', '<c-a-down>', '<c-w>-')
-map('n', '<c-a-left>', '<c-w><')
-map('n', '<c-a-right>', '<c-w>>')
+set('n', '<a-z>', ':set wrap!<cr>')
+set('n', '<c-a-up>', '<c-w>+')
+set('n', '<c-a-down>', '<c-w>-')
+set('n', '<c-a-left>', '<c-w><')
+set('n', '<c-a-right>', '<c-w>>')
 
-map('n', ',', '@@', vim.tbl_extend('keep', opts, { remap = true }))
-map('n', '<c-a>', 'gg<s-v><s-g>', opts)
+set('n', ',', '@@', eopts { noremap = false, remap = true })
+set('n', '<c-a>', 'gg<s-v><s-g>', dopts)
 
 -- find and replace/delete selected/under-cusor characters
-map('n', 'cgw', '*<s-n>"_cgn', { remap = true })
-map('v', 'cg', '*<s-n>cgn', { remap = true })
-map('n', 'dgw', '*<s-n>"_dgn', { remap = true })
-map('v', 'dg', '*<s-n>dgn', { remap = true })
-
--- Diagnostics
--- map('n', '<leader>]d', vim.diagnostic.goto_next, opts)
--- map('n', '<leader>[d', vim.diagnostic.goto_prev, opts)
+set('n', 'cgw', '*<s-n>cgn', eopts { remap = true, desc = 'Find and replace' })
+set('n', 'dgw', '*<s-n>dgn', eopts { remap = true, desc = 'Find and replace' })
+set('v', 'cg', '*<s-n>cgn', eopts { remap = true, desc = 'Find and replace' })
+set('v', 'dg', '*<s-n>dgn', eopts { remap = true, desc = 'Find and replace' })
+set('n', ';cgw', '*<s-n>"_cgn', eopts { remap = true, desc = 'Find and replace' })
+set('n', ';dgw', '*<s-n>"_dgn', eopts { remap = true, desc = 'Find and replace' })
+set('v', ';cg', '*<s-n>"_cg', eopts { remap = true, desc = 'Find and replace' })
+set('v', ';dg', '*<s-n>"_dgn', eopts { remap = true, desc = 'Find and replace' })

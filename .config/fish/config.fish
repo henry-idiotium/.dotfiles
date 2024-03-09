@@ -15,15 +15,17 @@ set -U fish_cursor_replace_one underscore
 set -U fish_cursor_visual block
 
 ## env
-set -gx EDITOR /usr/bin/nvim
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
+set -gx EDITOR nvim
+set -gx TERM wezterm # enable undercurl (~/.terminfo/w/wezterm)
 
 fish_add_path -g ~/.local/bin
 fish_add_path -g ~/.local/share/pnpm
 fish_add_path -g ~/.bun/bin
+fish_add_path -g ~/.cache/.bun/bin # NOTE: or ~/.bun/install/cache
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/.local/share/fnm && type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
 
