@@ -1,12 +1,6 @@
-fundle/
 fish_variables
 fishd.tmp*
-functions/
-conf.d/_*
 themes/
 completions/*
-
-# custom tide elements
-!functions/_tide_item_custom_*
-# my functions
-!functions/bash.fish
+functions/*
+conf.d/_*

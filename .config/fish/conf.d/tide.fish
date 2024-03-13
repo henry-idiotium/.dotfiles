@@ -1,5 +1,4 @@
-# use `normal` for transparent
-set -l prompt_bg normal #1e1e24
+set -l prompt_bg normal # transparent
 
 # prompt config
 set -U tide_prompt_add_newline_before false
@@ -14,27 +13,24 @@ set -U tide_left_prompt_items pwd git newline character
 set -U tide_left_prompt_separator_same_color 
 
 # prompt righ
-set -U tide_right_prompt_items cmd_duration context jobs direnv node python rustc java php pulumi ruby go gcloud kubectl distrobox toolbox terraform aws nix_shell crystal elixir zig
 set -U tide_right_prompt_separator_same_color 
 
 # character
 set -U tide_character_color green
 set -U tide_character_color_failure red
-set -U tide_character_icon ❯
-set -U tide_character_vi_icon_default ❮
-set -U tide_character_vi_icon_replace R
-set -U tide_character_vi_icon_visual V
+set -U tide_character_icon ' ➜'
+set -U tide_character_vi_icon_default "$tide_character_icon"
+set -U tide_character_vi_icon_replace ' R'
+set -U tide_character_vi_icon_visual ' V'
 
 # pwd
 set -U tide_pwd_bg_color $prompt_bg
-set -U tide_pwd_markers bzr citc git hg node version python version ruby version shorten_folder_marker svn terraform Cargo toml composer json CVS go mod package json build zig
 set -U tide_pwd_color_anchors brblue
 set -U tide_pwd_color_dirs blue
 set -U tide_pwd_color_truncated_dirs BCBCBC
 set -U tide_pwd_icon
 set -U tide_pwd_icon_home
 set -U tide_pwd_icon_unwritable 
-
 
 # context
 set -U tide_context_always_display false
