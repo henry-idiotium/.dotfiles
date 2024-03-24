@@ -20,11 +20,14 @@ return {
                 'scss',
                 'sql',
                 'svelte',
+                'jsonc',
+                'vim',
+                'regex',
+                'lua',
+                'bash',
+                'markdown',
+                'markdown_inline',
             },
-
-            -- matchup = {
-            -- 	enable = true,
-            -- },
 
             -- https://github.com/nvim-treesitter/playground#query-linter
             query_linter = {

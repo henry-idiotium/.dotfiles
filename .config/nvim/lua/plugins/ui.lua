@@ -4,23 +4,18 @@ return {
         'folke/noice.nvim',
         opts = function(_, opts)
             table.insert(opts.routes, {
+                opts = { skip = true },
                 filter = {
                     event = 'notify',
                     find = 'No information available',
                 },
-                opts = { skip = true },
             })
+
             local focused = true
-            vim.api.nvim_create_autocmd('FocusGained', {
-                callback = function() focused = true end,
-            })
-            vim.api.nvim_create_autocmd('FocusLost', {
-                callback = function() focused = false end,
-            })
+            vim.api.nvim_create_autocmd('FocusGained', { callback = function() focused = true end })
+            vim.api.nvim_create_autocmd('FocusLost', { callback = function() focused = false end })
             table.insert(opts.routes, 1, {
-                filter = {
-                    cond = function() return not focused end,
-                },
+                filter = { cond = function() return not focused end },
                 view = 'notify_send',
                 opts = { stop = false },
             })
@@ -52,8 +47,7 @@ return {
         },
     },
 
-    -- buffer line
-    {
+    { --[[ tab/buffer line ]]
         'akinsho/bufferline.nvim',
         event = 'VeryLazy',
         keys = {
@@ -63,15 +57,13 @@ return {
         opts = {
             options = {
                 mode = 'tabs',
-                -- separator_style = "slant",
                 show_buffer_close_icons = false,
                 show_close_icon = false,
             },
         },
     },
 
-    -- filename
-    {
+    { --[[ floating filename ]]
         'b0o/incline.nvim',
         event = 'BufReadPre',
         priority = 1200,

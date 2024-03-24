@@ -1,6 +1,4 @@
 return {
-    { 'folke/flash.nvim', enabled = false },
-
     { 'nvim-neo-tree/neo-tree.nvim', enabled = false },
 
     {
@@ -15,79 +13,141 @@ return {
     },
 
     {
-        'ibhagwan/fzf-lua',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        config = function()
-            require('fzf-lua').setup('skim', {
-                winopts = {
-                    preview = { default = 'bat' },
-                },
-            })
-        end,
-    },
-
-    {
         'telescope.nvim',
-        -- keys = {
-        -- { '\\\\', '<cmd>Telescope buffers<cr>', desc = 'Lists open buffers' },
-        -- { '<c-l><c-l>', '<cmd>Telescope resume<cr>', desc = 'Open previous telescope action' },
-        -- { '<c-e>', '<cmd>Telescope find_files<cr>', desc = 'Find files in workspace' },
-        -- { '<c-f>', '<cmd>Telescope current_buffer_fuzzy_find<cr>', desc = 'Search words in active document/buffer' },
-        -- { '<c-a-f>', '<cmd>Telescope live_grep<cr>', desc = 'Search words in workspace' },
-        -- { '<c-l><c-s>', '<cmd>Telescope file_browser<cr>', desc = 'Find files in workspace' },
-        -- { '<c-l><c-j>', function() require('telescope').extensions.file_browser.file_browser { path = '%:p:h' } end },
-        -- },
+        dependencies = {
+            { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+            'nvim-telescope/telescope-file-browser.nvim',
+        },
+        keys = {
+            {
+                '\\\\',
+                function() require('telescope.builtin').buffers() end,
+                desc = 'Lists open buffers',
+            },
+            {
+                ';;',
+                require('telescope.builtin').resume,
+                desc = 'Resume the previous telescope picker',
+            },
+            {
+                ';f',
+                function()
+                    require('telescope.builtin').find_files {
+                        no_ignore = false,
+                        hidden = true,
+                    }
+                end,
+                desc = 'Lists files in your current working directory, respects .gitignore',
+            },
+            {
+                ';r',
+                function()
+                    require('telescope.builtin').live_grep {
+                        additional_args = { '--hidden' },
+                    }
+                end,
+                desc = 'Search for a string in your current working directory and get results live as you type, respects .gitignore',
+            },
+            {
+                ';t',
+                function() require('telescope.builtin').help_tags() end,
+                desc = 'Lists available help tags and opens a new window with the relevant help info on <cr>',
+            },
+            {
+                ';p',
+                function() require('telescope.builtin').diagnostics() end,
+                desc = 'Lists Diagnostics for all open buffers or a specific buffer',
+            },
+            {
+                ';s',
+                function() require('telescope.builtin').treesitter() end,
+                desc = 'Lists Function names, variables, from Treesitter',
+            },
+            {
+                'sf',
+                function()
+                    local function telescope_buffer_dir() return vim.fn.expand '%:p:h' end
+
+                    require('telescope').extensions.file_browser.file_browser {
+                        path = '%:p:h',
+                        cwd = telescope_buffer_dir(),
+                        respect_gitignore = false,
+                        hidden = true,
+                        grouped = true,
+                        previewer = false,
+                        initial_mode = 'normal',
+                        layout_config = { height = 40 },
+                    }
+                end,
+                desc = 'Open File Browser with the path of the current buffer',
+            },
+        },
+
         config = function(_, opts)
+            local telescope = require 'telescope'
             local actions = require 'telescope.actions'
             local layout = require 'telescope.actions.layout'
+            local fb_actions = require('telescope').extensions.file_browser.actions
 
-            require('telescope').setup {
-                defaults = vim.tbl_deep_extend('force', opts.defaults, {
-                    wrap_results = false,
-                    layout_strategy = 'horizontal',
-                    layout_config = { prompt_position = 'top' },
-                    sorting_strategy = 'ascending',
-                    winblend = 0,
+            opts.defaults = vim.tbl_deep_extend('force', opts.defaults, {
+                wrap_results = true,
+                layout_strategy = 'horizontal',
+                layout_config = { prompt_position = 'top' },
+                winblend = 0,
+
+                selection_strategy = 'reset',
+                sorting_strategy = 'ascending',
+
+                path_display = { 'tail' },
+                dynamic_preview_title = true,
+
+                mappings = {
+                    n = {
+                        ['<c-q>'] = actions.close,
+                        ['q'] = actions.close,
+                        ['l'] = actions.select_default,
+                        ['<c-l>'] = actions.select_default,
+                        ['<c-a-l>'] = actions.select_tab,
+                        ['<c-j>'] = actions.move_selection_next,
+                        ['<c-k>'] = actions.move_selection_previous,
+                        ['<c-p>'] = layout.toggle_preview,
+                        ['<esc>'] = false,
+                    },
+                    i = {
+                        ['<c-q>'] = actions.close,
+                        ['<c-l>'] = actions.select_default,
+                        ['<c-a-l>'] = actions.select_tab,
+                        ['<c-j>'] = actions.move_selection_next,
+                        ['<c-k>'] = actions.move_selection_previous,
+                        ['<c-p>'] = layout.toggle_preview,
+                    },
+                },
+            })
+            opts.pickers = {
+                diagnostics = {
+                    theme = 'ivy',
+                    initial_mode = 'normal',
+                    layout_config = {
+                        preview_cutoff = 9999,
+                    },
+                },
+            }
+            opts.extensions = {
+                file_browser = {
+                    theme = 'dropdown',
+                    hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
                     mappings = {
-                        n = {
-                            ['<c-q>'] = actions.close,
-                            ['q'] = actions.close,
-                            ['l'] = actions.select_default,
-                            ['<c-l>'] = actions.select_tab,
-                            ['<c-p>'] = layout.toggle_preview,
-                            ['<c-j>'] = actions.move_selection_next,
-                            ['<c-k>'] = actions.move_selection_previous,
-                            ['<esc>'] = false,
-                        },
-                        i = {
-                            ['<c-l>'] = actions.select_default,
-                            ['<c-a-l>'] = actions.select_tab,
-                            ['<c-j>'] = actions.move_selection_next,
-                            ['<c-k>'] = actions.move_selection_previous,
-                            ['<c-p>'] = layout.toggle_preview,
-                            ['<c-q>'] = actions.close,
+                        ['n'] = {
+                            ['<s-n>'] = fb_actions.create,
+                            ['h'] = fb_actions.goto_parent_dir,
+                            ['/'] = function() vim.cmd 'startinsert' end,
                         },
                     },
-                }),
-                -- pickers = {
-                --     diagnostics = { initial_mode = 'normal' },
-                --     find_files = {
-                --         theme = 'dropdown',
-                --         cwd = vim.loop.cwd(),
-                --         no_ignore = false,
-                --         hidden = true,
-                --         path_display = { 'tail' },
-                --     },
-                -- live_grep = { additional_args = { '--hidden' } },
-                -- current_buffer_fuzzy_find = {
-                --     theme = 'dropdown',
-                --     previewer = false,
-                --     skip_empty_lines = true,
-                -- },
-                -- },
+                },
             }
-
+            telescope.setup(opts)
             require('telescope').load_extension 'fzf'
+            require('telescope').load_extension 'file_browser'
         end,
     },
 }

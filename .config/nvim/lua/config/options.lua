@@ -1,6 +1,11 @@
-vim.scriptencoding = 'utf-8'
-vim.opt.fileencoding = 'utf-8'
+vim.g.mapleader = ' '
+vim.g.shortmess = 'I' -- Disable intro message
+
 vim.opt.encoding = 'utf-8'
+vim.opt.fileencoding = 'utf-8'
+
+vim.opt.number = true -- Line Numbers
+vim.opt.relativenumber = false
 
 vim.opt.title = false -- set false to avoid weird buffer renering with Wezterm terminal
 vim.opt.undofile = true
@@ -8,18 +13,16 @@ vim.opt.backup = false
 vim.opt.ignorecase = true -- case insensitive searching UNLESS /C or capital in search
 vim.opt.hlsearch = true
 vim.opt.showcmd = true
-vim.opt.showtabline = 0 -- 0: never, 1: if any, 2: always
 vim.opt.timeoutlen = 500
+vim.opt.showtabline = 0 -- 0: never, 1: if any, 2: always
 vim.opt.scrolloff = 5
--- vim.opt.shell = '/bin/fish'
-vim.g.shortmess = 'I' -- Disable intro message
-vim.go.cmdheight = 1
-vim.go.viminfofile = ''
-vim.go.viminfo = ''
-
 vim.opt.laststatus = 2
+vim.opt.shell = 'fish'
 vim.opt.inccommand = 'split'
-
+vim.opt.mouse = 'n'
+vim.opt.mousefocus = true
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = 'number'
 vim.opt.termguicolors = true
@@ -28,35 +31,28 @@ vim.opt.wildoptions = 'pum'
 vim.opt.pumblend = 5
 vim.opt.background = 'dark'
 
+-- Indent Settings
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.smarttab = true
+vim.opt.expandtab = true
+vim.opt.wrap = false
+vim.opt.autoindent = true
+vim.opt.breakindent = true
+vim.opt.smartindent = true
+vim.opt.linebreak = true
+vim.opt.breakindent = true
+vim.opt.showbreak = ' '
+vim.opt.breakat = ' \t;:,!?'
+vim.opt.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
+
 vim.opt.backupskip = { '/tmp/*', '/private/tmp/*' }
 vim.opt.backspace = { 'start', 'eol', 'indent' }
 
 vim.opt.path:append { '**' } -- Finding files - Search down into subfolders
 vim.opt.wildignore:append { '*/node_modules/*' }
 vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments
-
--- Mouse
-vim.opt.mouse = 'a'
-vim.opt.mousefocus = true
-
--- Line Numbers
-vim.opt.number = true
-vim.opt.relativenumber = false
-
--- Splits
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-
--- Indent Settings
-vim.opt.expandtab = true
-vim.opt.smartindent = true
-vim.opt.wrap = false
-vim.opt.autoindent = true
-vim.opt.breakindent = true
-vim.opt.smarttab = true
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
 
 -- Undercurl
 vim.cmd [[ let &t_Cs = "\e[4:3m" ]]
