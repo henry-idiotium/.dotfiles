@@ -14,6 +14,7 @@ set({ 'n', 'v' }, '<c-k>', '5k')
 set({ 'n', 'v' }, '<c-j>', '5j')
 set({ 'n', 'v', 'o' }, '<s-h>', '^')
 set({ 'n', 'v', 'o' }, '<s-l>', '$')
+set('n', '<c-a>', 'gg<s-v><s-g>')
 
 ---- Editor
 set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')
@@ -21,7 +22,7 @@ set({ 'n', 'i', 'v' }, '<c-y>', '<cmd>redo<cr>')
 
 set('n', 'o', 'o<esc>')
 set('n', '<s-o>', '<s-o><esc>')
-set('v', 'p', 'l<s-p>') -- Avoid copy on paste in Visual mode
+set('v', 'p', '<s-p>') -- Avoid copy on paste in Visual mode
 
 -- move lines
 set({ 'n', 'i' }, '<a-j>', '<cmd>m +1<cr>')

@@ -1,29 +1,8 @@
 return {
     { 'echasnovski/mini.bracketed', enabled = false },
+    { 'echasnovski/mini.surround', enabled = false },
 
-    {
-        'echasnovski/mini.surround',
-        opts = {
-            highlight_duration = 500,
-
-            -- Module mappings. Use '' (empty string) to disable one.
-            mappings = {
-                add = 's', -- Add surrounding in Normal and Visual modes
-                delete = 'ds', -- Delete surrounding
-                highlight = 'sh', -- Highlight surrounding
-                replace = 'cs', -- Replace surrounding
-                update_n_lines = 'sn', -- Update `n_lines`
-                find = '',
-                find_left = '',
-
-                suffix_last = 'l', -- Suffix to search with "prev" method
-                suffix_next = 'n', -- Suffix to search with "next" method
-            },
-            n_lines = 20, -- Number of lines within which surrounding is searched
-            respect_selection_type = false, -- Whether to respect selection type:
-            silent = true, -- Whether to disable showing non-error feedback
-        },
-    },
+    { 'kylechui/nvim-surround', event = 'VeryLazy', config = true },
 
     {
         'abecodes/tabout.nvim',
@@ -56,10 +35,10 @@ return {
         'chrisgrieser/nvim-spider',
         lazy = true,
         keys = {
-            { ';w', '<cmd>lua require "spider" .motion "w" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider w' },
-            { ';e', '<cmd>lua require "spider" .motion "e" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider e' },
-            { ';b', '<cmd>lua require "spider" .motion "b" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider b' },
-            { ';ge', '<cmd>lua require "spider" .motion "ge" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider ge' },
+            { ',w', '<cmd>lua require "spider" .motion "w" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider w' },
+            { ',e', '<cmd>lua require "spider" .motion "e" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider e' },
+            { ',b', '<cmd>lua require "spider" .motion "b" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider b' },
+            { ',ge', '<cmd>lua require "spider" .motion "ge" <cr>', silent = true, mode = { 'n', 'o', 'x' }, desc = 'Spider ge' },
         },
     },
 
@@ -93,26 +72,11 @@ return {
         },
     },
 
-    -- Better increase/descrease
-    {
+    { -- Better increase/descrease
         'monaqa/dial.nvim',
         keys = {
-            {
-                '+',
-                function()
-                    return require('dial.map').inc_normal()
-                end,
-                expr = true,
-                desc = 'Increment',
-            },
-            {
-                '-',
-                function()
-                    return require('dial.map').dec_normal()
-                end,
-                expr = true,
-                desc = 'Decrement',
-            },
+            { '+', function() return require('dial.map').inc_normal() end, expr = true, desc = 'Increment' },
+            { '-', function() return require('dial.map').dec_normal() end, expr = true, desc = 'Decrement' },
         },
         config = function()
             local augend = require 'dial.augend'
@@ -146,12 +110,8 @@ return {
 
             local cmp = require 'cmp'
             opts.mapping = cmp.mapping.preset.insert {
-                ['<c-j>'] = cmp.mapping(function(fallback)
-                    return cmp.visible() and cmp.select_next_item() or fallback()
-                end, { 'i', 's' }),
-                ['<c-k>'] = cmp.mapping(function(fallback)
-                    return cmp.visible() and cmp.select_prev_item() or fallback()
-                end, { 'i', 's' }),
+                ['<c-j>'] = cmp.mapping(function(fallback) return cmp.visible() and cmp.select_next_item() or fallback() end, { 'i', 's' }),
+                ['<c-k>'] = cmp.mapping(function(fallback) return cmp.visible() and cmp.select_prev_item() or fallback() end, { 'i', 's' }),
                 ['<c-d>'] = cmp.mapping.scroll_docs(-4),
                 ['<c-u>'] = cmp.mapping.scroll_docs(4),
                 ['<c-space>'] = cmp.mapping.complete(),
