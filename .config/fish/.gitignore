@@ -4,5 +4,3 @@ themes/
 completions/
 functions/
 conf.d/_*
-
-!functions/fish_user_key_bindings.fish
