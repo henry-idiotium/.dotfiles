@@ -20,6 +20,9 @@ return {
             { '<leader>ge', false },
         },
         opts = function(_, opts)
+            vim.g.loaded_netrwPlugin = 1
+            vim.g.loaded_netrw = 1
+
             opts = vim.tbl_extend('force', opts, {
                 popup_border_style = 'rounded',
                 enable_git_status = true,
