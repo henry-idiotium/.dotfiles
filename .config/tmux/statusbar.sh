@@ -6,8 +6,8 @@ set() { tmux set-option -gq "$1" "$2"; }
 setw() { tmux set-window-option -gq "$1" "$2"; }
 
 ## data/info display ---                    
-d_left="  ノラ"
-d_right=" マフル "
+d_left=' マフル'            #'  ノラ'
+d_right='%a %d %b %H:%M' #  マフル
 d_sep_right_fill=''
 d_sep_left_fill=''
 d_sep_right=''
@@ -29,8 +29,8 @@ t_gray2="#51585e"
 IFS_OLD="$IFS"
 IFS=''
 
-## modes
-setw mode-style "fg=$t_teal bg=$t_null"
+## modes (also includes selection style)
+setw mode-style "fg=$t_teal bg=$t_gray"
 
 ## messages
 set message-style "fg=$t_teal bg=$t_bg align=centre"
@@ -58,12 +58,12 @@ status_left=(
 set status-left "${status_left[*]}"
 
 status_right=(
-	"#[fg=$t_fg1 italics]#S "
+	"#[fg=$t_fg1 italics] #S "
 	"#[none]"
 	"#[fg=$t_gray1 bg=$t_bg]$d_sep_left_fill"
 	"#[fg=$t_gray bg=$t_gray1]$d_sep_left_fill"
 	"#[fg=$t_black bg=$t_gray]$d_sep_left_fill"
-	"#[fg=$t_teal bg=$t_black bold]$d_right" # %a %b %H:%M
+	"#[fg=$t_teal bg=$t_black bold] $d_right " # %a %b %H:%M
 )
 set status-right "${status_right[*]}"
 
