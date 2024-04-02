@@ -28,8 +28,9 @@ return {
             keys[#keys + 1] = {
                 'gd',
                 function()
-                    -- DO NOT RESUSE WINDOW
-                    require('telescope.builtin').lsp_definitions { reuse_win = false }
+                    require('telescope.builtin').lsp_definitions {
+                        reuse_win = false, -- DO NOT RESUSE WINDOW
+                    }
                 end,
                 desc = 'Goto Definition',
                 has = 'definition',

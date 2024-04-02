@@ -15,6 +15,7 @@ set({ 'n', 'v' }, '<c-j>', '5j')
 set({ 'n', 'v', 'o' }, '<s-h>', '^')
 set({ 'n', 'v', 'o' }, '<s-l>', '$')
 set('n', '<c-a>', 'gg<s-v><s-g>')
+set('n', '<c-s-p>', '6j')
 
 ---- Editor
 set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')
