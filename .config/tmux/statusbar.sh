@@ -5,9 +5,9 @@
 set() { tmux set-option -gq "$1" "$2"; }
 setw() { tmux set-window-option -gq "$1" "$2"; }
 
-## data/info display ---                    
-d_left=' マフル'            #'  ノラ'
-d_right='%a %d %b %H:%M' #  マフル
+## data/info display
+d_left=' マフル' # ノラ
+d_right='%a %d %b %H:%M'
 d_sep_right_fill=''
 d_sep_left_fill=''
 d_sep_right=''
@@ -25,7 +25,7 @@ t_gray="#343540"
 t_gray1="#494952"
 t_gray2="#51585e"
 
-# look up `Internal Field Separator`
+## look up `Internal Field Separator`
 IFS_OLD="$IFS"
 IFS=''
 
@@ -58,12 +58,12 @@ status_left=(
 set status-left "${status_left[*]}"
 
 status_right=(
-	"#[fg=$t_fg1 italics] #S "
+	"#[fg=$t_fg1 italics] $d_right "
 	"#[none]"
 	"#[fg=$t_gray1 bg=$t_bg]$d_sep_left_fill"
 	"#[fg=$t_gray bg=$t_gray1]$d_sep_left_fill"
 	"#[fg=$t_black bg=$t_gray]$d_sep_left_fill"
-	"#[fg=$t_teal bg=$t_black bold] $d_right " # %a %b %H:%M
+	"#[fg=$t_teal bg=$t_black bold] #S " # %a %b %H:%M
 )
 set status-right "${status_right[*]}"
 
@@ -82,7 +82,6 @@ setw window-status-format " #[default fg=$t_fg1] #I $d_sep_right #{b:pane_curren
 # ACTIVE state
 window_status_current_format=(
 	"#[bg=$t_gray1 fg=#000000]$d_sep_right_fill"
-	# "#[fg=$t_gray1 bg=$t_bg]"
 	"#[bg=$t_gray1 fg=$t_teal bold] #I "
 	"#[fg=$t_gray1 bg=$t_black]$d_sep_right_fill "
 	"#[fg=$t_teal noitalics nobold]#{b:pane_current_path} "
