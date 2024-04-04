@@ -39,16 +39,16 @@ return {
                 end,
             }
 
-            vim.keymap.set('n', '<leader>hp', function() harpoon:list():prepend() end)
-            vim.keymap.set('n', '<leader>ha', function() harpoon:list():append() end)
-            vim.keymap.set('n', '<c-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-            vim.keymap.set('n', '<c-a-.>', function() harpoon:list():next() end)
-            vim.keymap.set('n', '<c-a-,>', function() harpoon:list():prev() end)
+            vim.keymap.set('n', '<leader>hp', function() harpoon:list():prepend() end, { desc = 'Harpoon prepend' })
+            vim.keymap.set('n', '<leader>ha', function() harpoon:list():add() end, { desc = 'Harpoon add' })
+            vim.keymap.set('n', '<c-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'Harpoon list' })
+            vim.keymap.set('n', '<c-a->>', function() harpoon:list():next() end, { desc = 'Harpoon next' })
+            vim.keymap.set('n', '<c-a-<>', function() harpoon:list():prev() end, { desc = 'Harpoon prev' })
 
-            vim.keymap.set('n', '<c-a-u>', function() harpoon:list():select(1) end)
-            vim.keymap.set('n', '<c-a-i>', function() harpoon:list():select(2) end)
-            vim.keymap.set('n', '<c-a-o>', function() harpoon:list():select(3) end)
-            vim.keymap.set('n', '<c-a-p>', function() harpoon:list():select(4) end)
+            vim.keymap.set('n', '<c-a-u>', function() harpoon:list():select(1) end, { desc = 'Harpoon 1st entry' })
+            vim.keymap.set('n', '<c-a-i>', function() harpoon:list():select(2) end, { desc = 'Harpoon 2nd entry' })
+            vim.keymap.set('n', '<c-a-o>', function() harpoon:list():select(3) end, { desc = 'Harpoon 3rd entry' })
+            vim.keymap.set('n', '<c-a-p>', function() harpoon:list():select(4) end, { desc = 'Harpoon 4th entry' })
         end,
     },
 

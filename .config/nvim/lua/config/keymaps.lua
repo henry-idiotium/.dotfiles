@@ -16,6 +16,7 @@ set({ 'n', 'v', 'o' }, '<s-h>', '^')
 set({ 'n', 'v', 'o' }, '<s-l>', '$')
 set('n', '<c-a>', 'gg<s-v><s-g>')
 set('n', '<c-s-p>', '6j')
+set('n', '<leader>uu', vim.cmd.UndotreeToggle)
 
 ---- Editor
 set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')

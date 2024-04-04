@@ -72,27 +72,6 @@ return {
         },
     },
 
-    { -- Better increase/descrease
-        'monaqa/dial.nvim',
-        keys = {
-            { '+', function() return require('dial.map').inc_normal() end, expr = true, desc = 'Increment' },
-            { '-', function() return require('dial.map').dec_normal() end, expr = true, desc = 'Decrement' },
-        },
-        config = function()
-            local augend = require 'dial.augend'
-            require('dial.config').augends:register_group {
-                default = {
-                    augend.integer.alias.decimal,
-                    augend.integer.alias.hex,
-                    augend.date.alias['%Y/%m/%d'],
-                    augend.constant.alias.bool,
-                    augend.semver.alias.semver,
-                    augend.constant.new { elements = { 'let', 'const' } },
-                },
-            }
-        end,
-    },
-
     {
         'simrat39/symbols-outline.nvim',
         keys = { { '<leader>cs', '<cmd>SymbolsOutline<cr>', desc = 'Symbols Outline' } },
@@ -104,32 +83,39 @@ return {
 
     {
         'nvim-cmp',
-        dependencies = { 'hrsh7th/cmp-emoji' },
         opts = function(_, opts)
-            table.insert(opts.sources, { name = 'emoji' })
+            table.insert(opts.sources, { name = 'marksman' })
 
             local cmp = require 'cmp'
+            local cmp_select = { behavior = cmp.SelectBehavior.Select }
             opts.mapping = cmp.mapping.preset.insert {
-                ['<c-j>'] = cmp.mapping(function(fallback) return cmp.visible() and cmp.select_next_item() or fallback() end, { 'i', 's' }),
-                ['<c-k>'] = cmp.mapping(function(fallback) return cmp.visible() and cmp.select_prev_item() or fallback() end, { 'i', 's' }),
-                ['<c-d>'] = cmp.mapping.scroll_docs(-4),
-                ['<c-u>'] = cmp.mapping.scroll_docs(4),
+                ['<c-j>'] = cmp.mapping.select_next_item(cmp_select),
+                ['<c-k>'] = cmp.mapping.select_prev_item(cmp_select),
+                ['<c-d>'] = cmp.mapping.scroll_docs(-5),
+                ['<c-u>'] = cmp.mapping.scroll_docs(5),
+                ['<c-y>'] = cmp.mapping.confirm { select = true },
                 ['<c-space>'] = cmp.mapping.complete(),
                 ['<c-e>'] = cmp.mapping.close(),
-                ['<cr>'] = cmp.mapping.confirm {
-                    behavior = cmp.ConfirmBehavior.Replace,
-                    select = true,
-                },
-                ['<tab>'] = cmp.mapping.confirm {
-                    behavior = cmp.ConfirmBehavior.Replace,
-                    select = true,
-                },
+                ['<tab>'] = nil,
             }
 
+            local window_border = cmp.config.window.bordered()
             opts.window = {
-                completion = cmp.config.window.bordered(),
-                documentation = cmp.config.window.bordered(),
+                completion = window_border,
+                documentation = window_border,
             }
         end,
+    },
+
+    {
+        'ThePrimeagen/refactoring.nvim',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-treesitter/nvim-treesitter',
+        },
+        keys = {
+            { '<leader>rr', function() require('refactoring').select_refactor() end, desc = 'Refactoring actions' },
+        },
+        config = function() require('refactoring').setup() end,
     },
 }
