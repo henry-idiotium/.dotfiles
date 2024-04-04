@@ -26,7 +26,8 @@ alias which 'type -a'
 alias vi nvim
 alias g git
 alias cat bat
-alias l 'eza -laU --icons --no-filesize --no-user --group-directories-first'
+alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
+alias l ls
 
 ## keymaps
 fish_vi_key_bindings

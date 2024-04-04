@@ -35,22 +35,13 @@ set -U fzf_fd_cmd fd \
 #		Helpers & Widgets
 # -----------------------------
 function __fzf_open_dir
-    set -f cmd $argv
-    [ -z "$cmd" ]; and return 0
-
-    [ -d "$cmd" ]; and set -p cmd cd #> directory
+    set -f cmd $argv[1]
+    [ -z "$cmd" ]; and return #> empty
     [ -f "$cmd" ]; and set -p cmd $EDITOR #> file
 
-    begin # add command to the shell history list
-        flock 1
-        echo -- '- cmd:' (string replace -- \n \\n (string join ' ' $cmd) | string replace \\ \\\\)
-        date +'  when: %s'
-    end >>$__fish_user_data_dir/fish_history
-    history merge
-
-    eval "$cmd"
-    commandline -t '' # clear token
+    commandline -t "$cmd"
     commandline -f repaint
+    commandline -f execute
 end
 
 function __fzf_preview_file -d 'Print a preview for the given file based on its file type.'
@@ -60,7 +51,7 @@ function __fzf_preview_file -d 'Print a preview for the given file based on its 
     # which can be any of these file types
     if [ -L "$file_path" ] #> symlink
         set -l target_path (realpath "$file_path")
-        printf "'$file_path' is a symlink to '$target_path'.\n\n"
+        echo -e "'$file_path' is a symlink to '$target_path'.\n"
         __fzf_preview_file "$target_path"
 
     else if [ -f "$file_path" ] #> regular file
@@ -71,17 +62,14 @@ function __fzf_preview_file -d 'Print a preview for the given file based on its 
             --no-filesize --no-user --group-directories-first
 
     else #> unrecognizable
-        printf "Cannot preview '$file_path'.\n\n"
+        echo -e "Cannot preview '$file_path'.\n"
 
     end
 end
 
 function fzf_search_directory -d 'Search files and directories'
     set -f token (commandline --current-token)
-    # expand vars or leading tidle
-    set -f expanded_token (eval echo -- "$token")
-    # remove backslashes (e.g, 'path/dumb \foo/' -> 'path/dumb foo/')
-    set -f unescaped_exp_token (string unescape -- $expanded_token)
+    set -f unescaped_exp_token (string unescape -- (echo -- "$token"))
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
@@ -89,7 +77,7 @@ function fzf_search_directory -d 'Search files and directories'
         set -a fzf_fd_cmd --base-directory $unescaped_exp_token
         set -a fzf_cmd \
             --prompt " $unescaped_exp_token> " \
-            --preview "__fzf_preview_file $expanded_token{}"
+            --preview "__fzf_preview_file $unescaped_exp_token{}"
         set -f result $unescaped_exp_token($fzf_fd_cmd | $fzf_cmd)
     else
         set -a fzf_cmd \
@@ -103,16 +91,17 @@ function fzf_search_directory -d 'Search files and directories'
 end
 
 function fzf_search_base_directory -d "Search files and directories with specify base directory."
-    set -f base_dir $argv
-    set -f expanded_dir (eval echo -- $base_dir)
-    set -f unescaped_exp_dir (string unescape -- $expanded_dir)
+    set -f dir (realpath $argv[1])/ # realpath of base directory
 
-    set -a fzf_fd_cmd --base-directory "$unescaped_exp_dir"
-    set -a fzf_cmd --prompt " $(basename $unescaped_exp_dir)> " \
-        --preview "__fzf_preview_file $expanded_dir{}" \
+    set -f relative_dir (realpath -s --relative-to . $dir)/
+    not string match -q '../*' "$relative_dir"; and set dir $relative_dir
+
+    set -a fzf_fd_cmd --base-directory "$dir"
+    set -a fzf_cmd --prompt " $(basename $dir)> " \
+        --preview "__fzf_preview_file $dir{}" \
         --bind 'ctrl-o:clear-query+put()+print-query'
 
-    set -f result $unescaped_exp_dir($fzf_fd_cmd | $fzf_cmd)
+    set -f result $dir($fzf_fd_cmd | $fzf_cmd)
 
     __fzf_open_dir $result
 end
