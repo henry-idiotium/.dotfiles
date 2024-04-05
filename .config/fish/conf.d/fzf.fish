@@ -66,7 +66,7 @@ end
 
 function fzf_search_directory -d 'Search files and directories'
     set -f token (commandline --current-token)
-    set -f unescaped_exp_token (string unescape -- (echo -- "$token"))
+    set -f unescaped_exp_token (string unescape -- (eval echo -- "$token"))
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
