@@ -15,8 +15,6 @@ set({ 'n', 'v' }, '<c-j>', '5j')
 set({ 'n', 'v', 'o' }, '<s-h>', '^')
 set({ 'n', 'v', 'o' }, '<s-l>', '$')
 set('n', '<c-a>', 'gg<s-v><s-g>')
-set('n', '<c-s-p>', '6j')
-set('n', '<leader>uu', vim.cmd.UndotreeToggle)
 
 ---- Editor
 set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')
@@ -25,6 +23,9 @@ set({ 'n', 'i', 'v' }, '<c-y>', '<cmd>redo<cr>')
 set('n', 'o', 'o<esc>')
 set('n', '<s-o>', '<s-o><esc>')
 set('v', 'p', '<s-p>') -- Avoid copy on paste in Visual mode
+
+set('n', '+', '<c-a>')
+set('n', '-', '<c-x>')
 
 -- move lines
 set({ 'n', 'i' }, '<a-j>', '<cmd>m +1<cr>')
@@ -41,8 +42,8 @@ set('v', '<s-a-k>', ":'<,'>t'><cr>gv")
 -- indent
 set('v', '<', '<gv')
 set('v', '>', '>gv')
-set('n', 'z<s-c>', '<cmd>set foldlevel=00<cr>')
-set('n', 'z<s-o>', '<cmd>set foldlevel=99<cr>')
+set('n', 'z<s-c>', ':set foldlevel=00<cr>')
+set('n', 'z<s-o>', ':set foldlevel=99<cr>')
 
 -- Void yanks
 set('n', 'x', '"_x')
