@@ -39,16 +39,13 @@ function __fzf_open_dir
     [ -z "$cmd" ]; and return #> empty
     [ -f "$cmd" ]; and set -p cmd $EDITOR #> file
 
-    commandline -t "$cmd"
-    commandline -f repaint
-    commandline -f execute
+    commandline -t "$cmd " # white space to `disable` completion inline hinting
+    commandline -f repaint execute
 end
 
 function __fzf_preview_file -d 'Print a preview for the given file based on its file type.'
     set -f file_path $argv
 
-    # notify user and recurse on the target of the symlink,
-    # which can be any of these file types
     if [ -L "$file_path" ] #> symlink
         set -l target_path (realpath "$file_path")
         echo -e "'$file_path' is a symlink to '$target_path'.\n"

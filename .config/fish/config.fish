@@ -29,19 +29,23 @@ alias cat bat
 alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
 alias l ls
 
+
 ## keymaps
-fish_vi_key_bindings
-# unbind keys
-for key in \cd
-    bind -e --preset $key
-    bind -e --preset -M insert $key
-    bind -e --preset -M visual $key
+function fish_user_key_bindings
+    fish_vi_key_bindings
+
+    # unbind keys
+    for key in \cd
+        bind -e --preset $key
+        bind -e --preset -M insert $key
+        bind -e --preset -M visual $key
+    end
+
+    bind -M insert jj 'set fish_bind_mode default; commandline -f repaint'
+    bind \cq exit
+
+    bind L end-of-line
+    bind H beginning-of-line
+    bind -M visual L end-of-line
+    bind -M visual H beginning-of-line
 end
-
-bind -M insert jj 'set fish_bind_mode default; commandline -f repaint'
-bind \cq exit
-
-bind L end-of-line
-bind H beginning-of-line
-bind -M visual L end-of-line
-bind -M visual H beginning-of-line
