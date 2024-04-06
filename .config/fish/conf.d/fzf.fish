@@ -1,9 +1,9 @@
 bind -M insert \ce fzf_open_file
-bind -M insert \cs 'fzf_run --base-dir ~/documents/scripts/'
-bind -M insert \cd 'fzf_open_file --base-dir ~/.config/dotfiles/'
-bind -M insert \cn 'fzf_open_file --base-dir ~/documents/notes/'
-bind -M insert \cp 'fzf_open_file --base-dir ~/documents/projects/'
-bind -M insert \ct 'fzf_open_file --base-dir ~/documents/throwaways/'
+bind -M insert \cs 'fzf_run ~/documents/scripts/'
+bind -M insert \cd 'fzf_open_file ~/.config/dotfiles/'
+bind -M insert \cn 'fzf_open_file ~/documents/notes/'
+bind -M insert \cp 'fzf_open_file ~/documents/projects/'
+bind -M insert \ct 'fzf_open_file ~/documents/throwaways/'
 
 
 set -U fzf_cmd fzf \
@@ -56,45 +56,7 @@ function __fzf_preview_file -d 'Print a preview for the given file based on its 
     end
 end
 
-function fzf_open_file -d 'Search files and directories'
-    set -f options 'base-dir=!test -d "$_flag_value"'
-    argparse -n fzf_open_file $options -- $argv
-    or return
-
-    if [ -z "$_flag_base_dir" ]
-        set -f token (commandline --current-token)
-        set -f unescaped_exp_token (string unescape -- (echo -- $token))
-
-        # If the current token is a directory and has a trailing slash,
-        # then use it as fd's base directory.
-        if string match -q -- "*/" $unescaped_exp_token && test -d "$unescaped_exp_token"
-            set -a fzf_fd_cmd --base-directory $unescaped_exp_token
-            set -a fzf_cmd \
-                --prompt " $unescaped_exp_token> " \
-                --preview "__fzf_preview_file $unescaped_exp_token{}"
-            set -f result $unescaped_exp_token($fzf_fd_cmd 2>/dev/null | $fzf_cmd)
-        else
-            set -a fzf_cmd \
-                --prompt " > " \
-                --query "$unescaped_exp_token" \
-                --preview "__fzf_preview_file {}"
-            set -f result ($fzf_fd_cmd 2>/dev/null | $fzf_cmd)
-        end
-
-    else
-        set -f base_dir (echo -- $_flag_base_dir)
-
-        set -f relative_to_base_dir (realpath -s --relative-to . $base_dir)/
-        not string match -q '../*' "$relative_to_base_dir"; and set base_dir $relative_to_base_dir
-
-        set -a fzf_fd_cmd --base-directory "$base_dir"
-        set -a fzf_cmd --prompt " $(basename $base_dir)> " \
-            --preview "__fzf_preview_file $base_dir{}" \
-            --bind 'ctrl-o:clear-query+put()+print-query'
-
-        set -f result $base_dir($fzf_fd_cmd | $fzf_cmd)
-    end
-
+function __fzf_open_file
     [ -z "$result" ]; and return #> empty
     [ -f "$result" ]; and set -p result $EDITOR #> file
 
@@ -103,17 +65,56 @@ function fzf_open_file -d 'Search files and directories'
     commandline -f repaint execute
 end
 
+function fzf_search_file
+    # no escape chars, expanded token
+    set -f token (string unescape -- (echo -- (commandline --current-token)))
 
-function fzf_run -d "Search (and/or run it) entries in specified directory"
-    set -f options 'base-dir=!test -d "$_flag_value"' disable-run
-    argparse -n fzf_open_file $options -- $argv
-    or return
-    [ -z "$_flag_base_dir" ]; and return
+    # If the current token is a directory and has a trailing slash,
+    # then use it as fd's base directory.
+    if string match -q -- "*/" $token && test -d "$token"
+        set -a fzf_fd_cmd --base-directory $token
+        set -a fzf_cmd \
+            --prompt " $token> " \
+            --preview "__fzf_preview_file $token{}"
 
-    set -f base_dir (echo -- $_flag_base_dir)
+        set -f result $token($fzf_fd_cmd 2>/dev/null | $fzf_cmd)
+    else
+        set -a fzf_cmd \
+            --prompt " > " \
+            --query "$token" \
+            --preview "__fzf_preview_file {}"
+
+        set -f result ($fzf_fd_cmd 2>/dev/null | $fzf_cmd)
+    end
+
+    __fzf_open_file $result
+end
+
+function fzf_search_base_dir
+    set -f base_dir $argv[1]
+
+    set -f base_dir (string unescape -- (echo -- $base_dir))
 
     set -a fzf_fd_cmd --base-directory "$base_dir"
-    set -a fzf_cmd --prompt " $(basename $base_dir)> " \
+    set -a fzf_cmd \
+        --prompt " $(basename $base_dir)> " \
+        --preview "__fzf_preview_file $base_dir{}" \
+        --bind 'ctrl-o:clear-query+put()+print-query'
+
+    set -f result $base_dir($fzf_fd_cmd | $fzf_cmd)
+
+    __fzf_open_file $result
+end
+
+
+function fzf_run -d "Search (and/or run it) entries in specified directory"
+    argparse -n fzf_open_file d/disable-run -- $argv
+
+    set -f base_dir (string unescape -- (echo -- $argv[1]))
+
+    set -a fzf_fd_cmd --base-directory "$base_dir"
+    set -a fzf_cmd \
+        --prompt " $(basename $base_dir)> " \
         --preview "__fzf_preview_file $base_dir{}" \
         --bind 'ctrl-o:clear-query+put()+print-query'
 
@@ -121,8 +122,7 @@ function fzf_run -d "Search (and/or run it) entries in specified directory"
 
     # put result in the current token; otherwise run it
     if [ -z "$_flag_disable_run"]
-        echo
-        eval "$result"
+        echo; and eval "$result"
     else
         set -f token $result
     end
