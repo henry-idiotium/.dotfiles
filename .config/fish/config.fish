@@ -24,6 +24,7 @@ alias rm 'rm -iv'
 alias mkdir 'mkdir -pv'
 alias which 'type -a'
 alias vi nvim
+alias nvimdiff 'nvim -d'
 alias g git
 alias cat bat
 alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
