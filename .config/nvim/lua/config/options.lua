@@ -44,6 +44,9 @@ vim.opt.smartindent = false
 vim.opt.breakindent = true
 vim.opt.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
 
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
+
 vim.opt.backupskip = { '/tmp/*', '/private/tmp/*' }
 vim.opt.backspace = { 'start', 'eol', 'indent' }
 

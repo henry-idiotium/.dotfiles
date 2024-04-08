@@ -1,3 +1,4 @@
+---@diagnostic disable: no-unknown
 return {
     { 'nvim-neo-tree/neo-tree.nvim', enabled = false },
 
@@ -42,8 +43,8 @@ return {
             vim.keymap.set('n', '<leader>hp', function() harpoon:list():prepend() end, { desc = 'Harpoon prepend' })
             vim.keymap.set('n', '<leader>ha', function() harpoon:list():add() end, { desc = 'Harpoon add' })
             vim.keymap.set('n', '<c-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'Harpoon list' })
-            vim.keymap.set('n', '<c-a->>', function() harpoon:list():next() end, { desc = 'Harpoon next' })
-            vim.keymap.set('n', '<c-a-<>', function() harpoon:list():prev() end, { desc = 'Harpoon prev' })
+            vim.keymap.set('n', '<c-a-]>', function() harpoon:list():next() end, { desc = 'Harpoon next' })
+            vim.keymap.set('n', '<c-a-[>', function() harpoon:list():prev() end, { desc = 'Harpoon prev' })
 
             vim.keymap.set('n', '<c-a-u>', function() harpoon:list():select(1) end, { desc = 'Harpoon 1st entry' })
             vim.keymap.set('n', '<c-a-i>', function() harpoon:list():select(2) end, { desc = 'Harpoon 2nd entry' })
@@ -59,64 +60,19 @@ return {
             'nvim-telescope/telescope-file-browser.nvim',
         },
         keys = {
-            {
-                '\\\\',
-                function() require('telescope.builtin').buffers() end,
-                desc = 'Lists open buffers',
-            },
-            {
-                ';;',
-                require('telescope.builtin').resume,
-                desc = 'Resume the previous telescope picker',
-            },
-            {
-                ';f',
-                function()
-                    require('telescope.builtin').find_files {
-                        no_ignore = false,
-                        hidden = true,
-                    }
-                end,
-                desc = 'Lists files in your current working directory, respects .gitignore',
-            },
-            {
-                ';r',
-                function()
-                    require('telescope.builtin').live_grep {
-                        additional_args = { '--hidden' },
-                    }
-                end,
-                desc = 'Search for a string in your current working directory and get results live as you type, respects .gitignore',
-            },
-            {
-                ';t',
-                function() require('telescope.builtin').help_tags() end,
-                desc = 'Lists available help tags and opens a new window with the relevant help info on <cr>',
-            },
-            {
-                ';p',
-                function() require('telescope.builtin').diagnostics() end,
-                desc = 'Lists Diagnostics for all open buffers or a specific buffer',
-            },
-            {
-                ';s',
-                function() require('telescope.builtin').treesitter() end,
-                desc = 'Lists Function names, variables, from Treesitter',
-            },
+            { '\\\\', '<cmd>Telescope buffers<cr>' },
+            { ';;', '<cmd>Telescope resume<cr>' },
+            { ';f', '<cmd>Telescope find_files<cr>' },
+            { ';r', '<cmd>Telescope live_grep<cr>' },
+            { ';t', '<cmd>Telescope help_tags<cr>' },
+            { ';d', '<cmd>Telescope diagnostics<cr>' },
+            { ';o', '<cmd>Telescope treesitter<cr>' },
             {
                 'sf',
                 function()
                     local function telescope_buffer_dir() return vim.fn.expand '%:p:h' end
-
                     require('telescope').extensions.file_browser.file_browser {
-                        path = '%:p:h',
                         cwd = telescope_buffer_dir(),
-                        respect_gitignore = false,
-                        hidden = true,
-                        grouped = true,
-                        previewer = false,
-                        initial_mode = 'normal',
-                        layout_config = { height = 40 },
                     }
                 end,
                 desc = 'Open File Browser with the path of the current buffer',
@@ -127,7 +83,6 @@ return {
             local telescope = require 'telescope'
             local actions = require 'telescope.actions'
             local layout = require 'telescope.actions.layout'
-            local fb_actions = require('telescope').extensions.file_browser.actions
 
             opts.defaults = vim.tbl_deep_extend('force', opts.defaults, {
                 wrap_results = true,
@@ -151,7 +106,6 @@ return {
                         ['<c-j>'] = actions.move_selection_next,
                         ['<c-k>'] = actions.move_selection_previous,
                         ['<c-p>'] = layout.toggle_preview,
-                        ['<esc>'] = false,
                     },
                     i = {
                         ['<c-q>'] = actions.close,
@@ -163,7 +117,12 @@ return {
                     },
                 },
             })
+
             opts.pickers = {
+                find_files = { no_ignore = false, hidden = true },
+                live_grep = {
+                    additional_args = { '--hidden' },
+                },
                 diagnostics = {
                     theme = 'ivy',
                     initial_mode = 'normal',
@@ -172,10 +131,21 @@ return {
                     },
                 },
             }
+
+            local fb_actions = require('telescope').extensions.file_browser.actions
             opts.extensions = {
                 file_browser = {
                     theme = 'dropdown',
                     hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
+
+                    path = '%:p:h',
+                    respect_gitignore = false,
+                    hidden = true,
+                    grouped = true,
+                    previewer = false,
+                    initial_mode = 'normal',
+                    layout_config = { height = 40 },
+
                     mappings = {
                         ['n'] = {
                             ['<s-n>'] = fb_actions.create,
