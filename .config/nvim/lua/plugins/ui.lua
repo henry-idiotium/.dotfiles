@@ -1,7 +1,16 @@
+---@diagnostic disable: no-unknown
 return {
+    { 'akinsho/bufferline.nvim', enabled = false },
+
+    { 'rcarriga/nvim-notify', opts = { timeout = 5000 } },
+    { 'folke/which-key.nvim', opts = function(_, opts) opts.window = { border = 'single' } end },
+
     {
-        'folke/which-key.nvim',
-        opts = function(_, opts) opts.window = { border = 'single' } end,
+        'lewis6991/satellite.nvim',
+        opts = {
+            current_only = true,
+            winblend = 40,
+        },
     },
 
     {
@@ -23,59 +32,38 @@ return {
         },
     },
 
-    {
-        'rcarriga/nvim-notify',
-        opts = {
-            timeout = 5000,
-        },
-    },
-
-    { -- tab/buffer line
-        'akinsho/bufferline.nvim',
-        event = 'VeryLazy',
-        keys = {
-            { '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next tab' },
-            { '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev tab' },
-        },
-        opts = {
-            options = {
-                mode = 'tabs',
-                show_buffer_close_icons = false,
-                show_close_icon = false,
-            },
-        },
-    },
-
     { -- floating filename
         'b0o/incline.nvim',
         event = 'BufReadPre',
+        name = 'incline',
         priority = 420,
-        config = function()
-            require('incline').setup {
-                window = { margin = { vertical = 0, horizontal = 1 } },
-                hide = { cursorline = true },
-                render = function(props)
-                    local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
-                    local icon, color = require('nvim-web-devicons').get_icon_color(filename)
+        opts = {
+            window = {
+                padding = 0,
+                margin = { vertical = 0, horizontal = 3 },
+            },
+            hide = { cursorline = true },
+            render = function(props)
+                local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
+                local icon, color = require('nvim-web-devicons').get_icon_color(filename)
 
-                    if vim.bo[props.buf].modified then filename = filename .. ' ' end
+                if vim.bo[props.buf].modified then filename = filename .. '  ' end
 
-                    return { { icon, guifg = color }, { ' ' }, { filename } }
-                end,
-            }
-        end,
+                return { { icon, guifg = color }, '  ', filename }
+            end,
+        },
     },
 
     {
         'folke/zen-mode.nvim',
         cmd = 'ZenMode',
+        keys = { { '<leader>z', '<cmd>ZenMode<cr>', desc = 'Toggle Zen Mode' } },
         opts = {
             plugins = {
                 gitsigns = true,
                 tmux = true,
             },
         },
-        keys = { { '<leader>z', '<cmd>ZenMode<cr>', desc = 'Zen Mode' } },
     },
 
     { -- messages, cmdline and the popupmenu

@@ -17,13 +17,21 @@ set({ 'n', 'v', 'o' }, '<s-h>', '^')
 set({ 'n', 'v', 'o' }, '<s-l>', '$')
 set('n', '<c-a>', 'gg<s-v><s-g>')
 
+---- Remap builtins
+set({ 'n', 's', 'x', 'o' }, '<a-,>', ',')
+set({ 'n', 's', 'x', 'o' }, '<a-;>', ';')
+
 ---- Editor
+set({ 'n', 's', 'x', 'o' }, ',', '"_', { desc = 'Void yank' })
+
 set({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')
 set({ 'n', 'i', 'v' }, '<c-y>', '<cmd>redo<cr>')
 
 set('n', 'o', 'o<esc>')
 set('n', '<s-o>', '<s-o><esc>')
 set('v', 'p', '<s-p>') -- Avoid copy on paste in Visual mode
+
+set('n', '<a-z>', '<cmd>set wrap!<cr>')
 
 set('n', '+', '<c-a>')
 set('n', '-', '<c-x>')
@@ -46,13 +54,12 @@ set('v', '>', '>gv')
 set('n', 'z<s-c>', ':set foldlevel=00<cr>')
 set('n', 'z<s-o>', ':set foldlevel=99<cr>')
 
--- Void yanks
-set('n', 'x', '"_x')
-set({ 'n', 's', 'x', 'o' }, ',', '"_', { desc = 'Void' })
-
----- Tab
-set('n', '<a-z>', ':set wrap!<cr>')
+---- Split
 set('n', '<c-a-up>', '<c-w>+')
 set('n', '<c-a-down>', '<c-w>-')
 set('n', '<c-a-left>', '<c-w><')
 set('n', '<c-a-right>', '<c-w>>')
+
+---- Tab
+set('n', '<tab>', '<cmd>tabnext<cr>')
+set('n', '<s-tab>', '<cmd>tabprev<cr>')

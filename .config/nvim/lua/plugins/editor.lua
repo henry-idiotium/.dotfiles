@@ -1,6 +1,7 @@
 ---@diagnostic disable: no-unknown
 return {
     { 'nvim-neo-tree/neo-tree.nvim', enabled = false },
+    { 'nvim-pack/nvim-spectre', enabled = false },
 
     {
         'dinhhuy258/git.nvim',
@@ -17,6 +18,18 @@ return {
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
         dependencies = { 'nvim-lua/plenary.nvim' },
+        keys = {
+            { '<c-e>', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
+            { '<leader>hp', function() require('harpoon'):list():prepend() end, desc = 'Harpoon prepend' },
+            { '<leader>ha', function() require('harpoon'):list():add() end, desc = 'Harpoon add' },
+            { '<a-}>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
+            { '<a-{>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
+
+            { '<c-a-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
+            { '<c-a-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
+            { '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
+            { '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
+        },
         config = function()
             local harpoon = require 'harpoon'
 
@@ -31,7 +44,6 @@ return {
             harpoon:extend {
                 UI_CREATE = function(cx)
                     local opts = { buffer = cx.bufnr }
-
                     vim.keymap.set({ 'n', 'i' }, '<c-q>', function() harpoon.ui:close_menu() end, opts)
                     vim.keymap.set('n', '<c-l>', function() harpoon.ui:select_menu_item {} end, opts)
                     vim.keymap.set('n', '<c-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
@@ -39,17 +51,6 @@ return {
                     vim.keymap.set('n', '<c-t>', function() harpoon.ui:select_menu_item { tabedit = true } end, opts)
                 end,
             }
-
-            vim.keymap.set('n', '<leader>hp', function() harpoon:list():prepend() end, { desc = 'Harpoon prepend' })
-            vim.keymap.set('n', '<leader>ha', function() harpoon:list():add() end, { desc = 'Harpoon add' })
-            vim.keymap.set('n', '<c-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'Harpoon list' })
-            vim.keymap.set('n', '<c-a-]>', function() harpoon:list():next() end, { desc = 'Harpoon next' })
-            vim.keymap.set('n', '<c-a-[>', function() harpoon:list():prev() end, { desc = 'Harpoon prev' })
-
-            vim.keymap.set('n', '<c-a-u>', function() harpoon:list():select(1) end, { desc = 'Harpoon 1st entry' })
-            vim.keymap.set('n', '<c-a-i>', function() harpoon:list():select(2) end, { desc = 'Harpoon 2nd entry' })
-            vim.keymap.set('n', '<c-a-o>', function() harpoon:list():select(3) end, { desc = 'Harpoon 3rd entry' })
-            vim.keymap.set('n', '<c-a-p>', function() harpoon:list():select(4) end, { desc = 'Harpoon 4th entry' })
         end,
     },
 
@@ -60,8 +61,8 @@ return {
             'nvim-telescope/telescope-file-browser.nvim',
         },
         keys = {
-            { '\\\\', '<cmd>Telescope buffers<cr>' },
-            { ';;', '<cmd>Telescope resume<cr>' },
+            { '\\\\', '<cmd>Telescope resume<cr>' },
+            { ';b', '<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>' },
             { ';f', '<cmd>Telescope find_files<cr>' },
             { ';r', '<cmd>Telescope live_grep<cr>' },
             { ';t', '<cmd>Telescope help_tags<cr>' },
@@ -77,6 +78,40 @@ return {
                 end,
                 desc = 'Open File Browser with the path of the current buffer',
             },
+
+            { '<leader>,', false },
+            { '<leader>/', false },
+            { '<leader><space>', false },
+            { '<leader>fb', false },
+            { '<leader>fc', false },
+            { '<leader>ff', false },
+            { '<leader>f<s-f>', false },
+            { '<leader>fg', false },
+            { '<leader>fr', false },
+            { '<leader>f<s-r>', false },
+            { '<leader>gc', false },
+            { '<leader>gs', false },
+            { '<leader>s"', false },
+            { '<leader>ss', false },
+            { '<leader>sa', false },
+            { '<leader>sb', false },
+            { '<leader>sc', false },
+            { '<leader>s<s-c>', false },
+            { '<leader>sd', false },
+            { '<leader>s<s-d>', false },
+            { '<leader>sg', false },
+            { '<leader>s<s-g>', false },
+            { '<leader>sh', false },
+            { '<leader>s<s-h>', false },
+            { '<leader>sk', false },
+            { '<leader>sm', false },
+            { '<leader>s<s-m>', false },
+            { '<leader>so', false },
+            { '<leader>s<s-r>', false },
+            { '<leader>sw', false },
+            { '<leader>s<s-w>', false },
+            { '<leader>uc', false },
+            { '<leader>u<s-c>', false },
         },
 
         config = function(_, opts)
