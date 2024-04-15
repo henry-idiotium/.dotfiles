@@ -4,3 +4,5 @@ themes/
 completions/
 functions/
 conf.d/_*
+
+!functions/user.d/*
