@@ -75,5 +75,3 @@ if vim.fn.has 'nvim-0.10' then
 else
     vim.opt.foldmethod = 'indent'
 end
--- if vim.fn.has 'nvim-0.9' then
--- end
