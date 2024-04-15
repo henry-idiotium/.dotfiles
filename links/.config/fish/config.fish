@@ -51,14 +51,14 @@ function fish_user_key_bindings
         bind -e --preset -M visual $key
     end
 
-    __bind \cq exit
-    __bind -m insert jj 'set fish_bind_mode default; commandline -f repaint'
+    bind \cq exit
+    bind -M insert -m default jj ''
 
     __bind -m default,visual L end-of-line
     __bind -m default,visual H beginning-of-line
 
-    __bind -m insert \ce fzf_search_file
-    __bind -m insert \cd 'fzf_search_base_dir ~/.config/dotfiles/'
+    __bind -m insert \ce fzf_search_path
+    __bind -m insert \cd 'fzf_search_base_dir ~/.dotfiles/'
     __bind -m insert \cn 'fzf_search_base_dir ~/documents/notes/'
     __bind -m insert \cp 'fzf_search_base_dir ~/documents/projects/'
     __bind -m insert \ct 'fzf_search_base_dir ~/documents/throwaways/'

@@ -2,7 +2,8 @@ fish_variables
 fishd.tmp*
 themes/
 completions/
-functions/
 conf.d/_*
 
+functions/*
+!functions/user.d/
 !functions/user.d/*
