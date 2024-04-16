@@ -1,8 +1,12 @@
-.log
-*.local*
+# vim:ft=gitignore
 
-links/.config/*
-!links/.config/fish/
-!links/.config/nvim/
-!links/.config/tmux/
-!links/.config/bat/
+.git
+.dotfiles
+# ignore first level
+/*
+
+.config/**/*.local*
+
+!.config/
+!.terminfo/
+!.gitconfig

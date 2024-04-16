@@ -10,11 +10,10 @@ function fzf_search_run -d "Search (and/or run it) entries in specified director
         --bind 'ctrl-o:clear-query+put()+print-query'
 
     set -f result $base_dir($fzf_fd_cmd | $fzf_cmd)
+    [ -z "$result" ]; and return
 
     # put result in the current token; otherwise run it
-    if [ -z "$_flag_disable_run"]
-        echo; and eval "$result"
-    end
+    echo; and eval "$result"
 
     commandline -t ''
     commandline -f repaint

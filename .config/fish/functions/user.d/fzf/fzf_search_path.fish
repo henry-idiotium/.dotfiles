@@ -19,8 +19,9 @@ function fzf_search_path
             --query "$token" \
             --preview "__fzf_preview_path {}"
         set -f result ($fzf_fd_cmd 2>/dev/null | $fzf_cmd)
-
     end
+
+    [ -z "$result" ]; and return
 
     __fzf_open_path $result
 end

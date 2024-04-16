@@ -6,4 +6,4 @@ completions/
 conf.d/_*
 functions/
 
-!functions/user.d/
+!functions/user.d/*
