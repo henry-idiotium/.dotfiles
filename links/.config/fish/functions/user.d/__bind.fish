@@ -5,7 +5,12 @@ function __bind -d 'Alternative bind function. (e.g., __bind -m default,insert \
     set -f key $argv[1]
     set -f action $argv[2..]
     set -f modes $_flag_modes
-    [ -z "$_flag_modes" ] && set modes default
+
+    if [ -n "$_flag_modes" ]
+        set modes (string replace ' ' '' -- (string split ',' $modes))
+    else
+        set modes default
+    end
 
     for mode in $modes
         bind -M $mode $key $action

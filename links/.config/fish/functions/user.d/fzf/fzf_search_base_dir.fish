@@ -11,5 +11,9 @@ function fzf_search_base_dir -d 'Fuzzy searching paths in specified directory.'
 
     set -f result $base_dir($fzf_fd_cmd | $fzf_cmd)
 
+    # parse absolute path to relative path
+    set result (realpath --relative-base "$PWD" "$result")
+    [ -d "$result" ]; and set result "$result/"
+
     __fzf_open_path $result
 end

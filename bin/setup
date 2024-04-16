@@ -21,7 +21,8 @@ switch $run_type
         return
 end
 
-for link in (fd . 'dotfiles/links' --hidden --max-depth 1)
+mkdir -p $BACKUP_PATH
+for link in $LINK_PATH/{.,}*
     set -l target (readlink -f $link)
     set -l dest $DEST_PATH
     set -l target_name (basename $target)
@@ -30,15 +31,15 @@ for link in (fd . 'dotfiles/links' --hidden --max-depth 1)
     echo
     if [ -L $symlink_path ] # remove exist symlinks
         echo "Remove old symlink: $symlink_path"
-		# unlink $symlink_path
+        unlink $symlink_path
 
     else if [ -d $symlink_path ] || [ -f $symlink_path ] # remove/backup exist configs
         set -l backup_path "$BACKUP_PATH$target_name--$(uuidgen --time)"
         echo "Backup: $symlink_path --> $backup_path"
-		#mv $symlink_path $backup_path
+        mv $symlink_path $backup_path
     end
 
 
     echo "Set symlink: $target --> $symlink_path"
-	#ln -sf $target $dest
+    ln -sf $target $dest
 end

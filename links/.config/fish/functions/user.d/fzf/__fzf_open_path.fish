@@ -1,10 +1,13 @@
 function __fzf_open_path -d '[fzf helper] Open path'
-    set -f path $argv
+    [ -z "$argv" ]; and return
 
-    [ -z "$path" ]; and return #> empty
-    [ -f "$path" ]; and set -p path $EDITOR #> file
+    set -f token $argv[1]
+    [ -f "$token" ]; and set -p token $EDITOR
 
-    # add path to history via executing input
-    commandline -t "$path " # white space to `disable` completion inline hinting
+    # shorten $HOME
+    set token (string replace $HOME '~' (string escape -n  $token))
+
+    # add to history via executing input token
+    commandline -t "$token "
     commandline -f repaint execute
 end
