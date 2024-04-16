@@ -5,5 +5,4 @@
 # ignore first level
 /*
 
-.config/**/*.local*
 !.config/

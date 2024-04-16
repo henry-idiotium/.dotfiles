@@ -7,5 +7,5 @@
 	excludesFile = ~/.config/dotfiles/gitignore
 
 [alias]
-    edit-ignore = !eval $EDITOR $(git -C $HOME/.dotfiles config core.excludesFile)
-    edit-config = !eval $EDITOR $(git -C $HOME/.dotfiles config user.gitconfig)
+    edit-ignore = !eval $GIT_EDITOR $(git -C $HOME/.dotfiles config core.excludesFile)
+    edit-config = !eval $GIT_EDITOR $(git -C $HOME/.dotfiles config user.gitconfig)

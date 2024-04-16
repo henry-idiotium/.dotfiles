@@ -12,7 +12,10 @@ set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
 set -gx TERM wezterm # enable undercurl (~/.terminfo/w/wezterm)
+set -gx GIT_EDITOR nvim # git doesn't understand aliases
 set -gx EDITOR vi
+# set -gx GIT_WORK_TREE
+# set -gx GIT_DIR .git
 
 fish_add_path -g ~/bin ~/.local/bin
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
