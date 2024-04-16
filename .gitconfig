@@ -3,7 +3,6 @@
 	name = Henry
 
 [core]
-	editor = nvim
 	autocrlf = false
     askpass = # disable credential manager
 
@@ -15,7 +14,7 @@
 	confl = diff --name-only --diff-filter=U
 
 	lastest-commits-diff-files = diff --stat HEAD~1 HEAD~2
-	lastest-commit-branches = "!r() { refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)|%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|';}; r"
+	lastest-commit-branches = "!refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)|%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|'"
 
     # commits graph
 	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(bold magenta)%an%C(reset)%C(bold yellow)%d%C(reset)' --all

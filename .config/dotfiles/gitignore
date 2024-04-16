@@ -6,7 +6,4 @@
 /*
 
 .config/**/*.local*
-
 !.config/
-!.terminfo/
-!.gitconfig
