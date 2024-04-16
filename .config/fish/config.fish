@@ -35,7 +35,8 @@ alias cat bat
 alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
 alias l ls
 
-alias config 'git -C $HOME --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias git_dotfiles 'git -C $HOME --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias gd git_dotfiles
 
 # user defined functions folder
 set -a fish_function_path \
