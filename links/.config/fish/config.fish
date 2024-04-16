@@ -14,9 +14,9 @@ set -gx XDG_STATE_HOME "$HOME/.local/state"
 set -gx TERM wezterm # enable undercurl (~/.terminfo/w/wezterm)
 set -gx EDITOR vi
 
-fish_add_path -g ~/.local/bin
-fish_add_path -g ~/.cargo/bin
+fish_add_path -g ~/bin ~/.local/bin
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
+fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/go/bin
 fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
 fish_add_path -g $XDG_DATA_HOME/fnm && type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
@@ -34,6 +34,8 @@ alias g git
 alias cat bat
 alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
 alias l ls
+
+alias config 'git -C $HOME --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 # user defined functions folder
 set -a fish_function_path \

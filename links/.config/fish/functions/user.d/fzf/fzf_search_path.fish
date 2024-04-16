@@ -1,6 +1,8 @@
 function fzf_search_path
     # no escape chars, expanded token
-    set -f token (string unescape -- (echo -- (commandline --current-token)))
+    set -f token (commandline --current-token)
+    set token (eval echo -- $token) # expand vars & tidle
+    set token (string unescape -- $token) # unescape to void compromise the path
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
