@@ -1,0 +1,92 @@
+#!/usr/bin/env fish
+# vim:ft=fish
+
+## Helpers
+function t-set
+    tmux set-option -gq $argv[1] "$argv[2..]"
+end
+function t-setw
+    tmux set-window-option -gq $argv[1] "$argv[2..]"
+end
+
+
+## Display
+set -l left ' マフル' # ノラ
+set -l right '%a %d %b %H:%M'
+set -l sep_left_fill 
+set -l sep_right_fill 
+set -l sep_left_tail_fill 
+set -l sep_left 
+set -l sep_right 
+
+## Color palette
+set -l bg default
+set -l fg \#cdd6f4
+set -l fg1 \##7f849c
+set -l violet \#945eff
+set -l teal \#31ebb8
+set -l null \#0c0c0c
+set -l black \#26272e
+set -l gray \#343540
+set -l gray1 \#494952
+set -l gray2 \#51585e
+
+
+## Modes (also includes selection style)
+t-setw mode-style fg=$teal bg=$gray
+
+## Message
+t-set message-style fg=$teal bg=$bg align=centre
+t-set message-command-style fg=$teal bg=$bg align=centre
+
+## Clock
+t-setw clock-mode-colour "$teal"
+
+## Status
+t-set status on
+t-set status-style bg=$bg fg=$fg
+t-set status-justify left
+t-set status-left-length 100
+t-set status-right-length 100
+t-set status-left-style
+t-set status-right-style
+
+t-set status-left (string join '' \
+    "#[bg=$black bold]#{?client_prefix," \
+    "#[fg=$violet]$left" "," \
+    "#[fg=$teal]$left}" \
+    "#[fg=$black bg=$gray none]$sep_left_fill" \
+    "#[fg=$gray bg=$gray1]$sep_left_fill" \
+    "#[fg=$gray1 bg=$bg]$sep_left_fill" \
+)
+
+t-set status-right (string join '' \
+    "#[fg=$fg1 italics] $right " \
+    "#[none]" \
+    "#[fg=$gray1 bg=$bg]$sep_right_fill" \
+    "#[fg=$gray bg=$gray1]$sep_right_fill" \
+    "#[fg=$black bg=$gray]$sep_right_fill" \
+    "#[fg=$teal bg=$black bold] #S" \ 
+)
+
+
+## Window (tab)
+t-setw window-status-activity-style fg=$fg bg=$bg none
+t-setw window-status-separator
+t-setw window-status-style fg=$fg bg=$bg none
+
+t-setw window-status-activity-style underscore fg=$gray1 bg=$bg
+t-setw window-status-separator
+t-setw window-status-style NONE fg=$gray1 bg=$bg
+
+# idle state
+t-setw window-status-format " #[default fg=$fg1] #I $sep_left #{b:pane_current_path}  "
+
+# active state
+t-setw window-status-current-format (string join '' \
+    "#[fg=$gray1]$sep_left_tail_fill" \
+    "#[bg=$gray1 fg=$teal bold] #I " \
+    "#[fg=$gray1 bg=$black]$sep_left_fill " \
+    "#[fg=$teal noitalics nobold]#{b:pane_current_path} " \
+    "#[fg=$black bg=$bg nobold]$sep_left_fill" \
+)
