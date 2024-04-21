@@ -1,9 +1,5 @@
 ---@diagnostic disable: no-unknown
 return {
-    { 'echasnovski/mini.bracketed', enabled = false },
-    { 'echasnovski/mini.surround', enabled = false },
-    { 'folke/flash.nvim', enabled = false },
-
     { 'kylechui/nvim-surround', event = 'VeryLazy', config = true },
 
     {
@@ -21,34 +17,7 @@ return {
         'simrat39/symbols-outline.nvim',
         keys = { { '<leader>cs', '<cmd>SymbolsOutline<cr>', desc = 'Symbols Outline' } },
         cmd = 'SymbolsOutline',
-        opts = {
-            position = 'right',
-        },
-    },
-
-    {
-        'nvim-cmp',
-        opts = function(_, opts)
-            table.insert(opts.sources, { name = 'marksman' })
-
-            local cmp = require 'cmp'
-            local cmp_select = { behavior = cmp.SelectBehavior.Insert }
-            opts.mapping = cmp.mapping.preset.insert {
-                ['<c-j>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<c-k>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<c-d>'] = cmp.mapping.scroll_docs(-4),
-                ['<c-u>'] = cmp.mapping.scroll_docs(4),
-                ['<tab>'] = cmp.mapping.confirm { select = true },
-                ['<c-space>'] = cmp.mapping.complete(),
-                ['<c-e>'] = function() return cmp.visible() and cmp.abort() end,
-            }
-
-            local window_border = { border = 'rounded' }
-            opts.window = {
-                completion = window_border,
-                documentation = window_border,
-            }
-        end,
+        opts = { position = 'right' },
     },
 
     {
@@ -61,5 +30,24 @@ return {
             { '<leader>rr', function() require('refactoring').select_refactor { show_success_message = true } end, desc = 'Refactoring actions' },
         },
         config = function() require('refactoring').setup { show_success_message = true } end,
+    },
+
+    -- auto pairs closing blocks
+    { 'echasnovski/mini.pairs', event = 'VeryLazy', opts = {} },
+
+    -- comments
+    {
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        lazy = true,
+        opts = { enable_autocmd = false },
+    },
+    {
+        'echasnovski/mini.comment',
+        event = 'VeryLazy',
+        opts = {
+            options = {
+                custom_commentstring = function() return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring end,
+            },
+        },
     },
 }

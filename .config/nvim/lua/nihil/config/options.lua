@@ -1,13 +1,12 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
-vim.g.autoformat = true
 
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
 
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.numberwidth = 5
+vim.opt.numberwidth = 4
 vim.opt.signcolumn = 'yes'
 
 vim.opt.undofile = true
@@ -32,6 +31,8 @@ vim.opt.wildoptions = 'pum'
 vim.opt.winblend = 0
 vim.opt.pumblend = 0
 vim.opt.background = 'dark'
+vim.opt.completeopt = 'menu,menuone,noselect'
+vim.opt.confirm = true
 vim.opt.conceallevel = 0
 
 vim.opt.tabstop = 4
@@ -47,17 +48,10 @@ vim.opt.breakindent = true
 vim.opt.smartindent = false
 vim.opt.breakindent = true
 vim.opt.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
-vim.opt.fillchars = {
-    foldopen = '',
-    foldclose = '',
-    fold = ' ',
-    foldsep = ' ',
-    diff = ' ', -- ╱
-    eob = ' ',
-}
 
-vim.g.loaded_netrwPlugin = 1
-vim.g.loaded_netrw = 1
+vim.g.netrw_browse_split = 0
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 25
 
 vim.opt.backupskip = { '/tmp/*', '/private/tmp/*' }
 vim.opt.backspace = { 'start', 'eol', 'indent' }
@@ -66,12 +60,11 @@ vim.opt.path:append { '**' } -- Finding files - Search down into subfolders
 vim.opt.wildignore:append { '*/node_modules/*' }
 vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments
 
--- HACK: causes freezes on <= 0.9, so only enable on >= 0.10 for now
-if vim.fn.has 'nvim-0.10' then
-    vim.opt.foldmethod = 'expr'
-    vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
-    vim.opt.smoothscroll = true
-    vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
-else
-    vim.opt.foldmethod = 'indent'
-end
+vim.opt.smoothscroll = true
+vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
+
+vim.opt.foldlevel = 99
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+-- vim.opt.foldtext = ''
+-- vim.opt.fillchars = 'fold: '
