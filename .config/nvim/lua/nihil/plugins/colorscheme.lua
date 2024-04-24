@@ -8,10 +8,6 @@ return {
         init = function()
             vim.opt.winblend = 0
             vim.opt.pumblend = 0
-
-            vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-            vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-
             vim.cmd.colorscheme 'rose-pine-main'
         end,
         opts = {
@@ -32,6 +28,14 @@ return {
             highlight_groups = {
                 Comment = { fg = 'muted' },
                 VertSplit = { fg = 'muted', bg = 'muted' },
+                Folded = { bg = '#141417' },
+                Search = { bg = 'highlight_high', fg = 'text' },
+                Normal = { bg = 'none' },
+                NormalFloat = { bg = 'none' },
+
+                -- others
+                TroubleNormal = { bg = 'none' },
+                CmpGhostText = { link = 'Comment', default = true },
             },
         },
     },
@@ -41,9 +45,7 @@ return {
         name = 'catppuccin',
         priority = 1000,
         enabled = false,
-        init = function()
-            vim.cmd.colorscheme 'catppuccin'
-        end,
+        init = function() vim.cmd.colorscheme 'catppuccin' end,
         opts = {
             flavour = 'mocha', -- latte, frappe, macchiato, mocha
             transparent_background = true,

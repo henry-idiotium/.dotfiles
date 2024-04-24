@@ -34,6 +34,7 @@ vim.opt.background = 'dark'
 vim.opt.completeopt = 'menu,menuone,noselect'
 vim.opt.confirm = true
 vim.opt.conceallevel = 0
+vim.opt.shortmess:append { W = true, I = true, c = true, C = true }
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -41,7 +42,7 @@ vim.opt.shiftwidth = 4
 vim.opt.smarttab = true
 vim.opt.expandtab = true
 vim.opt.wrap = false
-vim.opt.showbreak = ''
+vim.opt.showbreak = ''
 vim.opt.linebreak = true
 vim.opt.autoindent = true
 vim.opt.breakindent = true
@@ -63,8 +64,15 @@ vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments
 vim.opt.smoothscroll = true
 vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 
+vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
+
+vim.opt.foldcolumn = '2'
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
--- vim.opt.foldtext = ''
--- vim.opt.fillchars = 'fold: '
+vim.opt.foldexpr = [[v:lua.require'nihil.util.ui'.foldexpr()]] -- v:lua.vim.treesitter.foldexpr()
+vim.opt.foldtext = [[v:lua.require'nihil.util.ui'.foldtext()]]
+vim.opt.foldtext = ''
+vim.opt.fillchars = { fold = ' ', eob = ' ' }
+
+-- Fix markdown indentation settings
+vim.g.markdown_recommended_style = 0

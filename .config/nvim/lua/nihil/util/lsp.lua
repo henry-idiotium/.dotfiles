@@ -1,4 +1,5 @@
 local M = {}
+M.toggle = {}
 
 ---@param on_attach fun(client?: vim.lsp.Client, buffer: number)
 function M.on_attach(on_attach)
@@ -12,15 +13,12 @@ function M.on_attach(on_attach)
     })
 end
 
--- M.toggle = {}
---
--- --- Toggle inlay hint
--- ---@param buffer? number
--- ---@param value? boolean
--- function M.toggle.inlay_hints(buffer, value)
---     local ih = vim.lsp.inlay_hint
---     if value == nil then value = not ih.is_enabled(buffer) end
---     ih.enable(value, { buffer = buffer })
--- end
+--- Toggle inlay hint
+---@param _buffer? number
+---@param value? boolean
+function M.toggle.inlay_hints(_buffer, value)
+    if value == nil then value = not vim.lsp.inlay_hint.is_enabled() end
+    vim.lsp.inlay_hint.enable(value)
+end
 
 return M

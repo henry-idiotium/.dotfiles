@@ -1,24 +1,39 @@
 ---@diagnostic disable: no-unknown, missing-fields
 local M = {}
 
-M.ui = {
-    border = 'rounded',
+---- Mason for tools like formatter, lint, dap
+M.mason_tool = {
+    ensure_installed = {
+        'prettierd',
+        'black',
+        'stylua',
+    },
+}
+
+---- Mason for LspConfig
+M.mason_lspconfig = {
+    ensure_installed = {
+        'lua_ls',
+        'rust_analyzer',
+        'gopls',
+        'tsserver',
+        'pyright',
+        'jsonls',
+        'yamlls',
+    },
+    handlers = {},
 }
 
 ---- LspConfig
 M.lspconfig = {
-    inlay_hints = { enabled = true },
-    codelens = { enabled = true },
+    inlay_hints = { enabled = false },
+    codelens = { enabled = false },
 
     ---@type vim.diagnostic.Opts
     diagnostics = {
         underline = true,
         update_in_insert = false,
-        virtual_text = {
-            spacing = 4,
-            source = 'if_many',
-            prefix = '●',
-        },
+        virtual_text = { spacing = 4, source = 'if_many' },
         severity_sort = true,
         signs = {
             text = {
@@ -49,15 +64,11 @@ M.lspconfig = {
             },
         },
         tailwindcss = {
-            root_dir = function(...)
-                return require('lspconfig.util').root_pattern '.git'(...)
-            end,
+            root_dir = function(...) return require('lspconfig.util').root_pattern '.git'(...) end,
         },
         tsserver = {
             single_file_support = false,
-            root_dir = function(...)
-                return require('lspconfig.util').root_pattern '.git'(...)
-            end,
+            root_dir = function(...) return require('lspconfig.util').root_pattern '.git'(...) end,
             settings = {
                 typescript = {
                     inlayHints = {
@@ -143,51 +154,6 @@ M.lspconfig = {
 
     ---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
     setup = {},
-}
-
----- Mason for tools like formatter, lint, dap
-M.mason_tool = {
-    ensure_installed = {
-        'prettierd',
-        'black',
-        'stylua',
-    },
-}
-
----- Mason for LspConfig
-M.mason_lspconfig = {
-    ensure_installed = {
-        'lua_ls',
-        'rust_analyzer',
-        'gopls',
-        'tsserver',
-        'pyright',
-        'jsonls',
-        'yamlls',
-    },
-    handlers = {},
-}
-
----- Conform (formatting)
-local prettier_fmt = { 'prettierd', 'prettier' }
-
-M.conform = {
-    ---@type table<string, conform.FiletypeFormatter>
-    formatters_by_ft = {
-        lua = { 'stylua' },
-        go = { 'goimports', 'gofmt' },
-        rust = { 'rustfmt' },
-        typescript = prettier_fmt,
-        typescriptreact = prettier_fmt,
-        javascript = prettier_fmt,
-        javascriptreact = prettier_fmt,
-        json = prettier_fmt,
-        html = prettier_fmt,
-        css = prettier_fmt,
-        python = { 'isort', 'black' },
-        ['_'] = { 'trim_whitespace' },
-    },
-    format_on_save = { timeout_ms = 3000, lsp_fallback = false, async = false },
 }
 
 return M

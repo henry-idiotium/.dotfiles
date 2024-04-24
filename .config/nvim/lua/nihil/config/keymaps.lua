@@ -1,14 +1,16 @@
 ---@diagnostic disable: no-unknown
-local map = function(mode, lhs, rhs, opts)
+local function map(mode, lhs, rhs, opts)
     opts = vim.tbl_extend('force', { noremap = true, silent = true }, opts or {})
     vim.keymap.set(mode, lhs, rhs, opts)
 end
 
 ----- Unbindings
 map('n', 'ZZ', '<nop>')
+map('n', '<c-w>q', '<nop>')
 
 ----- Bindings
 map('i', 'jj', '<esc>')
+map('i', 'jk', '<esc>')
 map('c', '<c-q>', '<c-c>')
 map('n', '<c-a>', 'gg<s-v><s-g>')
 map({ 'n', 'v', 'o' }, '<s-h>', '^')
@@ -36,12 +38,13 @@ map('x', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result
 map('o', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result' })
 
 -- highlights under cursor
-map('n', '<leader>ui', vim.show_pos, { desc = 'Inspect Pos' })
+map('n', '<leader>ui', vim.show_pos, { desc = 'Inspect highlight under cursor' })
 
 ---- Editor
 map('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit All' })
 map({ 'i', 'x', 'n', 's' }, '<c-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })
 
+map({ 'n', 's', 'x' }, 'x', '"_x', { desc = 'Void yank x' })
 map({ 'n', 's', 'x', 'o' }, ',', '"_', { desc = 'Void yank' })
 
 map({ 'n', 'i', 'v' }, '<c-z>', '<cmd>undo<cr>')
@@ -56,9 +59,10 @@ map('n', '<a-z>', '<cmd>set wrap!<cr>')
 map('n', '+', '<c-a>')
 map('n', '-', '<c-x>')
 
-map('x', '<leader>p', '"_dP')
-map({ 'n', 'v' }, ',y', '"+y', { desc = 'Copy to system clipboard' })
-map('n', ',<s-y>', '"+Y')
+-- better remap
+map({ 'n', 's', 'x', 'o' }, '<a-p>', '"+p', { desc = 'Paste from system clipboard' })
+map({ 'n', 's', 'x', 'o' }, '<a-y>', '"+y', { desc = 'Copy to system clipboard' })
+map({ 'n', 's', 'x', 'o' }, '<a-s-y>', '"+<s-y>', { desc = 'Copy to system clipboard' })
 
 -- Clear search with <esc>
 map({ 'i', 'n' }, '<esc>', '<cmd>noh<cr><esc>', { desc = 'Escape and Clear hlsearch' })
@@ -88,44 +92,45 @@ map('n', 'z<s-c>', ':set foldlevel=00<cr>')
 map('n', 'z<s-o>', ':set foldlevel=99<cr>')
 
 ---- Quickfix/Localtion list
-map('n', '<leader>xl', vim.cmd.lopen, { desc = 'Location List' })
-map('n', '<leader>xq', vim.cmd.copen, { desc = 'Quickfix List' })
+map('n', '<leader>xl', '<cmd>lopen<cr>', { desc = 'Location List' })
+map('n', '<leader>xq', '<cmd>copen<cr>', { desc = 'Quickfix List' })
 
-map('n', '[q', vim.cmd.cprev, { desc = 'Previous Quickfix' })
-map('n', ']q', vim.cmd.cnext, { desc = 'Next Quickfix' })
+map('n', '[q', '<cmd>cprev<cr>', { desc = 'Previous Quickfix' })
+map('n', ']q', '<cmd>cnext<cr>', { desc = 'Next Quickfix' })
 
 ---- Split
 -- Resize window using <ctrl> arrow keys
-map('n', '<c-a-up>', '<cmd>resize +2<cr>', { desc = 'Increase Window Height' })
-map('n', '<c-a-down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
-map('n', '<c-a-left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
-map('n', '<c-a-right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
+map('n', '<c-s-up>', '<cmd>resize +2<cr>', { desc = 'Increase Window Height' })
+map('n', '<c-s-down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
+map('n', '<c-s-left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
+map('n', '<c-s-right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
 ---- Tab
-map('n', '<tab>', vim.cmd.tabnext, { desc = 'Next Tab' })
-map('n', '<s-tab>', vim.cmd.tabprev, { desc = 'Prev Tab' })
-map('n', '<leader><tab>d', vim.cmd.tabclose, { desc = 'Close Tab' })
+map('n', '<tab>', '<cmd>tabnext<cr>', { desc = 'Next Tab' })
+map('n', '<s-tab>', '<cmd>tabprev<cr>', { desc = 'Prev Tab' })
+map('n', '<leader><tab>d', '<cmd>tabclose<cr>', { desc = 'Close Tab' })
+map('n', '<leader><tab>n', '<cmd>tabnew<cr>', { desc = 'New Tab' })
 
 ---- Buffers
-map('n', '<leader><tab>', vim.cmd.bnext, { desc = 'Next Buffer' })
-map('n', '<leader><s-tab>', vim.cmd.bprevious, { desc = 'Prev Buffer' })
-map('n', ']b', vim.cmd.bnext, { desc = 'Next Buffer' })
-map('n', '[b', vim.cmd.bprevious, { desc = 'Prev Buffer' })
-map('n', '<leader>`', '<cmd>b#<cr>', { desc = 'Alternative buffer' })
+map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
+map('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
+map('n', '<leader>`', '<cmd>b#<cr>', { desc = 'Alternate buffer' })
 
 ---- Others
-if vim.cmd.Lazy ~= nil then map('n', '<leader>l', vim.cmd.Lazy, { desc = 'Lazy' }) end
+map('n', '<leader>nl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
+map('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Lazy' })
 
 ---- Diagnostics
-local diagnostic_goto = function(next, severity)
-    local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-    severity = severity and vim.diagnostic.severity[severity] or nil
+---@param dir 'next'|'prev'
+---@param severity? vim.diagnostic.Severity
+local diagnostic_goto = function(dir, severity)
+    local go = vim.diagnostic['goto_' .. dir]
+    severity = severity and vim.diagnostic.severity[severity] or 'ERROR'
     return function() go { severity = severity } end
 end
-map('n', '<leader>cd', vim.diagnostic.open_float, { desc = '[LSP] Line diagnostics' })
-map('n', ']d', diagnostic_goto(true), { desc = '[LSP] Next diagnostic' })
-map('n', '[d', diagnostic_goto(false), { desc = '[LSP] Prev diagnostic' })
-map('n', ']e', diagnostic_goto(true, 'ERROR'), { desc = '[LSP] Next error diagnostic' })
-map('n', '[e', diagnostic_goto(false, 'ERROR'), { desc = '[LSP] Prev error diagnostic' })
-map('n', ']w', diagnostic_goto(true, 'WARN'), { desc = '[LSP] Next warning diagnostic' })
-map('n', '[w', diagnostic_goto(false, 'WARN'), { desc = '[LSP] Prev warning diagnostic' })
+map('n', ']d', diagnostic_goto 'next', { desc = 'Next diagnostic' })
+map('n', '[d', diagnostic_goto 'prev', { desc = 'Prev diagnostic' })
+map('n', ']e', diagnostic_goto('next', 'ERROR'), { desc = 'Next error diagnostic' })
+map('n', '[e', diagnostic_goto('prev', 'ERROR'), { desc = 'Prev error diagnostic' })
+map('n', ']w', diagnostic_goto('next', 'WARN'), { desc = 'Next warning diagnostic' })
+map('n', '[w', diagnostic_goto('prev', 'WARN'), { desc = 'Prev warning diagnostic' })

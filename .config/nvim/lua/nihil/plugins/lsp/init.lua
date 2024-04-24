@@ -6,24 +6,30 @@ return {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
             'WhoIsSethDaniel/mason-tool-installer.nvim',
-            { 'hrsh7th/nvim-cmp', version = false, event = 'InsertEnter' },
-            'hrsh7th/cmp-nvim-lsp',
-            'hrsh7th/cmp-buffer',
-            'hrsh7th/cmp-path',
-            'hrsh7th/cmp-cmdline',
-            'L3MON4D3/LuaSnip',
-            'saadparwaiz1/cmp_luasnip',
-            'j-hui/fidget.nvim',
-            'stevearc/conform.nvim',
-            { 'folke/neodev.nvim', opts = {} },
-            { 'folke/neoconf.nvim', dependencies = { 'nvim-lspconfig' }, cmd = 'Neoconf', opts = {} },
+
+            { 'folke/neodev.nvim', config = true },
+            { 'folke/neoconf.nvim', dependencies = { 'nvim-lspconfig' }, cmd = 'Neoconf', config = true },
+
+            {
+                'hrsh7th/nvim-cmp',
+                version = false,
+                event = 'InsertEnter',
+                dependencies = {
+                    'hrsh7th/cmp-path',
+                    'hrsh7th/cmp-cmdline',
+                    'hrsh7th/cmp-nvim-lsp',
+                    'hrsh7th/cmp-buffer',
+                    'L3MON4D3/LuaSnip',
+                    'saadparwaiz1/cmp_luasnip',
+                },
+            },
         },
 
         config = function()
             local cmp = require 'cmp'
             local has_cmp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
-            local lsp_utils = require 'nihil.plugins.lsp.utils'
-            local options = require 'nihil.plugins.lsp.options'
+            local lsp_util = require 'nihil.util.lsp'
+            local options = require 'nihil.plugins.lsp.config'
             local lsp_opts = options.lspconfig
 
             local capabilities = vim.tbl_deep_extend(
@@ -34,7 +40,7 @@ return {
                 lsp_opts.capabilities or {}
             )
 
-            require('mason').setup { ui = { border = options.ui.border } }
+            require('mason').setup { ui = { border = 'rounded' } }
             require('mason-tool-installer').setup(options.mason_tool)
             require('mason-lspconfig').setup(vim.tbl_deep_extend('force', {}, options.mason_lspconfig, {
                 handlers = {
@@ -48,11 +54,7 @@ return {
             }))
 
             ---- Setup keymaps
-            lsp_utils.on_attach(function(client, buffer) require('nihil.plugins.lsp.keymaps').on_attach(client, buffer) end)
-
-            ---- Setting lsp UI
-            vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = options.ui.border })
-            vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.hover, { border = options.ui.border })
+            lsp_util.on_attach(function(client, buffer) require('nihil.plugins.lsp.keymaps').on_attach(client, buffer) end)
 
             ---- Setup diagnostic
             vim.diagnostic.config(vim.deepcopy(lsp_opts.diagnostics))
@@ -67,16 +69,16 @@ return {
                 return ret
             end
 
-            -- -- inlay hints
-            -- if lsp_opts.inlay_hints.enabled then
-            --     lsp_utils.on_attach(function(client, buffer)
-            --         if client.supports_method 'textDocument/inlayHint' then lsp_utils.toggle.inlay_hints(buffer, true) end
-            --     end)
-            -- end
+            -- inlay hints
+            if lsp_opts.inlay_hints.enabled then
+                lsp_util.on_attach(function(client, buffer)
+                    if client.supports_method 'textDocument/inlayHint' then lsp_util.toggle.inlay_hints(buffer, true) end
+                end)
+            end
 
             -- code lens
             if lsp_opts.codelens.enabled and vim.lsp.codelens then
-                lsp_utils.on_attach(function(client, buffer)
+                lsp_util.on_attach(function(client, buffer)
                     if client.supports_method 'textDocument/codeLens' then
                         vim.lsp.codelens.refresh()
                         vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
@@ -120,10 +122,13 @@ return {
                     { name = 'luasnip' },
                 }, {
                     { name = 'buffer' },
+                    { name = 'markman' },
+                    { name = 'path' },
                 }),
+
                 window = {
-                    completion = { border = options.ui.border },
-                    documentation = { border = options.ui.border },
+                    completion = { border = 'rounded' },
+                    documentation = { border = 'rounded' },
                 },
 
                 completion = { completeopt = 'menu,menuone,noinsert' },
@@ -134,62 +139,6 @@ return {
                 },
                 sorting = cmp_default.sorting,
             }
-
-            vim.api.nvim_set_hl(0, 'CmpGhostText', { link = 'Comment', default = true })
-        end,
-    },
-
-    {
-        'stevearc/conform.nvim',
-        event = { 'BufWritePre' },
-        lazy = true,
-
-        cmd = { 'ConformInfo' },
-        keys = {
-            {
-                '<a-s-f>',
-                function() require('conform').format(require('nihil.plugins.lsp.options').conform.format_on_save) end,
-                mode = { 'i', 'n', 'v' },
-                desc = 'Format buffer',
-            },
-            {
-                '<leader>cf',
-                function() require('conform').format(require('nihil.plugins.lsp.options').conform.format_on_save) end,
-                mode = { 'n', 'v' },
-                desc = 'Format buffer',
-            },
-
-            { '<leader>tf', '<cmd>ToggleAutoFormat<cr>', mode = { 'n', 'v' }, desc = 'Toggle Auto Format Globally' },
-            { '<leader>t<s-f>', '<cmd>ToggleAutoFormat!<cr>', mode = { 'n', 'v' }, desc = 'Toggle Auto Format Locally' },
-        },
-
-        init = function()
-            vim.opt.formatexpr = "v:lua.require'conform'.formatexpr()"
-
-            vim.api.nvim_create_user_command('ToggleAutoFormat', function(arg)
-                if arg.bang then
-                    vim.b.disable_autoformat = not vim.b.disable_autoformat and true or nil
-                else
-                    vim.g.disable_autoformat = not vim.g.disable_autoformat and true or nil
-                end
-
-                vim.notify('- [' .. (vim.g.disable_autoformat and ' ' or 'x') .. '] global auto format', vim.log.levels.INFO)
-                vim.notify('- [' .. (vim.b.disable_autoformat and ' ' or 'x') .. '] local auto format', vim.log.levels.INFO)
-            end, {
-                desc = 'Toggle Auto Format (global)',
-                bang = true,
-            })
-        end,
-
-        opts = require('nihil.plugins.lsp.options').conform,
-
-        config = function(_, opts)
-            require('conform').setup(vim.tbl_deep_extend('force', opts, {
-                format_on_save = function(bufnr)
-                    if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
-                    return opts.format_on_save
-                end,
-            }))
         end,
     },
 }

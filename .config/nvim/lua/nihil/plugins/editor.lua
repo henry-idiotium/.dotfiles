@@ -1,17 +1,5 @@
 ---@diagnostic disable: no-unknown
 return {
-    -- git helpers
-    {
-        'dinhhuy258/git.nvim',
-        event = 'BufReadPre',
-        opts = {
-            keymaps = {
-                blame = '<leader>gb', -- Open blame window
-                browse = '<leader>go', -- Open file/folder in git repository
-            },
-        },
-    },
-
     -- maneuvering throught files like the flash
     {
         'ThePrimeagen/harpoon',
@@ -56,6 +44,7 @@ return {
     {
         'nvim-telescope/telescope.nvim',
         dependencies = {
+            'nvim-lua/plenary.nvim',
             { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
             'nvim-telescope/telescope-file-browser.nvim',
         },
@@ -75,7 +64,7 @@ return {
                         cwd = telescope_buffer_dir(),
                     }
                 end,
-                desc = 'Open File Browser with the path of the current buffer',
+                desc = 'Open Current Buffer File Browser',
             },
         },
 
@@ -92,12 +81,15 @@ return {
                 path_display = { 'tail' },
                 dynamic_preview_title = true,
             },
-
             pickers = {
-                find_files = { no_ignore = false, hidden = true },
-                live_grep = {
-                    additional_args = { '--hidden' },
+                find_files = {
+                    no_ignore = false,
+                    hidden = true,
+                    path_display = { 'absolute' },
+                    previewer = false,
+                    respect_gitignore = false,
                 },
+                live_grep = { additional_args = { '--hidden' } },
                 diagnostics = {
                     theme = 'ivy',
                     initial_mode = 'normal',
@@ -113,25 +105,23 @@ return {
             local actions = require 'telescope.actions'
             local layout = require 'telescope.actions.layout'
 
+            local mappings = {
+                ['<c-q>'] = actions.close,
+                ['<c-l>'] = actions.select_default,
+                ['<c-a-l>'] = actions.select_tab,
+                ['<c-j>'] = actions.move_selection_next,
+                ['<c-k>'] = actions.move_selection_previous,
+                ['<c-p>'] = layout.toggle_preview,
+
+                ['<c-t>'] = function(...) return require('trouble.providers.telescope').open_with_trouble(...) end,
+                ['<a-t>'] = function(...) return require('trouble.providers.telescope').open_selected_with_trouble(...) end,
+            }
             opts.defaults.mappings = {
-                n = {
-                    ['<c-q>'] = actions.close,
+                i = vim.tbl_extend('force', mappings, {}),
+                n = vim.tbl_extend('force', mappings, {
                     ['q'] = actions.close,
                     ['l'] = actions.select_default,
-                    ['<c-l>'] = actions.select_default,
-                    ['<c-a-l>'] = actions.select_tab,
-                    ['<c-j>'] = actions.move_selection_next,
-                    ['<c-k>'] = actions.move_selection_previous,
-                    ['<c-p>'] = layout.toggle_preview,
-                },
-                i = {
-                    ['<c-q>'] = actions.close,
-                    ['<c-l>'] = actions.select_default,
-                    ['<c-a-l>'] = actions.select_tab,
-                    ['<c-j>'] = actions.move_selection_next,
-                    ['<c-k>'] = actions.move_selection_previous,
-                    ['<c-p>'] = layout.toggle_preview,
-                },
+                }),
             }
 
             local fb_actions = require('telescope').extensions.file_browser.actions
@@ -163,35 +153,16 @@ return {
         end,
     },
 
-    -- keymaps helper
+    -- git helpers
     {
-        'folke/which-key.nvim',
-        priority = 1000,
+        'dinhhuy258/git.nvim',
+        event = 'BufReadPre',
         opts = {
-            window = { border = 'single' },
-            plugins = { spelling = true },
-            defaults = {
-                mode = { 'n', 'v' },
-                ['g'] = { name = '+goto' },
-                ['z'] = { name = '+fold' },
-                [']'] = { name = '+next' },
-                ['['] = { name = '+prev' },
-                ['<leader>x'] = { name = '+diagnostics/quickfix' },
-                ['<leader>b'] = { name = '+buffer' },
-                ['<leader>c'] = { name = '+code' },
-                ['<leader>f'] = { name = '+file/find' },
-                ['<leader>q'] = { name = '+quit/session' },
-                ['<leader>s'] = { name = '+search' },
-                ['<leader>u'] = { name = '+ui' },
-                ['<leader>g'] = { name = '+git' },
-                ['<leader>gh'] = { name = '+hunks' },
+            keymaps = {
+                blame = '<leader>gb', -- Open blame window
+                browse = '<leader>go', -- Open file/folder in git repository
             },
         },
-        config = function(_, opts)
-            local wk = require 'which-key'
-            wk.setup(opts)
-            wk.register(opts.defaults)
-        end,
     },
 
     -- git status hunks in linenumber buffer
@@ -231,62 +202,14 @@ return {
         },
     },
 
-    -- highlight symbols
-    {
-        'RRethy/vim-illuminate',
-        lazy = false,
-        event = 'VeryLazy',
-
-        keys = {
-            { ']]', desc = 'Next Reference' },
-            { '[[', desc = 'Prev Reference' },
-        },
-
-        opts = {
-            delay = 200,
-            large_file_cutoff = 2000,
-            large_file_overrides = { providers = { 'lsp' } },
-            filetypes_denylist = {
-                'dirbuf',
-                'dirvish',
-                'fugitive',
-                'help',
-                'TelescopePrompt',
-                'TelescopeResult',
-            },
-        },
-
-        config = function(_, opts)
-            require('illuminate').configure(opts)
-
-            local function map(key, dir, buffer)
-                vim.keymap.set(
-                    'n',
-                    key,
-                    function() require('illuminate')['goto_' .. dir .. '_reference'](false) end,
-                    { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer }
-                )
-            end
-
-            map(']]', 'next')
-            map('[[', 'prev')
-
-            -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
-            vim.api.nvim_create_autocmd('FileType', {
-                callback = function()
-                    local buffer = vim.api.nvim_get_current_buf()
-                    map(']]', 'next', buffer)
-                    map('[[', 'prev', buffer)
-                end,
-            })
-        end,
-    },
-
     -- easy location list
     {
         'folke/trouble.nvim',
         cmd = { 'TroubleToggle', 'Trouble' },
-        opts = { use_diagnostic_signs = true },
+        opts = {
+            use_diagnostic_signs = true,
+            height = 4,
+        },
         keys = {
             { '<leader>xx', '<cmd>TroubleToggle document_diagnostics<cr>', desc = 'Document Diagnostics (Trouble)' },
             { '<leader>x<s-x>', '<cmd>TroubleToggle workspace_diagnostics<cr>', desc = 'Workspace Diagnostics (Trouble)' },
@@ -319,13 +242,12 @@ return {
         },
     },
 
-    -- TODO commentes
+    -- highlighted commentes
     {
         'folke/todo-comments.nvim',
         cmd = { 'TodoTrouble', 'TodoTelescope' },
         lazy = false,
         event = 'VeryLazy',
-        config = true,
         keys = {
             { ']t', function() require('todo-comments').jump_next() end, desc = 'Next Todo Comment' },
             { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous Todo Comment' },
@@ -333,6 +255,41 @@ return {
             { '<leader>x<s-t>', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
             { '<leader>st', '<cmd>TodoTelescope<cr>', desc = 'Todo' },
             { '<leader>s<s-t>', '<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme' },
+        },
+
+        opts = {
+            keywords = {
+                TODO = { icon = '✨', color = 'todo' }, -- 
+                REFAC = { icon = '👺', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
+                HACK = { icon = '🔥', color = 'warning' }, -- 
+                FIX = { icon = '👹', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } }, -- 
+                WARN = { icon = '🙀', color = 'warning', alt = { 'WARNING', 'XXX' } }, -- 
+                PERF = { icon = '🚀', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } }, -- 
+                NOTE = { icon = '🔖', color = 'hint', alt = { 'INFO' } }, -- 󰙏
+                TEST = { icon = '🧪', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } }, -- 
+            },
+            colors = {
+                todo = { 'DiagnosticOk', '#25EBA2' },
+                info = { 'DiagnosticInfo', '#2563EB' },
+                hint = { 'DiagnosticHint', '#10B981' },
+                test = { 'DiagnosticHint', '#C4A7E7' },
+                error = { 'DiagnosticError', 'ErrorMsg', '#DC2626' },
+                warning = { 'DiagnosticWarn', 'WarningMsg', '#FBBF24' },
+                default = { 'Identifier', '#7C3AED' },
+            },
+        },
+    },
+
+    -- zen-ing
+    {
+        'folke/zen-mode.nvim',
+        cmd = 'ZenMode',
+        keys = { { '<leader>tz', '<cmd>ZenMode<cr>', desc = 'Toggle Zen Mode' } },
+        opts = {
+            plugins = {
+                gitsigns = true,
+                tmux = true,
+            },
         },
     },
 }

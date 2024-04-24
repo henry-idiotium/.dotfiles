@@ -1,7 +1,11 @@
 ---@diagnostic disable: no-unknown
 return {
     { 'nvim-lua/plenary.nvim', name = 'plenary', lazy = true },
-    { 'eandrju/cellular-automaton.nvim', cmd = 'CellularAutomaton make_it_rain' },
+    { 'nvim-tree/nvim-web-devicons', event = 'VeryLazy', lazy = true }, -- icons
+    { 'MunifTanjim/nui.nvim', event = 'VeryLazy', lazy = true }, -- ui components
+
+    -- brainrot
+    { 'eandrju/cellular-automaton.nvim', lazy = true },
 
     -- measure startuptime
     {
@@ -22,5 +26,43 @@ return {
             { '<leader>ql', function() require('persistence').load { last = true } end, desc = 'Restore Last Session' },
             { '<leader>qd', function() require('persistence').stop() end, desc = "Don't Save Current Session" },
         },
+    },
+
+    -- keymaps helper
+    {
+        'folke/which-key.nvim',
+        priority = 1000,
+        event = 'VeryLazy',
+
+        opts = {
+            window = { border = 'single' },
+
+            defaults = {
+                mode = { 'n', 'v' },
+                ['g'] = { name = '+goto' },
+                ['z'] = { name = '+fold' },
+                [']'] = { name = '+next' },
+                ['['] = { name = '+prev' },
+                ['<leader>x'] = { name = '+diagnostics/quickfix' },
+                ['<leader>b'] = { name = '+buffer' },
+                ['<leader>c'] = { name = '+code' },
+                ['<leader>f'] = { name = '+file/find' },
+                ['<leader>q'] = { name = '+quit/session' },
+                ['<leader>u'] = { name = '+ui' },
+                ['<leader>g'] = { name = '+git' },
+                ['<leader>gh'] = { name = '+hunks' },
+                ['<leader>s'] = { name = '+search' },
+                ['<leader>sw'] = { name = '+workspace' },
+                ['<leader><tab>'] = { name = '+tab' },
+                ['<leader>t'] = { name = '+toggle' },
+                ['<leader>tl'] = { name = '+lsp' },
+            },
+        },
+
+        config = function(_, opts)
+            local wk = require 'which-key'
+            wk.setup(opts)
+            wk.register(opts.defaults)
+        end,
     },
 }

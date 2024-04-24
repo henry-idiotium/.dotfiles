@@ -1,8 +1,6 @@
 return {
     -- Automatically add closing tags for HTML and JSX
-    { 'windwp/nvim-ts-autotag', lazy = true, opts = {} },
-
-    { 'nvim-treesitter/playground', cmd = 'TSPlaygroundToggle' },
+    { 'windwp/nvim-ts-autotag', lazy = true, config = true },
 
     {
         'nvim-treesitter/nvim-treesitter',
@@ -68,32 +66,6 @@ return {
                     goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer' },
                 },
             },
-
-            -- https://github.com/nvim-treesitter/playground#query-linter
-            query_linter = {
-                enable = true,
-                use_virtual_text = true,
-                lint_events = { 'BufWrite', 'CursorHold' },
-            },
-
-            playground = {
-                enable = true,
-                disable = {},
-                updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-                persist_queries = true, -- Whether the query persists across vim sessions
-                keybindings = {
-                    toggle_query_editor = 'o',
-                    toggle_hl_groups = 'i',
-                    toggle_injected_languages = 't',
-                    toggle_anonymous_nodes = 'a',
-                    toggle_language_display = 'I',
-                    focus_language = 'f',
-                    unfocus_language = 'F',
-                    update = 'R',
-                    goto_node = '<cr>',
-                    show_help = '?',
-                },
-            },
         },
 
         ---@param opts TSConfig
@@ -118,15 +90,5 @@ return {
             }
             vim.treesitter.language.register('markdown', 'mdx')
         end,
-    },
-
-    { -- Show context of the current function
-        'nvim-treesitter/nvim-treesitter-context',
-        lazy = true,
-        enabled = true,
-        opts = { mode = 'cursor', max_lines = 3 },
-        keys = {
-            { '<leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
-        },
     },
 }
