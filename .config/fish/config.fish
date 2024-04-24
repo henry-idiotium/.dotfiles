@@ -59,14 +59,17 @@ function fish_user_key_bindings
 
     bind \cq exit
     bind -M insert -m default jj ''
+    bind -M insert -m default jk ''
 
-    __bind -m default,visual L end-of-line
-    __bind -m default,visual H beginning-of-line
+    alt_bind -m default,visual L end-of-line
+    alt_bind -m default,visual H beginning-of-line
 
-    __bind -m insert \ce fzf_search_path
-    __bind -m insert \cd 'fzf_search_base_dir ~/.config/'
-    __bind -m insert \cn 'fzf_search_base_dir ~/documents/notes/'
-    __bind -m insert \cp 'fzf_search_base_dir ~/documents/projects/'
-    __bind -m insert \ct 'fzf_search_base_dir ~/documents/throwaways/'
-    __bind -m insert \cr 'fzf_search_run ~/documents/scripts/'
+    alt_bind -m insert \ce fzf_search_path
+    alt_bind -m insert \cd 'fzf_search_base_dir ~/.config/'
+    alt_bind -m insert \cn 'fzf_search_base_dir ~/documents/notes/'
+    alt_bind -m insert \cp 'fzf_search_base_dir ~/documents/projects/'
+    alt_bind -m insert \ct 'fzf_search_base_dir ~/documents/throwaways/'
+    alt_bind -m insert \cr 'fzf_search_run ~/documents/scripts/'
+
+    bind -M insert \e\; ~/documents/scripts/start-tmux
 end
