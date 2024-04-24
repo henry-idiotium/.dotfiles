@@ -58,6 +58,7 @@ local exclude_filetypes = {
     'neotest-summary',
     'neotest-output-panel',
     'PlenaryTestPopup',
+    'Trouble',
 }
 
 -- Easy closing
@@ -75,12 +76,16 @@ vim.api.nvim_create_autocmd('BufReadPost', {
     group = augroup 'last_loc',
     callback = function(event)
         local buf = event.buf
+        local has_mark, mark = pcall(vim.api.nvim_buf_get_mark, buf, '"')
 
-        if vim.tbl_contains(exclude_filetypes, vim.bo.filetype) or vim.b[buf].last_loc then return end
+        -- stylua: ignore
+        if  vim.tbl_contains(exclude_filetypes, vim.bo.filetype)
+            or vim.b[buf].last_loc
+            or not has_mark
+        then return end
 
         vim.b[buf].last_loc = true
 
-        local mark = vim.api.nvim_buf_get_mark(buf, '"')
         local lcount = vim.api.nvim_buf_line_count(buf)
         if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
     end,

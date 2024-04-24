@@ -29,14 +29,6 @@ map({ 'n', 'x' }, '<Up>', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = t
 map({ 'n', 's', 'x', 'o' }, '<a-,>', ',')
 map({ 'n', 's', 'x', 'o' }, '<a-;>', ';')
 
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
-map('n', 'n', "'Nn'[v:searchforward].'zv'", { expr = true, desc = 'Next Search Result' })
-map('x', 'n', "'Nn'[v:searchforward]", { expr = true, desc = 'Next Search Result' })
-map('o', 'n', "'Nn'[v:searchforward]", { expr = true, desc = 'Next Search Result' })
-map('n', 'N', "'nN'[v:searchforward].'zv'", { expr = true, desc = 'Prev Search Result' })
-map('x', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result' })
-map('o', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result' })
-
 -- highlights under cursor
 map('n', '<leader>ui', vim.show_pos, { desc = 'Inspect highlight under cursor' })
 
@@ -118,14 +110,14 @@ map('n', '<leader>`', '<cmd>b#<cr>', { desc = 'Alternate buffer' })
 
 ---- Others
 map('n', '<leader>nl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
-map('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Lazy' })
+map('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 ---- Diagnostics
 ---@param dir 'next'|'prev'
 ---@param severity? vim.diagnostic.Severity
 local diagnostic_goto = function(dir, severity)
     local go = vim.diagnostic['goto_' .. dir]
-    severity = severity and vim.diagnostic.severity[severity] or 'ERROR'
+    severity = severity and vim.diagnostic.severity[severity] or nil
     return function() go { severity = severity } end
 end
 map('n', ']d', diagnostic_goto 'next', { desc = 'Next diagnostic' })

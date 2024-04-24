@@ -16,11 +16,11 @@ return {
         vim.opt.formatexpr = "v:lua.require'conform'.formatexpr()"
 
         vim.api.nvim_create_user_command('ToggleAutoFormat', function()
-            vim.g.disable_autoformat = not vim.g.disable_autoformat and true or nil
-            vim.notify((vim.g.disable_autoformat and '❌' or '💪') .. ' Global', nil, {
-                title = 'Conform Auto Format',
-            })
-        end, { desc = 'Toggle Auto Format (globally)' })
+            vim.g.disable_autoformat = not vim.g.disable_autoformat
+            vim.notify('Conform auto format (global) ' .. (vim.g.disable_autoformat and '❌' or '💪'))
+        end, {
+            desc = 'Toggle Auto Format (globally)',
+        })
     end,
 
     opts = function()

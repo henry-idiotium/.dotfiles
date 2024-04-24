@@ -208,7 +208,13 @@ return {
         cmd = { 'TroubleToggle', 'Trouble' },
         opts = {
             use_diagnostic_signs = true,
-            height = 4,
+            height = 6,
+            padding = false,
+            action_keys = {
+                close = '<c-q>',
+                close_folds = 'zC', -- close all folds
+                open_folds = 'zO', -- open all folds
+            },
         },
         keys = {
             { '<leader>xx', '<cmd>TroubleToggle document_diagnostics<cr>', desc = 'Document Diagnostics (Trouble)' },
