@@ -43,18 +43,16 @@ return {
     },
 
     -- comments
+    { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true, opts = { enable_autocmd = false } },
     {
-        'JoosepAlviste/nvim-ts-context-commentstring',
-        lazy = true,
-        opts = { enable_autocmd = false },
-    },
-    {
-        'echasnovski/mini.comment',
-        event = 'VeryLazy',
+        'numToStr/Comment.nvim',
+        lazy = false,
         opts = {
-            options = {
-                custom_commentstring = function() return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring end,
-            },
+            padding = false,
+            sticky = true,
+            -- `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
+            mappings = { basic = true, extra = false },
+            pre_hook = function() return require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook() end,
         },
     },
 }

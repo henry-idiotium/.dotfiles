@@ -6,6 +6,7 @@ end
 
 ----- Unbindings
 map('n', 'ZZ', '<nop>')
+map('n', '<c-w>q', '<nop>')
 
 ----- Bindings
 map('i', 'jj', '<esc>')

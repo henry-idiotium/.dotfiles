@@ -220,8 +220,6 @@ return {
             -- PERF: we don't need this lualine require madness 🤷
             require('lualine_require').require = require
 
-            vim.o.laststatus = vim.g.lualine_laststatus
-
             -- recording cmp: init refresh to avoid delay
             local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
             vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
@@ -315,27 +313,16 @@ return {
             scope = { enabled = false },
             exclude = { filetypes = { 'help', 'Trouble', 'trouble', 'lazy', 'mason', 'notify' } },
         },
-    },
-
-    -- Active indent guide and indent text objects.
-    {
-        'echasnovski/mini.indentscope',
-        version = false, -- wait till new 3.7.0 release to put it back on semver
-        event = { 'VeryLazy', 'BufReadPost' },
-        opts = { symbol = '│', options = { try_as_border = true } },
         init = function()
-            vim.api.nvim_create_autocmd('FileType', {
-                pattern = { 'help', 'Trouble', 'trouble', 'lazy', 'mason', 'notify' },
-                callback = function() vim.b.miniindentscope_disable = true end,
-            })
+            local hooks = require 'ibl.hooks'
+            hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
         end,
     },
 
     -- floating filename
     {
         'b0o/incline.nvim',
-        event = { 'VeryLazy', 'BufReadPre' },
-        priority = 500,
+        event = 'BufReadPre',
         opts = {
             window = {
                 padding = 1,
@@ -357,10 +344,16 @@ return {
     {
         'lukas-reineke/virt-column.nvim',
         event = 'VeryLazy',
+        opts = { char = '│', virtcolumn = '80,120,160', highlight = 'VirtColumn' },
+    },
+
+    {
+        'kevinhwang91/nvim-ufo',
+        dependencies = 'kevinhwang91/promise-async',
+        event = 'VeryLazy',
         opts = {
-            char = '│',
-            virtcolumn = '80,120,160',
-            highlight = 'VirtColumn',
+            open_fold_hl_timeout = 200,
+            provider_selector = function() return { 'treesitter', 'indent' } end,
         },
     },
 }

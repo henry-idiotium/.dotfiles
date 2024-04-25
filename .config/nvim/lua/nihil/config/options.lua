@@ -18,7 +18,7 @@ vim.opt.showcmd = true
 vim.opt.timeoutlen = 500
 vim.opt.showtabline = 1
 vim.opt.scrolloff = 6
-vim.opt.laststatus = 2
+vim.opt.laststatus = 0
 vim.opt.shell = 'fish'
 vim.opt.inccommand = 'split'
 vim.opt.mouse = 'n'
@@ -67,8 +67,9 @@ vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
-vim.opt.foldtext = [[]]
+vim.opt.foldenable = true
+-- vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+-- vim.opt.foldtext = [[]]
 vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }
 
