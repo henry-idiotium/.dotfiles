@@ -27,8 +27,8 @@ return {
             groups = {},
             highlight_groups = {
                 Comment = { fg = 'muted' },
+                Folded = { bg = 'base' },
                 VertSplit = { fg = 'muted', bg = 'muted' },
-                Folded = { bg = '#141417' },
                 Search = { bg = 'highlight_high', fg = 'text' },
                 Normal = { bg = 'none' },
                 NormalFloat = { bg = 'none' },
@@ -36,24 +36,7 @@ return {
                 -- others
                 TroubleNormal = { bg = 'none' },
                 CmpGhostText = { link = 'Comment', default = true },
-            },
-        },
-    },
-
-    {
-        'catppuccin/nvim',
-        name = 'catppuccin',
-        priority = 1000,
-        enabled = false,
-        init = function() vim.cmd.colorscheme 'catppuccin' end,
-        opts = {
-            flavour = 'mocha', -- latte, frappe, macchiato, mocha
-            transparent_background = true,
-            term_colors = true,
-            styles = {
-                comments = { 'italic' },
-                conditionals = { 'italic' },
-                types = { 'bold' },
+                VirtColumn = { fg = 'base' },
             },
         },
     },

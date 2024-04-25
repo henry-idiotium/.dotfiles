@@ -1,8 +1,22 @@
 ---@diagnostic disable: no-unknown
 return {
-    -- better surround
-    { 'kylechui/nvim-surround', event = 'VeryLazy', config = true },
+    { 'kylechui/nvim-surround', event = 'VeryLazy', config = true }, -- better surround
+    { 'echasnovski/mini.pairs', event = 'VeryLazy', config = true }, -- auto pairs closing blocks
 
+    {
+        'danymat/neogen',
+        event = 'VeryLazy',
+        opts = { snippet_engine = 'luasnip' },
+        keys = {
+            {
+                '<leader>cg',
+                function() require('neogen').generate {} end,
+                desc = 'Neogen Comment',
+            },
+        },
+    },
+
+    -- ThePrimeagen's refactoring
     {
         'ThePrimeagen/refactoring.nvim',
         dependencies = {
@@ -11,13 +25,22 @@ return {
             { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>r'] = { name = '+refactoring' } end },
         },
         keys = {
-            { '<leader>rr', function() require('refactoring').select_refactor { show_success_message = true } end, desc = 'Refactoring actions' },
+            {
+                '<leader>rr',
+                function()
+                    require('refactoring').select_refactor {
+                        show_success_message = true,
+                    }
+                end,
+                mode = { 'n', 'v' },
+                desc = 'Refactoring actions',
+                noremap = true,
+                silent = true,
+                expr = false,
+            },
         },
-        config = function() require('refactoring').setup { show_success_message = true } end,
+        opts = { show_success_message = true },
     },
-
-    -- auto pairs closing blocks
-    { 'echasnovski/mini.pairs', event = 'VeryLazy', config = true },
 
     -- comments
     {

@@ -43,6 +43,7 @@ return {
                 ['z'] = { name = '+fold' },
                 [']'] = { name = '+next' },
                 ['['] = { name = '+prev' },
+                ['<leader>o'] = { name = '+open' },
                 ['<leader>x'] = { name = '+diagnostics/quickfix' },
                 ['<leader>b'] = { name = '+buffer' },
                 ['<leader>c'] = { name = '+code' },

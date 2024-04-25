@@ -33,7 +33,7 @@ return {
                     'n',
                     key,
                     function() require('illuminate')['goto_' .. dir .. '_reference'](false) end,
-                    { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer }
+                    { desc = dir:sub(4, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer }
                 )
             end
 
@@ -65,10 +65,10 @@ return {
         },
         opts = {
             render = 'wrapped-compact',
-            stages = 'static',
+            stages = 'fade',
             timeout = 5000,
-            max_height = function() return math.floor(vim.o.lines * 0.75) end,
-            max_width = function() return math.floor(vim.o.columns * 0.75) end,
+            background_colour = '#000000',
+            max_width = function() return math.floor(vim.o.columns * 3.75) end,
             on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
         },
     },
@@ -189,7 +189,7 @@ return {
             vim.api.nvim_create_autocmd('FocusLost', {
                 callback = function() focused = false end,
             })
-            table.insert(opts.routes, 1, {
+            table.insert(opts.routes, 4, {
                 filter = { cond = function() return not focused end },
                 view = 'notify_send',
                 opts = { stop = false },
@@ -211,11 +211,24 @@ return {
         'nvim-lualine/lualine.nvim',
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
-            if vim.fn.argc(-1) > 0 then
+            if vim.fn.argc(2) > 0 then
                 vim.o.statusline = ' ' -- set an empty statusline till lualine loads
             else
                 vim.o.laststatus = 0 -- hide the statusline on the starter page
             end
+
+            -- PERF: we don't need this lualine require madness 🤷
+            require('lualine_require').require = require
+
+            vim.o.laststatus = vim.g.lualine_laststatus
+
+            -- recording cmp: init refresh to avoid delay
+            local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
+            vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
+            vim.api.nvim_create_autocmd(
+                'RecordingLeave',
+                { callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end }
+            )
         end,
 
         opts = {
@@ -225,24 +238,20 @@ return {
                 section_separators = { left = '', right = '' },
             },
             extensions = { 'neo-tree', 'lazy' },
-        },
 
-        config = function(_, opts)
-            local icons = require('nihil.plugins.lsp.config').lspconfig.diagnostics.signs.text
-
-            opts.sections = {
+            sections = {
                 lualine_a = { 'mode' },
-                lualine_b = { 'branch' },
+                lualine_b = { 'branch', 'diff' },
 
                 lualine_c = {
                     {
                         'root-dir',
                         fmt = function() return vim.fn.fnamemodify(vim.fn.getcwd(), ':t') end,
-                        color = { fg = '#FFAA88', gui = 'bold' },
+                        color = { fg = '#FFAA91', gui = 'bold' },
                         icon = '󱉭',
                     },
                     { 'filename', path = 1, symbols = { modified = '●', readonly = '' }, separator = '' },
-                    { 'diff' },
+                    'diagnostics',
                 },
 
                 lualine_x = {
@@ -250,13 +259,13 @@ return {
                         'macro-recording',
                         fmt = function() return 'recording @' .. vim.fn.reg_recording() end,
                         cond = function() return vim.fn.reg_recording() ~= '' end,
-                        color = { fg = '#FFAA88' },
+                        color = { fg = '#FFAA91' },
                     },
                     {
                         'noice-status-command',
                         fmt = function() return require('noice').api.status.command.get() end,
                         cond = function() return package.loaded['noice'] and require('noice').api.status.command.has() end,
-                        color = { fg = '#FFAA88' },
+                        color = { fg = '#FFAA91' },
                     },
                     {
                         'dap',
@@ -273,13 +282,13 @@ return {
                             local count_ft = { 'markdown', 'vimwiki', 'latex', 'text', 'tex' }
                             return vim.tbl_contains(count_ft, vim.bo.ft)
                         end,
-                        color = { fg = '#6e6e80', gui = 'italic' },
+                        color = { fg = '#9e6e80', gui = 'italic' },
                     },
                 },
                 lualine_y = {
                     {
                         'encoding',
-                        cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
+                        cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-5' end,
                     },
                     {
                         'fileformat',
@@ -291,24 +300,8 @@ return {
                     { 'progress', separator = '' },
                     { 'location' },
                 },
-            }
-
-            -- PERF: we don't need this lualine require madness 🤷
-            require('lualine_require').require = require
-
-            vim.o.laststatus = vim.g.lualine_laststatus
-
-            local lualine = require 'lualine'
-            lualine.setup(opts)
-
-            -- recording cmp: init refresh to avoid delay
-            local refresh_statusline = function() lualine.refresh { place = { 'statusline' } } end
-            vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
-            vim.api.nvim_create_autocmd(
-                'RecordingLeave',
-                { callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end }
-            )
-        end,
+            },
+        },
     },
 
     -- indent guides for Neovim
@@ -327,7 +320,7 @@ return {
     -- Active indent guide and indent text objects.
     {
         'echasnovski/mini.indentscope',
-        version = false, -- wait till new 0.7.0 release to put it back on semver
+        version = false, -- wait till new 3.7.0 release to put it back on semver
         event = { 'VeryLazy', 'BufReadPost' },
         opts = { symbol = '│', options = { try_as_border = true } },
         init = function()
@@ -341,14 +334,12 @@ return {
     -- floating filename
     {
         'b0o/incline.nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
         event = { 'VeryLazy', 'BufReadPre' },
-        name = 'incline',
-        priority = 420,
+        priority = 500,
         opts = {
             window = {
-                padding = 0,
-                margin = { vertical = 0, horizontal = 3 },
+                padding = 1,
+                margin = { vertical = 0, horizontal = 1 },
             },
             hide = { cursorline = true },
             render = function(props)
@@ -359,6 +350,17 @@ return {
 
                 return { { icon, guifg = color }, '  ', filename }
             end,
+        },
+    },
+
+    -- rulers
+    {
+        'lukas-reineke/virt-column.nvim',
+        event = 'VeryLazy',
+        opts = {
+            char = '│',
+            virtcolumn = '80,120,160',
+            highlight = 'VirtColumn',
         },
     },
 }

@@ -8,6 +8,37 @@ return {
         lazy = false,
         dependencies = 'nvim-treesitter/nvim-treesitter-textobjects',
 
+        opts = {
+            indent = { enable = true },
+            highlight = { enable = true },
+
+            -- Automatically install missing parsers when entering buffer
+            -- require `tree-sitter-cli` via cargo or npm
+            auto_install = true,
+
+            ensure_installed = { 'fish', 'lua', 'markdown', 'markdown_inline' },
+            ignore_install = {}, -- List of parsers to ignore installing (or "all")
+
+            incremental_selection = {
+                enable = true,
+                keymaps = {
+                    init_selection = '<c-space>',
+                    node_incremental = '<c-space>',
+                    scope_incremental = false,
+                    node_decremental = '<bs>',
+                },
+            },
+            textobjects = {
+                move = {
+                    enable = true,
+                    goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer' },
+                    goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer' },
+                    goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer' },
+                    goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer' },
+                },
+            },
+        },
+
         cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
         keys = {
             { '<c-space>', desc = 'Increment Selection' },
@@ -23,50 +54,6 @@ return {
             require('lazy.core.loader').add_to_rtp(plugin)
             require 'nvim-treesitter.query_predicates'
         end,
-
-        opts = {
-            highlight = { enable = true },
-            indent = { enable = true },
-            ensure_installed = {
-                'astro',
-                'cmake',
-                'css',
-                'fish',
-                'gitignore',
-                'go',
-                'http',
-                'rust',
-                'scss',
-                'sql',
-                'jsonc',
-                'vim',
-                'regex',
-                'lua',
-                'bash',
-                'markdown',
-                'markdown_inline',
-                -- 'cpp', 'graphql', 'java', 'php', 'svelte',
-            },
-
-            incremental_selection = {
-                enable = true,
-                keymaps = {
-                    init_selection = '<C-space>',
-                    node_incremental = '<C-space>',
-                    scope_incremental = false,
-                    node_decremental = '<bs>',
-                },
-            },
-            textobjects = {
-                move = {
-                    enable = true,
-                    goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer' },
-                    goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer' },
-                    goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer' },
-                    goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer' },
-                },
-            },
-        },
 
         ---@param opts TSConfig
         config = function(_, opts)

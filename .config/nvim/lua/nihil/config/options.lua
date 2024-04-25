@@ -1,6 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
-vim.g.disable_autoformat = true
+vim.g.disable_autoformat = false
 
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
@@ -65,14 +65,11 @@ vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments
 vim.opt.smoothscroll = true
 vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 
-vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
-
-vim.opt.foldcolumn = '2'
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = [[v:lua.require'nihil.util.ui'.foldexpr()]] -- v:lua.vim.treesitter.foldexpr()
-vim.opt.foldtext = [[v:lua.require'nihil.util.ui'.foldtext()]]
-vim.opt.foldtext = ''
+vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+vim.opt.foldtext = [[]]
+vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }
 
 -- Fix markdown indentation settings

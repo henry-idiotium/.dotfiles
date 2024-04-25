@@ -6,7 +6,6 @@ end
 
 ----- Unbindings
 map('n', 'ZZ', '<nop>')
-map('n', '<c-w>q', '<nop>')
 
 ----- Bindings
 map('i', 'jj', '<esc>')
@@ -107,10 +106,11 @@ map('n', '<leader><tab>n', '<cmd>tabnew<cr>', { desc = 'New Tab' })
 map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
 map('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
 map('n', '<leader>`', '<cmd>b#<cr>', { desc = 'Alternate buffer' })
+map('n', '<leader>bd', '<cmd>bwipeout<cr>', { desc = 'Delete buffer from list' })
 
 ---- Others
-map('n', '<leader>nl', '<cmd>Lazy<cr>', { desc = 'Lazy' })
-map('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Mason' })
+map('n', '<leader>ol', '<cmd>Lazy<cr>', { desc = 'Lazy' })
+map('n', '<leader>om', '<cmd>Mason<cr>', { desc = 'Mason' })
 
 ---- Diagnostics
 ---@param dir 'next'|'prev'

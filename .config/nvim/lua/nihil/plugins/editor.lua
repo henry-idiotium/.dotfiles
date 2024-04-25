@@ -4,7 +4,10 @@ return {
     {
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>h'] = { name = '+harpoon' } end },
+        },
         keys = {
             { '<c-e>', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
             { '<leader>hp', function() require('harpoon'):list():prepend() end, desc = 'Harpoon prepend' },
@@ -48,6 +51,7 @@ return {
             { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
             'nvim-telescope/telescope-file-browser.nvim',
         },
+        cmd = 'Telescope',
         keys = {
             { '\\\\', '<cmd>Telescope resume<cr>' },
             { ';b', '<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>' },
@@ -297,5 +301,12 @@ return {
                 tmux = true,
             },
         },
+    },
+
+    -- highlight text
+    {
+        'echasnovski/mini.hipatterns',
+        event = { 'BufReadPre', 'VeryLazy' },
+        config = true,
     },
 }

@@ -76,19 +76,6 @@ return {
                 end)
             end
 
-            -- code lens
-            if lsp_opts.codelens.enabled and vim.lsp.codelens then
-                lsp_util.on_attach(function(client, buffer)
-                    if client.supports_method 'textDocument/codeLens' then
-                        vim.lsp.codelens.refresh()
-                        vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
-                            buffer = buffer,
-                            callback = vim.lsp.codelens.refresh,
-                        })
-                    end
-                end)
-            end
-
             -- diagnostics signs
             for severity, icon in pairs(diagnostic_opts.signs.text) do
                 local name = vim.diagnostic.severity[severity]:lower():gsub('^%l', string.upper)

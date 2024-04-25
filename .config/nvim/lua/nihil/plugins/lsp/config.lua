@@ -16,12 +16,12 @@ M.mason_lspconfig = {
         'lua_ls',
         'rust_analyzer',
         'gopls',
-        'tsserver',
         'pyright',
         'jsonls',
         'yamlls',
+        'tsserver',
+        'emmet_ls',
     },
-    handlers = {},
 }
 
 ---- LspConfig
@@ -56,19 +56,9 @@ M.lspconfig = {
 
     ---@type lspconfig.options
     servers = {
-        cssls = {
-            settings = {
-                css = { validate = true, lint = { unknownAtRules = 'ignore' } },
-                scss = { validate = true, lint = { unknownAtRules = 'ignore' } },
-                less = { validate = true, lint = { unknownAtRules = 'ignore' } },
-            },
-        },
-        tailwindcss = {
-            root_dir = function(...) return require('lspconfig.util').root_pattern '.git'(...) end,
-        },
         tsserver = {
             single_file_support = false,
-            root_dir = function(...) return require('lspconfig.util').root_pattern '.git'(...) end,
+            root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
             settings = {
                 typescript = {
                     inlayHints = {
@@ -94,6 +84,15 @@ M.lspconfig = {
                 },
             },
         },
+        cssls = {
+            settings = {
+                css = { validate = true, lint = { unknownAtRules = 'ignore' } },
+                scss = { validate = true, lint = { unknownAtRules = 'ignore' } },
+                less = { validate = true, lint = { unknownAtRules = 'ignore' } },
+            },
+        },
+        tailwindcss = {},
+        emmet_ls = {},
         html = {},
         yamlls = {
             settings = {
