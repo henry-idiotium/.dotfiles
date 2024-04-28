@@ -11,13 +11,11 @@ set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
-set -gx TERM wezterm # enable undercurl (~/.terminfo/w/wezterm)
+set -gx TERM wezterm # enable undercurl  ~/.terminfo/w/wezterm
 set -gx GIT_EDITOR nvim # git doesn't understand aliases
 set -gx EDITOR vi
-# set -gx GIT_WORK_TREE
-# set -gx GIT_DIR .git
 
-fish_add_path -g ~/bin ~/.local/bin
+fish_add_path -g ~/.local/bin ~/bin ~/bin/.local/ ~/bin/.local/scripts/
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/go/bin
@@ -32,44 +30,39 @@ alias rm 'rm -iv'
 alias mkdir 'mkdir -pv'
 alias which 'type -a'
 alias vi nvim
-alias nvimdiff 'nvim -d'
 alias g git
 alias cat bat
 alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
 alias l ls
 
-alias git_dotfiles 'git -C $HOME --git-dir=$HOME/.dotfiles --work-tree=$HOME'
-alias gd git_dotfiles
+alias gd 'git --git-dir=$HOME/.dotfiles -C $HOME --work-tree=$HOME'
 
-# user defined functions folder
-set -a fish_function_path \
-    $__fish_config_dir/functions/user.d/ \
-    $__fish_config_dir/functions/user.d/*/
 
 ## keymaps
 function fish_user_key_bindings
     fish_vi_key_bindings
 
-    # unbind keys
-    for key in \cd \cs
+    set -l keys_to_unbind \cd \cs
+    # unbind keys (run in fish_user_key_bindings to ensure it works)
+    for key in $keys_to_unbind
         bind -e --preset $key
         bind -e --preset -M insert $key
         bind -e --preset -M visual $key
     end
 
+    # actions
     bind \cq exit
     bind -M insert -m default jj ''
     bind -M insert -m default jk ''
+    bind L end-of-line
+    bind H beginning-of-line
+    bind -M visual L end-of-line
+    bind -M visual H beginning-of-line
 
-    alt_bind -m default,visual L end-of-line
-    alt_bind -m default,visual H beginning-of-line
+    # custom funcs
+    bind -M insert \ce fzf_search_path
+    bind -M insert \cd fzf_change_document
 
-    alt_bind -m insert \ce fzf_search_path
-    alt_bind -m insert \cd 'fzf_search_base_dir ~/.config/'
-    alt_bind -m insert \cn 'fzf_search_base_dir ~/documents/notes/'
-    alt_bind -m insert \cp 'fzf_search_base_dir ~/documents/projects/'
-    alt_bind -m insert \ct 'fzf_search_base_dir ~/documents/throwaways/'
-    alt_bind -m insert \cr 'fzf_search_run ~/documents/scripts/'
-
-    bind -M insert \e\; ~/documents/scripts/start-tmux
+    # scripts
+    bind -M insert \e\; start-tmux
 end
