@@ -1,36 +1,61 @@
 [user]
-	email = quocdat.381872@gmail.com
 	name = Henry
+    email = quocdat.381872@gmail.com
 
 [core]
 	autocrlf = false
     askpass = # disable credential manager
 
 [alias]
-	st = status
-	co = checkout
-    comm = commit
 	br = branch
-	confl = diff --name-only --diff-filter=U
+    a = add
+    ap = add --patch
+    c = commit
+    cm = commit --message
+    ca = commit --all --message
+	co = checkout
+	cob = checkout -b
+	s = status --short --branch
+	su = status --short --branch --untracked-files
+    d = diff
+    ds = diff --stat
+    dc = diff --cached
 
-	lastest-commits-diff-files = diff --stat HEAD~1 HEAD~2
-	lastest-commit-branches = "!refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)|%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|'"
+    # show last modified branch
+	b = "!refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:dim white)%(objectname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:reset)%(color:italic dim white)%(authorname)|%(color:reset)%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|'"
 
-    # commits graph
-	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(bold magenta)%an%C(reset)%C(bold yellow)%d%C(reset)' --all
-    lg-alt = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %C(reset)%C(magenta)%an%C(reset)' --all
+    lg = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(italic dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+
+    # list aliases
+    la = !git config -l | grep alias | cut -c 7-
 
 [color]
+    ui = true
 	branch = auto
 	diff = auto
 	interactive = auto
 	status = auto
 
+# Avoid messy merge commits with autorebase
+[branch]
+    autosetuprebase = always
+
 [init]
 	defaultBranch = main
 
-[merge]
-	tool = nvimdiff
+# Push the current branch by default
+[push]
+    default = current
+
+# Guess what you really meant
+[help]
+    autocorrect = 1
+
+# Remove usage hints
+[advice]
+    statusHints = false
 
 [diff]
 	tool = nvimdiff
+    # instead of using a and b notation
+    mnemonicprefix = true

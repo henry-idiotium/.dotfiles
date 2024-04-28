@@ -3,7 +3,6 @@ function __fzf_open_path -d '[fzf helper] Open path'
     set -f token
 
     [ -f "$path" ]; and set token $EDITOR
-    [ -d "$path" ]; and set path "$path/"
 
     set path (string replace $HOME '~' (string escape -n  $path)) # shorten $HOME
     set -a token $path
