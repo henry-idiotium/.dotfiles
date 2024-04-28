@@ -1,0 +1,3 @@
+[submodule "/home/henry/bin/.local/scripts"]
+	path = /home/henry/bin/.local/scripts
+	url = git@github.com:henry-idiotium/scripts.git
