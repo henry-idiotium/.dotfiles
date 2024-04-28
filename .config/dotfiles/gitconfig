@@ -6,6 +6,9 @@
 [core]
 	excludesFile = ~/.config/dotfiles/gitignore
 
+[status]
+    showUntrackedFiles = no
+
 [alias]
     edit-ignore = !eval $GIT_EDITOR $(git -C $HOME/.dotfiles config core.excludesFile)
     edit-config = !eval $GIT_EDITOR $(git -C $HOME/.dotfiles config user.gitconfig)

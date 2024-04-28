@@ -3,6 +3,3 @@
 .git
 .dotfiles
 # ignore first level
-/*
-
-!.config/
