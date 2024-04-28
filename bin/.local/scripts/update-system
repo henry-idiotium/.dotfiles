@@ -1,0 +1,16 @@
+#!/usr/bin/env fish
+
+# TODO:
+# - check for external lib packages
+# - add logs
+# - add GO
+
+paru
+
+
+sudo pacman -Syu
+
+
+cargo install-update -a
+
+bob update nightly
