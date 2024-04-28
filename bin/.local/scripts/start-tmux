@@ -1,0 +1,50 @@
+#!/usr/bin/env fish
+
+if not type -q tmux
+    set_color red
+    echo Not found (set_color -o cyan)tmux(set_color red) in PATH !!
+    set_color normal
+    echo -e '\n'
+    return
+end
+
+set -l cool_unused_names \
+    もない \
+    ひきこもり \
+    アイドリング \
+    ヘンリク \
+    ピプトル \
+    ピカピカ \
+    キラサク \
+    モテる \
+    カワイイ \
+    ゲンキキ \
+    イクドキ \
+    ハッピー \
+    ノラ
+
+set -f session_name (random choice $cool_unused_names)
+while tmux has-session -t $session_name 2>/dev/null
+    set session_name (random choice $cool_unused_names)
+end
+
+
+set -l prompt \
+    "$(set_color cyan)New tmux session name:" \
+    "$(set_color 828282)($session_name)" \
+    (set_color normal)
+
+read -lP "$prompt" user_session_name
+or exit 69
+[ -n "$user_session_name" ] && set session_name $user_session_name
+
+
+tmux new-session -d -c "$HOME" -s "$session_name"
+if [ -n "$TMUX" ]
+    tmux switch-client -t $session_name
+else
+    tmux attach-session -t $session_name
+end
+
+
+echo
