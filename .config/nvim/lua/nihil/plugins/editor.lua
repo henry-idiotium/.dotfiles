@@ -136,8 +136,11 @@ return {
 
         cmd = 'Neotree',
         keys = {
-            { 'sf', function() require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() } end, desc = 'Explorer (Root Dir)' },
-            { 'sF', function() require('neo-tree.command').execute { toggle = true, dir = vim.uv.cwd() } end, desc = 'Explorer (cwd)' },
+            {
+                'sf',
+                function() require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() } end,
+                desc = 'Explorer (Root Dir)',
+            },
         },
 
         deactivate = function() vim.cmd [[Neotree close]] end,
@@ -150,13 +153,22 @@ return {
 
         opts = {
             sources = { 'filesystem', 'git_status' },
+            source_selector = { winbar = true },
+            hide_root_node = true,
+            retain_hidden_root_indent = true, -- IF the root node is hidden, keep the indentation anyhow.
+            popup_border_style = 'rounded',
 
             default_component_configs = {
-                indent = {
-                    indent_size = 3,
-                    padding = 1,
-                    indent_marker = '│',
-                    last_indent_marker = '│',
+                indent = { indent_size = 2, padding = 0 },
+            },
+
+            event_handlers = {
+                {
+                    event = 'neo_tree_popup_input_ready',
+                    handler = function(args)
+                        vim.cmd 'stopinsert'
+                        vim.keymap.set('i', '<esc>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr })
+                    end,
                 },
             },
 
