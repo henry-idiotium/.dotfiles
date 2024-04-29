@@ -6,7 +6,7 @@ set -U fzf_cmd fzf \
     --bind alt-g:first,alt-G:last
 
 set -U fzf_fd_cmd fd \
-    --hidden --no-ignore --no-require-git --color always \
+    --follow --hidden --no-ignore --no-require-git --color always \
     --exclude .git \
     --exclude node_modules
 
@@ -15,9 +15,9 @@ set -U fzf_fd_cmd fd \
 
 function fzf_change_document
     set -fa fzf_cmd --prompt ' Documents> '
-    set -fa fzf_fd_cmd --min-depth 1 --max-depth 1 --type directory \
+    set -fa fzf_fd_cmd --exact-depth 1 --type directory \
         --base-directory $HOME \
-        -- . .config \
+        -- . .config documents \
         documents/throwaways \
         documents/personal \
         documents/projects \
