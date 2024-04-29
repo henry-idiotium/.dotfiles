@@ -150,76 +150,84 @@ return {
 
         opts = {
             sources = { 'filesystem', 'git_status' },
+
+            default_component_configs = {
+                indent = {
+                    indent_size = 3,
+                    padding = 1,
+                    indent_marker = '│',
+                    last_indent_marker = '│',
+                },
+            },
+
+            -- neo-tree neo-tree-popup
+            use_default_mappings = false,
+            window = {
+                position = 'right',
+                mappings = {
+                    ['sf'] = 'close_window',
+                    ['q'] = 'close_window',
+                    ['<c-q>'] = 'close_window',
+                    ['h'] = 'close_node',
+                    ['l'] = 'open',
+                    ['<cr>'] = 'open',
+                    ['<2-leftmouse>'] = 'open',
+                    ['<a-t>'] = 'open_tabnew',
+                    ['<a-s>'] = 'open_split',
+                    ['<a-v>'] = 'open_vsplit',
+
+                    ['?'] = 'show_help',
+                    ['<'] = 'prev_source',
+                    ['>'] = 'next_source',
+                    ['<esc>'] = 'cancel',
+                    ['<s-r>'] = 'refresh',
+
+                    ['<a-n>'] = 'add',
+                    ['<a-c>'] = 'copy',
+                    ['<a-d>'] = 'delete',
+                    ['<a-m>'] = 'move',
+                    ['<a-i>'] = 'show_file_details',
+                    ['<a-r>'] = 'rename',
+
+                    ['<a-o>'] = 'show_help',
+                    ['<a-o>c'] = 'order_by_created',
+                    ['<a-o>d'] = 'order_by_diagnostics',
+                    ['<a-o>g'] = 'order_by_git_status',
+                    ['<a-o>m'] = 'order_by_modified',
+                    ['<a-o>n'] = 'order_by_name',
+                    ['<a-o>s'] = 'order_by_size',
+                    ['<a-o>t'] = 'order_by_type',
+
+                    ----
+                    -- ['A'] = 'add_directory',
+                    -- ['C'] = 'close_node',
+                    -- ['D'] = 'fuzzy_finder_directory',
+                    -- ['P'] = 'toggle_preview',
+                    -- ['S'] = 'open_split',
+                    -- ['[g'] = 'prev_git_modified',
+                    -- [']g'] = 'next_git_modified',
+                    -- ['l'] = 'focus_preview',
+                    -- ['e'] = 'toggle_auto_expand_width',
+                    -- ['p'] = 'paste_from_clipboard',
+                    -- ['x'] = 'cut_to_clipboard',
+                    -- ['<c-y>'] = 'Copy Path to Clipboard',
+                    -- ['<s-o>'] = 'Open with System Application',
+                },
+            },
+
             filesystem = {
                 bind_to_cwd = false,
                 follow_current_file = { enabled = true },
                 use_libuv_file_watcher = true,
-            },
-            window = {
-                mappings = {
-                    ['.'] = 'none',
-                    ['<space>'] = 'none',
-                    [''] = 'none',
-
-                    ['h'] = 'navigate_up',
-                    ['l'] = 'open',
-                    -- [[
-                    --             # -> fuzzy_sorter
-                    --             / -> fuzzy_finder
-                    --             < -> prev_source
-                    -- <2-leftmouse> -> open
-                    --          <bs> -> navigate_up
-                    --         <c-x> -> clear_filter
-                    --         <c-y> -> Copy Path to Clipboard
-                    --          <cr> -> open
-                    --         <esc> -> cancel
-                    --         <s-o> -> Open with System Application
-                    --             > -> next_source
-                    --             ? -> show_help
-                    --             A -> add_directory
-                    --             C -> close_node
-                    --             D -> fuzzy_finder_directory
-                    --             H -> toggle_hidden
-                    --             P -> toggle_preview
-                    --             R -> refresh
-                    --             S -> open_split
-                    --            [g -> prev_git_modified
-                    --            ]g -> next_git_modified
-                    --             a -> add
-                    --             c -> copy
-                    --             d -> delete
-                    --             e -> toggle_auto_expand_width
-                    --             f -> filter_on_submit
-                    --             i -> show_file_details
-                    --             l -> focus_preview
-                    --             m -> move
-                    --             o -> show_help
-                    --            oc -> order_by_created
-                    --            od -> order_by_diagnostics
-                    --            og -> order_by_git_status
-                    --            om -> order_by_modified
-                    --            on -> order_by_name
-                    --            os -> order_by_size
-                    --            ot -> order_by_type
-                    --             p -> paste_from_clipboard
-                    --             q -> close_window
-                    --             r -> rename
-                    --             s -> open_vsplit
-                    --             t -> open_tabnew
-                    --             w -> open_with_window_picker
-                    --             x -> cut_to_clipboard
-                    --             y -> copy_to_clipboard
-                    --             z -> close_all_nodes
-                    -- ]]
-                },
-            },
-            default_component_configs = {
-                indent = {
-                    indent_size = 3,
-                    padding = 1, -- extra padding on left hand side
-                    with_markers = true,
-                    indent_marker = '│',
-                    highlight = 'NeoTreeIndentMarker',
+                window = {
+                    mappings = {
+                        ['<c-c>'] = 'clear_filter',
+                        ['#'] = 'fuzzy_sorter',
+                        ['/'] = 'fuzzy_finder',
+                        ['<a-f>'] = 'filter_on_submit',
+                        ['<a-h>'] = 'toggle_hidden',
+                        ['<a-s-h>'] = 'navigate_up',
+                    },
                 },
             },
         },

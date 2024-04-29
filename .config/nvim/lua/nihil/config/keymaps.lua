@@ -89,6 +89,10 @@ map('n', '<c-s-down>', '<cmd>resize -1<cr>', { desc = 'Decrease Window Height' }
 map('n', '<c-s-left>', '<cmd>vertical resize -1<cr>', { desc = 'Decrease Window Width' })
 map('n', '<c-s-right>', '<cmd>vertical resize +1<cr>', { desc = 'Increase Window Width' })
 
+---- Tabs
+map('n', '<tab>', '<cmd>tabnext<cr>', { desc = 'Next Tab' })
+map('n', '<s-tab>', '<cmd>tabprev<cr>', { desc = 'Prev Tab' })
+
 ---- Buffers
 map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
 map('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })

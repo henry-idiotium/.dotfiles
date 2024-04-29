@@ -273,7 +273,7 @@ return {
                 lualine_y = {
                     {
                         'encoding',
-                        cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-5' end,
+                        cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
                     },
                     {
                         'fileformat',
@@ -289,7 +289,7 @@ return {
         },
     },
 
-    -- indent guides for Neovim
+    -- indent guides
     {
         'lukas-reineke/indent-blankline.nvim',
         priority = 500,
@@ -297,13 +297,49 @@ return {
         main = 'ibl',
         opts = {
             indent = { char = '│', tab_char = '│' },
-            exclude = { filetypes = { 'help', 'Trouble', 'trouble', 'lazy', 'mason', 'notify' } },
-            scope = {
-                enabled = true,
-                show_start = false,
-                show_end = false,
-                highlight = { 'Error' },
+            exclude = {
+                filetypes = {
+                    'help',
+                    'alpha',
+                    'dashboard',
+                    'neo-tree',
+                    'Trouble',
+                    'trouble',
+                    'lazy',
+                    'mason',
+                    'notify',
+                    'toggleterm',
+                    'lazyterm',
+                },
             },
         },
+    },
+    -- active indent highlight
+    {
+        'echasnovski/mini.indentscope',
+        version = false,
+        event = 'VeryLazy',
+        opts = {
+            symbol = '│',
+            options = { try_as_border = true },
+        },
+        init = function()
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = {
+                    'help',
+                    'alpha',
+                    'dashboard',
+                    'neo-tree',
+                    'Trouble',
+                    'trouble',
+                    'lazy',
+                    'mason',
+                    'notify',
+                    'toggleterm',
+                    'lazyterm',
+                },
+                callback = function() vim.b.miniindentscope_disable = true end,
+            })
+        end,
     },
 }
