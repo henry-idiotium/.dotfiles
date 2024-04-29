@@ -3,7 +3,5 @@ fish_plugins
 fishd.tmp*
 themes/
 completions/
-conf.d/_*
 functions/
-
-!functions/user.d/*
+conf.d/_*
