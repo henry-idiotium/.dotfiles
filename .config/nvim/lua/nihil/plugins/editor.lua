@@ -45,126 +45,182 @@ return {
 
     -- fuzzy picker
     {
-        'nvim-telescope/telescope.nvim',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-            'nvim-telescope/telescope-file-browser.nvim',
-        },
-        cmd = 'Telescope',
+        'ibhagwan/fzf-lua',
+        cmd = 'FzfLua',
         keys = {
-            { '\\\\', '<cmd>Telescope resume<cr>' },
-            { ';b', '<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>' },
-            { ';f', '<cmd>Telescope find_files<cr>' },
-            { ';r', '<cmd>Telescope live_grep<cr>' },
-            { ';t', '<cmd>Telescope help_tags<cr>' },
-            { ';d', '<cmd>Telescope diagnostics<cr>' },
-            { ';o', '<cmd>Telescope treesitter<cr>' },
+            { '\\\\', '<cmd>FzfLua resume<cr>' },
+            { ';b', '<cmd>FzfLua buffers<cr>', desc = 'Find Current Buffers' },
+            { ';r', '<cmd>FzfLua live_grep<cr>', desc = 'Live Grep' },
+            { ';t', '<cmd>FzfLua help_tags<cr>', desc = 'Search Help Tags' },
+            { ';o', '<cmd>FzfLua lsp_document_symbols<cr>', desc = 'LSP Doc Symbols' },
+            { ';<s-o>', '<cmd>FzfLua lsp_workspace_symbols<cr>', desc = 'LSP Workspace Symbols' },
             {
-                'sf',
+                ';f',
                 function()
-                    local function telescope_buffer_dir() return vim.fn.expand '%:p:h' end
-                    require('telescope').extensions.file_browser.file_browser {
-                        cwd = telescope_buffer_dir(),
+                    require('fzf-lua').files {
+                        winopts = {
+                            title = '  ' .. vim.fn.getcwd():gsub(vim.env.HOME, '~') .. '  ',
+                            title_pos = 'center',
+                        },
                     }
                 end,
-                desc = 'Open Current Buffer File Browser',
+                desc = 'Find files',
             },
         },
 
         opts = {
-            defaults = {
-                wrap_results = true,
-                layout_strategy = 'horizontal',
-                layout_config = { prompt_position = 'top' },
-                winblend = 0,
-
-                selection_strategy = 'reset',
-                sorting_strategy = 'ascending',
-
-                path_display = { 'tail' },
-                dynamic_preview_title = true,
-            },
-            pickers = {
-                find_files = {
-                    no_ignore = false,
-                    hidden = true,
-                    path_display = { 'absolute' },
-                    previewer = false,
-                    respect_gitignore = false,
-                },
-                live_grep = { additional_args = { '--hidden' } },
-                diagnostics = {
-                    theme = 'ivy',
-                    initial_mode = 'normal',
-                    layout_config = {
-                        preview_cutoff = 9999,
+            fzf_bin = 'sk',
+            winopts = {
+                preview = {
+                    title = true,
+                    wrap = 'nowrap',
+                    hidden = 'hidden',
+                    vertical = 'down:40%',
+                    horizontal = 'right:50%',
+                    layout = 'vertical', -- horizontal|vertical|flex
+                    title_pos = 'center', -- left|center|right, title alignment
+                    scrollbar = 'float', -- 'false|float|border'
+                    winopts = {
+                        number = true,
+                        relativenumber = false,
+                        signcolumn = 'no',
+                        foldlevel = 99,
                     },
                 },
+            },
+            keymap = {
+                -- Override the default tables completely. To disable, delete or modify is sufficient.
+                -- neovim `:tmap` mappings for the fzf win
+                builtin = {
+                    ['<c-q>'] = 'abort',
+                    ['<c-c>'] = 'abort',
+                    ['<a-/>'] = 'toggle-help',
+                    ['<a-z>'] = 'toggle-preview-wrap',
+                    ['<a-p>'] = 'toggle-preview',
+                    ['<c-u>'] = 'preview-page-up',
+                    ['<c-d>'] = 'preview-page-down',
+                    ['<f1>'] = 'preview-page-reset',
+                },
+                fzf = {
+                    ['ctrl-l'] = 'accept',
+                    ['ctrl-i'] = 'beginning-of-line',
+                    ['ctrl-a'] = 'end-of-line',
+                    ['tab'] = 'toggle+down',
+                    ['btab'] = 'toggle+up',
+                    ['alt-g'] = 'first',
+                    ['alt-G'] = 'last',
+                },
+            },
+
+            fzf_opts = {
+                ['--ansi'] = true,
+                ['--cycle'] = true,
+                ['--info'] = 'inline-right',
+                ['--color'] = 'gutter:-1',
+            },
+
+            -- PROVIDERS
+            files = {
+                width = 0.5,
+                prompt = 'Files❯ ',
+                cwd_prompt = false,
+                toggle_ignore_flag = '--no-ignore', -- `actions.toggle_ignore`
+                cmd = 'rg --sortr=accessed --color=never --files --hidden --follow --iglob !.git',
             },
         },
-
-        config = function(_, opts)
-            local telescope = require 'telescope'
-            local actions = require 'telescope.actions'
-            local layout = require 'telescope.actions.layout'
-
-            local mappings = {
-                ['<c-q>'] = actions.close,
-                ['<c-l>'] = actions.select_default,
-                ['<c-a-l>'] = actions.select_tab,
-                ['<c-j>'] = actions.move_selection_next,
-                ['<c-k>'] = actions.move_selection_previous,
-                ['<c-p>'] = layout.toggle_preview,
-
-                ['<c-t>'] = function(...) return require('trouble.providers.telescope').open_with_trouble(...) end,
-                ['<a-t>'] = function(...) return require('trouble.providers.telescope').open_selected_with_trouble(...) end,
-            }
-            opts.defaults.mappings = {
-                i = vim.tbl_extend('force', mappings, {}),
-                n = vim.tbl_extend('force', mappings, {
-                    ['q'] = actions.close,
-                    ['l'] = actions.select_default,
-                }),
-            }
-
-            local fb_actions = require('telescope').extensions.file_browser.actions
-            opts.extensions = {
-                file_browser = {
-                    theme = 'dropdown',
-                    hijack_netrw = true, -- disables netrw and use telescope-file-browser in its place
-
-                    path = '%:p:h',
-                    respect_gitignore = false,
-                    hidden = true,
-                    grouped = true,
-                    previewer = false,
-                    initial_mode = 'normal',
-                    layout_config = { height = 40 },
-
-                    mappings = {
-                        ['n'] = {
-                            ['<s-n>'] = fb_actions.create,
-                            ['h'] = fb_actions.goto_parent_dir,
-                            ['/'] = function() vim.cmd 'startinsert' end,
-                        },
-                    },
-                },
-            }
-            telescope.setup(opts)
-            require('telescope').load_extension 'fzf'
-            require('telescope').load_extension 'file_browser'
-        end,
     },
 
-    -- git helpers
+    -- file explorer
     {
-        'dinhhuy258/git.nvim',
-        event = 'BufReadPre',
+        'nvim-neo-tree/neo-tree.nvim',
+
+        cmd = 'Neotree',
+        keys = {
+            { 'sf', function() require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() } end, desc = 'Explorer (Root Dir)' },
+            { 'sF', function() require('neo-tree.command').execute { toggle = true, dir = vim.uv.cwd() } end, desc = 'Explorer (cwd)' },
+        },
+
+        deactivate = function() vim.cmd [[Neotree close]] end,
+        init = function()
+            if vim.fn.argc(-1) == 1 then
+                local stat = vim.uv.fs_stat(vim.fn.argv(0)) ---@diagnostic disable-line: param-type-mismatch
+                if stat and stat.type == 'directory' then require 'neo-tree' end
+            end
+        end,
+
         opts = {
-            keymaps = {
-                blame = '<leader>gb', -- Open blame window
-                browse = '<leader>go', -- Open file/folder in git repository
+            sources = { 'filesystem', 'git_status' },
+            filesystem = {
+                bind_to_cwd = false,
+                follow_current_file = { enabled = true },
+                use_libuv_file_watcher = true,
+            },
+            window = {
+                mappings = {
+                    ['.'] = 'none',
+                    ['<space>'] = 'none',
+                    [''] = 'none',
+
+                    ['h'] = 'navigate_up',
+                    ['l'] = 'open',
+                    -- [[
+                    --             # -> fuzzy_sorter
+                    --             / -> fuzzy_finder
+                    --             < -> prev_source
+                    -- <2-leftmouse> -> open
+                    --          <bs> -> navigate_up
+                    --         <c-x> -> clear_filter
+                    --         <c-y> -> Copy Path to Clipboard
+                    --          <cr> -> open
+                    --         <esc> -> cancel
+                    --         <s-o> -> Open with System Application
+                    --             > -> next_source
+                    --             ? -> show_help
+                    --             A -> add_directory
+                    --             C -> close_node
+                    --             D -> fuzzy_finder_directory
+                    --             H -> toggle_hidden
+                    --             P -> toggle_preview
+                    --             R -> refresh
+                    --             S -> open_split
+                    --            [g -> prev_git_modified
+                    --            ]g -> next_git_modified
+                    --             a -> add
+                    --             c -> copy
+                    --             d -> delete
+                    --             e -> toggle_auto_expand_width
+                    --             f -> filter_on_submit
+                    --             i -> show_file_details
+                    --             l -> focus_preview
+                    --             m -> move
+                    --             o -> show_help
+                    --            oc -> order_by_created
+                    --            od -> order_by_diagnostics
+                    --            og -> order_by_git_status
+                    --            om -> order_by_modified
+                    --            on -> order_by_name
+                    --            os -> order_by_size
+                    --            ot -> order_by_type
+                    --             p -> paste_from_clipboard
+                    --             q -> close_window
+                    --             r -> rename
+                    --             s -> open_vsplit
+                    --             t -> open_tabnew
+                    --             w -> open_with_window_picker
+                    --             x -> cut_to_clipboard
+                    --             y -> copy_to_clipboard
+                    --             z -> close_all_nodes
+                    -- ]]
+                },
+            },
+            default_component_configs = {
+                indent = {
+                    indent_size = 3,
+                    padding = 1, -- extra padding on left hand side
+                    with_markers = true,
+                    indent_marker = '│',
+                    highlight = 'NeoTreeIndentMarker',
+                },
             },
         },
     },
@@ -174,12 +230,12 @@ return {
         'lewis6991/gitsigns.nvim',
         opts = {
             signs = {
-                add = { text = '▎' },
-                change = { text = '▎' },
+                add = { text = '│' },
+                change = { text = '│' },
                 delete = { text = '' },
                 topdelete = { text = '' },
-                changedelete = { text = '▎' },
-                untracked = { text = '▎' },
+                changedelete = { text = '│' },
+                untracked = { text = '│' },
             },
             on_attach = function(buffer)
                 local gs = package.loaded.gitsigns
@@ -191,17 +247,12 @@ return {
 
                 map('n', '<leader>ghu', gs.undo_stage_hunk, 'Undo Stage Hunk')
                 map('n', '<leader>ghp', gs.preview_hunk_inline, 'Preview Hunk Inline')
-                map('n', '<leader>ghb', function() gs.blame_line { full = true } end, 'Blame Line')
+                map('n', '<leader>ghb', gs.toggle_current_line_blame, 'Toggle line blame')
 
-                map({ 'n', 'v' }, '<leader>ghs', ':Gitsigns stage_hunk<CR>', 'Stage Hunk')
+                map({ 'n', 'v' }, '<leader>ghs', '<cmd>Gitsigns stage_hunk<cr>', 'Stage Hunk')
                 map('n', '<leader>gh<s-s>', gs.stage_buffer, 'Stage Buffer')
-                map({ 'n', 'v' }, '<leader>ghr', ':Gitsigns reset_hunk<CR>', 'Reset Hunk')
+                map({ 'n', 'v' }, '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', 'Reset Hunk')
                 map('n', '<leader>gh<s-r>', gs.reset_buffer, 'Reset Buffer')
-
-                map('n', '<leader>ghd', gs.diffthis, 'Diff This')
-                map('n', '<leader>gh<s-d>', function() gs.diffthis '~' end, 'Diff This ~')
-
-                map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', 'GitSigns Select Hunk')
             end,
         },
     },
@@ -263,8 +314,6 @@ return {
             { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous Todo Comment' },
             { '<leader>xt', '<cmd>TodoTrouble<cr>', desc = 'Todo (Trouble)' },
             { '<leader>x<s-t>', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-            { '<leader>st', '<cmd>TodoTelescope<cr>', desc = 'Todo' },
-            { '<leader>s<s-t>', '<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme' },
         },
 
         opts = {
@@ -290,23 +339,11 @@ return {
         },
     },
 
-    -- zen-ing
-    {
-        'folke/zen-mode.nvim',
-        cmd = 'ZenMode',
-        keys = { { '<leader>tz', '<cmd>ZenMode<cr>', desc = 'Toggle Zen Mode' } },
-        opts = {
-            plugins = {
-                gitsigns = true,
-                tmux = true,
-            },
-        },
-    },
-
-    -- highlight text
+    -- highlight hex colors
     {
         'echasnovski/mini.hipatterns',
         event = { 'BufReadPre', 'VeryLazy' },
+        version = false,
         config = true,
     },
 }

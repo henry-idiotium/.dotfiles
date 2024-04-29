@@ -14,7 +14,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 
 -- Highlight yanked text
 vim.api.nvim_create_autocmd('TextYankPost', {
-    group = vim.api.nvim_create_augroup('highlight_yank', { clear = true }),
+    group = augroup 'highlight_yank',
     callback = function()
         vim.highlight.on_yank {
             higroup = 'Visual',
@@ -25,15 +25,12 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Wrap and check for spell in text filetypes
 vim.api.nvim_create_autocmd('FileType', {
-    group = augroup 'wrap_spell',
-    pattern = { 'gitcommit', 'markdown' },
-    callback = function()
-        vim.opt_local.wrap = true
-        vim.opt_local.spell = true
-    end,
+    group = augroup 'text_wrap',
+    pattern = { 'gitcommit', 'markdown', 'noice' },
+    callback = function() vim.opt_local.wrap = true end,
 })
 
--- Turn ON conceallevel files
+-- content concealment
 vim.api.nvim_create_autocmd({ 'FileType' }, {
     group = augroup 'content_concealment',
     pattern = { 'markdown' },
@@ -59,6 +56,7 @@ local exclude_filetypes = {
     'neotest-output-panel',
     'PlenaryTestPopup',
     'Trouble',
+    'netrw',
 }
 
 -- Easy closing
@@ -67,25 +65,24 @@ vim.api.nvim_create_autocmd('FileType', {
     pattern = exclude_filetypes,
     callback = function(event)
         vim.bo[event.buf].buflisted = false
-        vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = event.buf, silent = true })
+        local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
+        map('n', 'q')
+        map('n', '<c-q>')
+        map('n', '<c-c>')
     end,
 })
 
--- go to prev cursor location when opening a buffer
+-- go to previous cursor location
 vim.api.nvim_create_autocmd('BufReadPost', {
     group = augroup 'last_loc',
     callback = function(event)
+        if vim.tbl_contains(exclude_filetypes, vim.bo.filetype) then return end
+
         local buf = event.buf
         local has_mark, mark = pcall(vim.api.nvim_buf_get_mark, buf, '"')
-
-        -- stylua: ignore
-        if  vim.tbl_contains(exclude_filetypes, vim.bo.filetype)
-            or vim.b[buf].last_loc
-            or not has_mark
-        then return end
+        if vim.b[buf].last_loc or not has_mark then return end
 
         vim.b[buf].last_loc = true
-
         local lcount = vim.api.nvim_buf_line_count(buf)
         if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
     end,
@@ -93,7 +90,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 
 -- Auto create dir when saving a file, in case some intermediate directory does not exist
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-    group = augroup 'auto_create_dirs_if_absent',
+    group = augroup 'auto_create_interm_absent_dirs',
     callback = function(event)
         if event.match:match '^%w%w+:[\\/][\\/]' then return end
         local file = vim.uv.fs_realpath(event.match) or event.match

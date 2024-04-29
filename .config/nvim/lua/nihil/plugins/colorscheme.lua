@@ -3,13 +3,9 @@ return {
     {
         'rose-pine/neovim',
         name = 'rose-pine',
-        priority = 1000,
+        event = 'VeryLazy',
         enabled = true,
-        init = function()
-            vim.opt.winblend = 0
-            vim.opt.pumblend = 0
-            vim.cmd.colorscheme 'rose-pine-main'
-        end,
+        init = function() vim.cmd.colorscheme 'rose-pine-main' end,
         opts = {
             variant = 'auto', -- auto, main, moon, or dawn
             dark_variant = 'main', -- main, moon, or dawn
@@ -24,12 +20,15 @@ return {
                 transparency = true,
             },
 
-            groups = {},
+            ---@type table<string, vim.api.keyset.highlight>
             highlight_groups = {
                 Comment = { fg = 'muted' },
                 Folded = { bg = 'base' },
-                VertSplit = { fg = 'muted', bg = 'muted' },
-                Search = { bg = 'highlight_high', fg = 'text' },
+                VertSplit = { fg = 'overlay', bg = 'muted' },
+                Search = { bg = 'highlight_med', fg = 'none' },
+                CurSearch = { bg = 'highlight_med', fg = 'none' },
+                IncSearch = { bg = 'highlight_med', fg = 'none' },
+                Visual = { bg = '#343242' },
                 Normal = { bg = 'none' },
                 NormalFloat = { bg = 'none' },
 
@@ -37,6 +36,9 @@ return {
                 TroubleNormal = { bg = 'none' },
                 CmpGhostText = { link = 'Comment', default = true },
                 VirtColumn = { fg = 'base' },
+                IlluminatedWordText = { bg = 'highlight_low' },
+                IlluminatedWordRead = { bg = 'highlight_low' },
+                IlluminatedWordWrite = { bg = 'highlight_low' },
             },
         },
     },

@@ -35,7 +35,7 @@ vim.opt.background = 'dark'
 vim.opt.completeopt = 'menu,menuone,noselect'
 vim.opt.confirm = true
 vim.opt.conceallevel = 0
-vim.opt.shortmess:append { W = true, I = true, c = true, C = true }
+-- vim.opt.shortmess:append { W = true, I = true, c = true, C = true }
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -51,10 +51,6 @@ vim.opt.smartindent = false
 vim.opt.breakindent = true
 vim.opt.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
 
-vim.g.netrw_browse_split = 0
-vim.g.netrw_banner = 0
-vim.g.netrw_winsize = 25
-
 vim.opt.backupskip = { '/tmp/*', '/private/tmp/*' }
 vim.opt.backspace = { 'start', 'eol', 'indent' }
 
@@ -68,10 +64,13 @@ vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = 'expr'
 vim.opt.foldenable = true
--- vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
--- vim.opt.foldtext = [[]]
+vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+vim.opt.foldtext = ''
 vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }
 
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
+
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1

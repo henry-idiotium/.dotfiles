@@ -3,8 +3,8 @@ return {
     -- highlight symbols on cursor
     {
         'RRethy/vim-illuminate',
-        lazy = false,
         event = 'VeryLazy',
+        lazy = false,
 
         keys = {
             { ']]', desc = 'Next Reference' },
@@ -15,14 +15,7 @@ return {
             delay = 200,
             large_file_cutoff = 2000,
             large_file_overrides = { providers = { 'lsp' } },
-            filetypes_denylist = {
-                'dirbuf',
-                'dirvish',
-                'fugitive',
-                'help',
-                'TelescopePrompt',
-                'TelescopeResult',
-            },
+            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help', 'TelescopePrompt', 'TelescopeResult' },
         },
 
         config = function(_, opts)
@@ -36,10 +29,8 @@ return {
                     { desc = dir:sub(4, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer }
                 )
             end
-
             map(']]', 'next')
             map('[[', 'prev')
-
             -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
             vim.api.nvim_create_autocmd('FileType', {
                 callback = function()
@@ -120,11 +111,7 @@ return {
         'folke/noice.nvim',
         lazy = false,
         event = 'VeryLazy',
-        dependencies = {
-            'MunifTanjim/nui.nvim',
-            -- Displays a popup with possible key bindings of the command you started typing
-            { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>sn'] = { name = '+noice' } end },
-        },
+        dependencies = { 'MunifTanjim/nui.nvim' },
         keys = {
             { '<s-enter>', function() require('noice').redirect(vim.fn.getcmdline()) end, mode = 'c', desc = 'Redirect Cmdline' },
             { '<leader>snl', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
@@ -310,50 +297,13 @@ return {
         main = 'ibl',
         opts = {
             indent = { char = '│', tab_char = '│' },
-            scope = { enabled = false },
             exclude = { filetypes = { 'help', 'Trouble', 'trouble', 'lazy', 'mason', 'notify' } },
-        },
-        init = function()
-            local hooks = require 'ibl.hooks'
-            hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
-        end,
-    },
-
-    -- floating filename
-    {
-        'b0o/incline.nvim',
-        event = 'BufReadPre',
-        opts = {
-            window = {
-                padding = 1,
-                margin = { vertical = 0, horizontal = 1 },
+            scope = {
+                enabled = true,
+                show_start = false,
+                show_end = false,
+                highlight = { 'Error' },
             },
-            hide = { cursorline = true },
-            render = function(props)
-                local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
-                local icon, color = require('nvim-web-devicons').get_icon_color(filename)
-
-                if vim.bo[props.buf].modified then filename = filename .. '  ' end
-
-                return { { icon, guifg = color }, '  ', filename }
-            end,
-        },
-    },
-
-    -- rulers
-    {
-        'lukas-reineke/virt-column.nvim',
-        event = 'VeryLazy',
-        opts = { char = '│', virtcolumn = '80,120,160', highlight = 'VirtColumn' },
-    },
-
-    {
-        'kevinhwang91/nvim-ufo',
-        dependencies = 'kevinhwang91/promise-async',
-        event = 'VeryLazy',
-        opts = {
-            open_fold_hl_timeout = 200,
-            provider_selector = function() return { 'treesitter', 'indent' } end,
         },
     },
 }

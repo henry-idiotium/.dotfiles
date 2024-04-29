@@ -1,18 +1,36 @@
 ---@diagnostic disable: no-unknown
 return {
-    { 'kylechui/nvim-surround', event = 'VeryLazy', config = true }, -- better surround
-    { 'echasnovski/mini.pairs', event = 'VeryLazy', config = true }, -- auto pairs closing blocks
+    { 'echasnovski/mini.pairs', event = 'VeryLazy', opts = {} }, -- auto pairs closing blocks
 
+    {
+        'echasnovski/mini.surround',
+        version = false,
+        opts = {
+            highlight_duration = 0,
+            mappings = {
+                add = '<s-s>',
+                delete = 'ds',
+                replace = 'sc',
+                find = '',
+                find_left = '',
+                highlight = '',
+                suffix_last = '',
+                suffix_next = '',
+                update_n_lines = '',
+            },
+            n_lines = 40, -- Number of lines within which surrounding is searched
+            respect_selection_type = false,
+            silent = false,
+        },
+    },
+
+    -- meta comment gen
     {
         'danymat/neogen',
         event = 'VeryLazy',
         opts = { snippet_engine = 'luasnip' },
         keys = {
-            {
-                '<leader>cg',
-                function() require('neogen').generate {} end,
-                desc = 'Neogen Comment',
-            },
+            { '<leader>cg', function() require('neogen').generate {} end, desc = 'Neogen Comment' },
         },
     },
 
@@ -43,16 +61,18 @@ return {
     },
 
     -- comments
-    { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true, opts = { enable_autocmd = false } },
     {
-        'numToStr/Comment.nvim',
-        lazy = false,
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        opts = { enable_autocmd = false },
+        lazy = true,
+    },
+    {
+        'echasnovski/mini.comment',
+        event = 'VeryLazy',
         opts = {
-            padding = false,
-            sticky = true,
-            -- `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
-            mappings = { basic = true, extra = false },
-            pre_hook = function() return require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook() end,
+            options = {
+                custom_commentstring = function() return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring end,
+            },
         },
     },
 }

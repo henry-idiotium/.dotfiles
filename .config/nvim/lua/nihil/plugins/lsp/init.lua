@@ -40,6 +40,7 @@ return {
                 lsp_opts.capabilities or {}
             )
 
+            require('lspconfig.ui.windows').default_options.border = 'single'
             require('mason').setup { ui = { border = 'rounded' } }
             require('mason-tool-installer').setup(options.mason_tool)
             require('mason-lspconfig').setup(vim.tbl_deep_extend('force', {}, options.mason_lspconfig, {
