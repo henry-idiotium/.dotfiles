@@ -6,7 +6,7 @@ function M.on_attach(_, buffer)
     map('n', 'gd', '<cmd>FzfLua lsp_definitions<cr>', { desc = 'Goto Definition' })
     map('n', 'g<s-d>', '<cmd>FzfLua lsp_declarations<cr>', { desc = 'Goto declaration' })
     map('n', 'gr', '<cmd>FzfLua lsp_references<cr>', { desc = 'Goto/listing references' })
-    map('n', 'g<s-i>', '<cmd>FzfLua lsp_implementation<cr>', { desc = 'Goto Implementation' })
+    map('n', 'gi', '<cmd>FzfLua lsp_implementations<cr>', { desc = 'Goto Implementation' })
 
     map('n', '<s-k>', vim.lsp.buf.hover, { desc = 'Hover/Show definition' })
     map('i', '<c-k>', vim.lsp.buf.signature_help, { desc = 'Show signature' })

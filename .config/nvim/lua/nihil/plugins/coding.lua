@@ -1,7 +1,7 @@
 ---@diagnostic disable: no-unknown
 return {
-    { 'echasnovski/mini.pairs', event = 'VeryLazy', opts = {} }, -- auto pairs closing blocks
-
+    -- delimiter pairs
+    { 'echasnovski/mini.pairs', event = 'VeryLazy', opts = {} }, -- auto delimiter closing pairs
     {
         'echasnovski/mini.surround',
         version = false,
@@ -26,11 +26,16 @@ return {
 
     -- meta comment gen
     {
+        enabled = false,
         'danymat/neogen',
         event = 'VeryLazy',
         opts = { snippet_engine = 'luasnip' },
         keys = {
-            { '<leader>cg', function() require('neogen').generate {} end, desc = 'Neogen Comment' },
+            {
+                '<leader>cg',
+                function() require('neogen').generate {} end,
+                desc = 'Neogen Comment',
+            },
         },
     },
 
@@ -52,9 +57,6 @@ return {
                 end,
                 mode = { 'n', 'v' },
                 desc = 'Refactoring actions',
-                noremap = true,
-                silent = true,
-                expr = false,
             },
         },
         opts = { show_success_message = true },

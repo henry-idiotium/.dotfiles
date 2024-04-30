@@ -1,15 +1,10 @@
 ---@diagnostic disable: no-unknown
-vim.cmd [[ autocmd BufNewFile,BufRead *.astro setfiletype astro ]]
-vim.cmd [[ autocmd BufNewFile,BufRead Podfile setfiletype ruby ]]
-
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
     group = augroup 'checktime',
-    callback = function()
-        if vim.o.buftype ~= 'nofile' then vim.cmd 'checktime' end
-    end,
+    callback = function() return vim.o.buftype ~= 'nofile' and vim.cmd 'checktime' end,
 })
 
 -- Highlight yanked text
@@ -38,15 +33,17 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
 })
 
 local exclude_filetypes = {
+    'qf',
+    'vim',
+    'help',
     'hgcommit',
     'gitcommit',
     'gitrebase',
     'svn',
-    'qf',
-    'help',
-    'vim',
+    'netrw',
     'notify',
     'query',
+    'lazy',
     'lspinfo',
     'checkhealth',
     'spectre_panel',
@@ -56,7 +53,6 @@ local exclude_filetypes = {
     'neotest-output-panel',
     'PlenaryTestPopup',
     'Trouble',
-    'netrw',
 }
 
 -- Easy closing
@@ -68,7 +64,6 @@ vim.api.nvim_create_autocmd('FileType', {
         local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
         map('n', 'q')
         map('n', '<c-q>')
-        map('n', '<c-c>')
     end,
 })
 
@@ -97,3 +92,8 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
         vim.fn.mkdir(vim.fn.fnamemodify(file, ':p:h'), 'p')
     end,
 })
+
+-- Set filetypes
+local function ft_pattern(pattern, ft) vim.cmd(' autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft) end
+ft_pattern('*.astro', 'astro')
+ft_pattern('Podfile', 'ruby')

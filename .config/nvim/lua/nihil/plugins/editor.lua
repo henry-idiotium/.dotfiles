@@ -69,63 +69,35 @@ return {
         },
 
         opts = {
-            fzf_bin = 'sk',
             winopts = {
                 preview = {
                     title = true,
                     wrap = 'nowrap',
                     hidden = 'hidden',
+                    title_pos = 'center',
                     vertical = 'down:40%',
                     horizontal = 'right:50%',
-                    layout = 'vertical', -- horizontal|vertical|flex
-                    title_pos = 'center', -- left|center|right, title alignment
-                    scrollbar = 'float', -- 'false|float|border'
-                    winopts = {
-                        number = true,
-                        relativenumber = false,
-                        signcolumn = 'no',
-                        foldlevel = 99,
-                    },
+                    scrollchars = { '┃', '' },
                 },
             },
             keymap = {
-                -- Override the default tables completely. To disable, delete or modify is sufficient.
-                -- neovim `:tmap` mappings for the fzf win
                 builtin = {
-                    ['<c-q>'] = 'abort',
-                    ['<c-c>'] = 'abort',
                     ['<a-/>'] = 'toggle-help',
-                    ['<a-z>'] = 'toggle-preview-wrap',
                     ['<a-p>'] = 'toggle-preview',
-                    ['<c-u>'] = 'preview-page-up',
-                    ['<c-d>'] = 'preview-page-down',
-                    ['<f1>'] = 'preview-page-reset',
-                },
-                fzf = {
-                    ['ctrl-l'] = 'accept',
-                    ['ctrl-i'] = 'beginning-of-line',
-                    ['ctrl-a'] = 'end-of-line',
-                    ['tab'] = 'toggle+down',
-                    ['btab'] = 'toggle+up',
-                    ['alt-g'] = 'first',
-                    ['alt-G'] = 'last',
+                    ['<c-u>'] = 'preview-up',
+                    ['<c-d>'] = 'preview-down',
+                    ['<a-z>'] = 'toggle-preview-wrap',
                 },
             },
 
-            fzf_opts = {
-                ['--ansi'] = true,
-                ['--cycle'] = true,
-                ['--info'] = 'inline-right',
-                ['--color'] = 'gutter:-1',
-            },
+            fzf_args = vim.env.FZF_DEFAULT_OPTS,
 
             -- PROVIDERS
             files = {
-                width = 0.5,
-                prompt = 'Files❯ ',
+                fd_opts = vim.env.FD_DEFAULT_OPTS and vim.env.FD_DEFAULT_OPTS .. ' --type f' or nil,
                 cwd_prompt = false,
-                toggle_ignore_flag = '--no-ignore', -- `actions.toggle_ignore`
-                cmd = 'rg --sortr=accessed --color=never --files --hidden --follow --iglob !.git',
+                prompt = ' Files❯ ',
+                winopts = { width = 0.5, layout = 'vertical' },
             },
         },
     },
@@ -136,6 +108,7 @@ return {
 
         cmd = 'Neotree',
         keys = {
+            { ';s', '<cmd>Neotree reveal<cr>', desc = 'Explorer reveal current file (root dir)' },
             {
                 'sf',
                 function() require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() } end,
@@ -187,12 +160,13 @@ return {
                     ['<a-t>'] = 'open_tabnew',
                     ['<a-s>'] = 'open_split',
                     ['<a-v>'] = 'open_vsplit',
-
                     ['?'] = 'show_help',
                     ['<'] = 'prev_source',
                     ['>'] = 'next_source',
                     ['<esc>'] = 'cancel',
                     ['<s-r>'] = 'refresh',
+                    ['z<s-c>'] = 'close_all_nodes',
+                    ['z<s-o>'] = 'expand_all_nodes',
 
                     ['<a-n>'] = 'add',
                     ['<a-c>'] = 'copy',
@@ -201,7 +175,6 @@ return {
                     ['<a-i>'] = 'show_file_details',
                     ['<a-r>'] = 'rename',
 
-                    ['<a-o>'] = 'show_help',
                     ['<a-o>c'] = 'order_by_created',
                     ['<a-o>d'] = 'order_by_diagnostics',
                     ['<a-o>g'] = 'order_by_git_status',
@@ -229,7 +202,8 @@ return {
 
             filesystem = {
                 bind_to_cwd = false,
-                follow_current_file = { enabled = true },
+                hijack_netrw_behavior = 'open_current',
+                follow_current_file = { enabled = false },
                 use_libuv_file_watcher = true,
                 window = {
                     mappings = {
@@ -326,8 +300,7 @@ return {
     -- highlighted commentes
     {
         'folke/todo-comments.nvim',
-        cmd = { 'TodoTrouble', 'TodoTelescope' },
-        lazy = false,
+        cmd = 'TodoTrouble',
         event = 'VeryLazy',
         keys = {
             { ']t', function() require('todo-comments').jump_next() end, desc = 'Next Todo Comment' },

@@ -15,7 +15,7 @@ return {
             delay = 200,
             large_file_cutoff = 2000,
             large_file_overrides = { providers = { 'lsp' } },
-            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help', 'TelescopePrompt', 'TelescopeResult' },
+            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help' },
         },
 
         config = function(_, opts)
@@ -280,9 +280,9 @@ return {
                         symbols = { unix = 'LF', dos = 'CRLF', mac = 'CR' },
                         cond = function() return vim.bo.ff ~= 'unix' end,
                     },
+                    { 'progress' },
                 },
                 lualine_z = {
-                    { 'progress', separator = '' },
                     { 'location' },
                 },
             },
@@ -343,5 +343,44 @@ return {
                 },
             })
         end,
+    },
+
+    -- floating filename
+    {
+        'b0o/incline.nvim',
+        event = 'VeryLazy',
+        opts = {
+            window = {
+                padding = 1,
+                margin = { vertical = 0, horizontal = 1 },
+            },
+            hide = { cursorline = true },
+            render = function(props)
+                local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
+                local icon, color = require('nvim-web-devicons').get_icon_color(filename)
+
+                if vim.bo[props.buf].modified then filename = filename .. '  ' end
+
+                return { { icon, guifg = color }, '  ', filename }
+            end,
+        },
+    },
+
+    {
+        'shortcuts/no-neck-pain.nvim',
+        version = '*',
+        event = 'VeryLazy',
+        keys = {
+            { '<leader>tz', function() require('no-neck-pain').toggle() end },
+        },
+        opts = {
+            width = 130,
+            minSideBufferWidth = 6,
+
+            integrations = {
+                NeoTree = { position = 'right', reopen = true },
+                -- undotree = { position = 'left', },
+            },
+        },
     },
 }

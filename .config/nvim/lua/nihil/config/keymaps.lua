@@ -84,10 +84,10 @@ map('n', '[q', '<cmd>cprev<cr>', { desc = 'Previous Quickfix' })
 map('n', ']q', '<cmd>cnext<cr>', { desc = 'Next Quickfix' })
 
 ---- Split
-map('n', '<c-s-up>', '<cmd>resize +1<cr>', { desc = 'Increase Window Height' })
-map('n', '<c-s-down>', '<cmd>resize -1<cr>', { desc = 'Decrease Window Height' })
-map('n', '<c-s-left>', '<cmd>vertical resize -1<cr>', { desc = 'Decrease Window Width' })
-map('n', '<c-s-right>', '<cmd>vertical resize +1<cr>', { desc = 'Increase Window Width' })
+map('n', '<c-a-up>', '<cmd>resize +1<cr>', { desc = 'Increase Window Height' })
+map('n', '<c-a-down>', '<cmd>resize -1<cr>', { desc = 'Decrease Window Height' })
+map('n', '<c-a-left>', '<cmd>vertical resize -1<cr>', { desc = 'Decrease Window Width' })
+map('n', '<c-a-right>', '<cmd>vertical resize +1<cr>', { desc = 'Increase Window Width' })
 
 ---- Tabs
 map('n', '<tab>', '<cmd>tabnext<cr>', { desc = 'Next Tab' })
@@ -97,7 +97,8 @@ map('n', '<s-tab>', '<cmd>tabprev<cr>', { desc = 'Prev Tab' })
 map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
 map('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
 map('n', '<leader>`', '<cmd>b#<cr>', { desc = 'Alternate buffer' })
-map('n', '<leader>bd', '<cmd>bwipeout<cr>', { desc = 'Delete buffer from list' })
+map('n', '<leader>bd', '<cmd>bwipeout<cr>', { desc = 'Delete Focus Buffer' })
+map('n', '<leader>b<s-d>', ':%bd | e#<cr>', { desc = 'Delete all buffers except this buffer' })
 
 ---- Others
 map('n', '<leader>ol', '<cmd>Lazy<cr>', { desc = 'Lazy' })
