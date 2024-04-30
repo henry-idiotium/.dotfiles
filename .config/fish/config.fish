@@ -54,15 +54,18 @@ function fish_user_key_bindings
     bind \cq exit
     bind -M insert -m default jj ''
     bind -M insert -m default jk ''
+
     bind L end-of-line
     bind H beginning-of-line
     bind -M visual L end-of-line
     bind -M visual H beginning-of-line
+
+    bind -M insert \cy forward-char # accept inline suggestion
 
     # custom funcs
     bind -M insert \ce fzf_search_path
     bind -M insert \cd fzf_change_document
 
     # scripts
-    bind -M insert \e\; start-tmux
+    [ -z "$(pgrep tmux)" ] && bind -M insert \e\; start-tmux
 end

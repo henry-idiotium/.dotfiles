@@ -3,7 +3,7 @@ local M = {}
 function M.on_attach(_, buffer)
     local map = function(modes, lhs, rhs, extra_opts) vim.keymap.set(modes, lhs, rhs, vim.tbl_extend('force', { buffer = buffer }, extra_opts or {})) end
 
-    map('n', 'gd', '<cmd>FzfLua lsp_definitions<cr>', { desc = 'Goto Definition' })
+    map('n', 'gd', '<cmd>FzfLua lsp_finder<cr>', { desc = 'Goto Definition' })
     map('n', 'g<s-d>', '<cmd>FzfLua lsp_declarations<cr>', { desc = 'Goto declaration' })
     map('n', 'gr', '<cmd>FzfLua lsp_references<cr>', { desc = 'Goto/listing references' })
     map('n', 'gi', '<cmd>FzfLua lsp_implementations<cr>', { desc = 'Goto Implementation' })

@@ -1,48 +1,5 @@
 ---@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil
 return {
-    -- highlight symbols on cursor
-    {
-        'RRethy/vim-illuminate',
-        event = 'VeryLazy',
-        lazy = false,
-
-        keys = {
-            { ']]', function() require('illuminate')['goto_next_reference'](false) end, desc = 'Next Reference' },
-            { '[[', function() require('illuminate')['goto_prev_reference'](false) end, desc = 'Prev Reference' },
-        },
-
-        opts = {
-            delay = 200,
-            large_file_cutoff = 2000,
-            large_file_overrides = { providers = { 'lsp' } },
-            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help' },
-        },
-
-        config = function(_, opts)
-            require('illuminate').configure(opts)
-
-            ---@param dir string
-            local function map(key, dir, buffer)
-                local action = 'goto_' .. dir .. '_reference'
-                vim.keymap.set('n', key, function() require('illuminate')[action](false) end, {
-                    desc = 'illuminate ' .. action,
-                    buffer = buffer,
-                })
-            end
-
-            map(']]', 'next')
-            map('[[', 'prev')
-            -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
-            vim.api.nvim_create_autocmd('FileType', {
-                callback = function()
-                    local buffer = vim.api.nvim_get_current_buf()
-                    map(']]', 'next', buffer)
-                    map('[[', 'prev', buffer)
-                end,
-            })
-        end,
-    },
-
     -- Better `vim.notify`
     {
         'rcarriga/nvim-notify',
@@ -378,7 +335,6 @@ return {
     {
         'shortcuts/no-neck-pain.nvim',
         version = '*',
-        event = 'VeryLazy',
         keys = { { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' } },
         opts = {
             width = 130,
@@ -386,7 +342,7 @@ return {
 
             integrations = {
                 NeoTree = { position = 'right', reopen = true },
-                -- undotree = { position = 'left', },
+                undotree = { position = 'left' },
             },
         },
     },

@@ -47,6 +47,7 @@ return {
     {
         'ibhagwan/fzf-lua',
         cmd = 'FzfLua',
+        version = false,
         keys = {
             { '\\\\', '<cmd>FzfLua resume<cr>' },
             { ';b', '<cmd>FzfLua buffers<cr>', desc = 'Find Current Buffers' },
@@ -94,7 +95,9 @@ return {
 
             -- PROVIDERS
             files = {
-                fd_opts = vim.env.FD_DEFAULT_OPTS and vim.env.FD_DEFAULT_OPTS .. ' --type f' or nil,
+                -- cmd = 'fd ' .. vim.env.FD_DEFAULT_OPTS .. ' --type f',
+                cmd = 'rg ' .. vim.env.RG_DEFAULT_OPTS,
+                formatter = 'path.filename_first',
                 cwd_prompt = false,
                 prompt = ' Files❯ ',
                 winopts = { width = 0.5, preview = { layout = 'vertical' } },
@@ -261,8 +264,8 @@ return {
             padding = false,
             action_keys = {
                 close = '<c-q>',
-                close_folds = 'zC', -- close all folds
-                open_folds = 'zO', -- open all folds
+                close_folds = 'zC',
+                open_folds = 'zO',
             },
         },
         keys = {
@@ -310,15 +313,16 @@ return {
         },
 
         opts = {
+            --           󰙏  
             keywords = {
-                TODO = { icon = '✨', color = 'todo' }, -- 
+                TODO = { icon = '✨', color = 'todo' },
                 REFAC = { icon = '👺', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
-                HACK = { icon = '🔥', color = 'warning' }, -- 
-                FIX = { icon = '👹', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } }, -- 
-                WARN = { icon = '🙀', color = 'warning', alt = { 'WARNING', 'XXX' } }, -- 
-                PERF = { icon = '🚀', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } }, -- 
-                NOTE = { icon = '🔖', color = 'hint', alt = { 'INFO' } }, -- 󰙏
-                TEST = { icon = '🧪', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } }, -- 
+                HACK = { icon = '🔥', color = 'warning' },
+                FIX = { icon = '👹', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
+                WARN = { icon = '🙀', color = 'warning', alt = { 'WARNING', 'XXX' } },
+                PERF = { icon = '🚀', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
+                NOTE = { icon = '🔖', color = 'hint', alt = { 'INFO' } },
+                TEST = { icon = '🧪', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
             },
             colors = {
                 todo = { 'DiagnosticOk', '#25EBA2' },
@@ -330,5 +334,72 @@ return {
                 default = { 'Identifier', '#7C3AED' },
             },
         },
+    },
+
+    -- highlight symbols on cursor
+    {
+        'RRethy/vim-illuminate',
+        event = 'VeryLazy',
+        lazy = false,
+
+        keys = {
+            { ']]', function() require('illuminate')['goto_next_reference'](false) end, desc = 'Next Reference' },
+            { '[[', function() require('illuminate')['goto_prev_reference'](false) end, desc = 'Prev Reference' },
+        },
+
+        opts = {
+            delay = 200,
+            large_file_cutoff = 2000,
+            large_file_overrides = { providers = { 'lsp' } },
+            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help' },
+        },
+
+        config = function(_, opts)
+            require('illuminate').configure(opts)
+
+            ---@param dir string
+            local function map(key, dir, buffer)
+                local action = 'goto_' .. dir .. '_reference'
+                vim.keymap.set('n', key, function() require('illuminate')[action](false) end, {
+                    desc = 'illuminate ' .. action,
+                    buffer = buffer,
+                })
+            end
+
+            map(']]', 'next')
+            map('[[', 'prev')
+            -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
+            vim.api.nvim_create_autocmd('FileType', {
+                callback = function()
+                    local buffer = vim.api.nvim_get_current_buf()
+                    map(']]', 'next', buffer)
+                    map('[[', 'prev', buffer)
+                end,
+            })
+        end,
+    },
+
+    -- improved ft
+    {
+        'backdround/improved-ft.nvim',
+        event = 'VeryLazy',
+        opts = {
+            use_default_mappings = false,
+            ignore_char_case = false,
+            use_relative_repetition = true,
+            use_relative_repetition_offsets = true,
+        },
+        config = function(_, opts)
+            local ft = require 'improved-ft'
+            ft.setup(opts)
+
+            local function map(key, action, desc) vim.keymap.set({ 'n', 'x', 'o' }, key, action, { desc = desc, expr = true }) end
+            map('f', ft.hop_forward_to_char, 'Hop forward to a given char')
+            map('F', ft.hop_backward_to_char, 'Hop backward to a given char')
+            map('t', ft.hop_forward_to_pre_char, 'Hop forward before a given char')
+            map('T', ft.hop_backward_to_pre_char, 'Hop backward before a given char')
+            map('<a-;>', ft.repeat_forward, 'Repeat hop forward to a last given char')
+            map('<a-,>', ft.repeat_backward, 'Repeat hop backward to a last given char')
+        end,
     },
 }

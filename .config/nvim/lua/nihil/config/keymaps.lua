@@ -19,8 +19,8 @@ map({ 'n', 'v', 'o' }, '<s-l>', '$')
 map('n', '<c-a>', 'gg<s-v><s-g>')
 
 -- better up/down
-map({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-map({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+map({ 'n', 'x' }, 'j', [[v:count == 0 ? 'gj' : 'j']], { expr = true })
+map({ 'n', 'x' }, 'k', [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 map({ 'n', 'v' }, '<c-k>', '5k')
 map({ 'n', 'v' }, '<c-j>', '5j')
 
@@ -38,7 +38,7 @@ map('n', 'o', 'o<esc>', { remap = true })
 map('n', '<s-o>', '<s-o><esc>', { remap = true })
 map('v', 'p', '<s-p>', { remap = true })
 
-map('n', '<a-z>', '<cmd>set wrap!<cr>')
+map('n', '<a-z>', ':setlocal wrap!<cr>')
 
 map('n', '+', '<c-a>')
 map('n', '-', '<c-x>')
@@ -46,11 +46,11 @@ map('n', '-', '<c-x>')
 map('v', '<', '<gv')
 map('v', '>', '>gv')
 
-map('n', 'z<s-c>', ':set foldlevel=00<cr>', { desc = 'Min Fold Level' })
-map('n', 'z<s-o>', ':set foldlevel=99<cr>', { desc = 'Max Fold Level' })
+map('n', 'z<s-c>', ':setlocal foldlevel=00 <cr>', { desc = 'Min Fold Level' })
+map('n', 'z<s-o>', ':setlocal foldlevel=99 <cr>', { desc = 'Max Fold Level' })
 
-map({ 'n', 's', 'x', 'o' }, '<a-,>', ',', { desc = 'Alt ;' })
-map({ 'n', 's', 'x', 'o' }, '<a-;>', ';', { desc = 'Alt ,' })
+-- map({ 'n', 's', 'x', 'o' }, '<a-,>', ',', { desc = 'Alt ;' })
+-- map({ 'n', 's', 'x', 'o' }, '<a-;>', ';', { desc = 'Alt ,' })
 
 -- register
 map({ 'n', 's', 'x' }, 'x', '"_x', { desc = 'Void yank x' })
