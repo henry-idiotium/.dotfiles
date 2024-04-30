@@ -78,7 +78,7 @@ map({ 'v', 's', 'x' }, '<s-a-j>', ":'<,'>t'><cr>gv", { desc = 'Duplicate Lines D
 
 ---- Quickfix/Localtion list
 map('n', '<leader>xl', '<cmd>lopen<cr>', { desc = 'Location List' })
-map('n', '<leader>xq', '<cmd>copen<cr>', { desc = 'Quickfix List' })
+map('n', '<leader>xq', '<cmd>copen 4<cr>', { desc = 'Quickfix List' })
 
 map('n', '[q', '<cmd>cprev<cr>', { desc = 'Previous Quickfix' })
 map('n', ']q', '<cmd>cnext<cr>', { desc = 'Next Quickfix' })

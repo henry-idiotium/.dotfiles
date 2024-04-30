@@ -7,8 +7,8 @@ return {
         lazy = false,
 
         keys = {
-            { ']]', desc = 'Next Reference' },
-            { '[[', desc = 'Prev Reference' },
+            { ']]', function() require('illuminate')['goto_next_reference'](false) end, desc = 'Next Reference' },
+            { '[[', function() require('illuminate')['goto_prev_reference'](false) end, desc = 'Prev Reference' },
         },
 
         opts = {
@@ -21,14 +21,15 @@ return {
         config = function(_, opts)
             require('illuminate').configure(opts)
 
+            ---@param dir string
             local function map(key, dir, buffer)
-                vim.keymap.set(
-                    'n',
-                    key,
-                    function() require('illuminate')['goto_' .. dir .. '_reference'](false) end,
-                    { desc = dir:sub(4, 1):upper() .. dir:sub(2) .. ' Reference', buffer = buffer }
-                )
+                local action = 'goto_' .. dir .. '_reference'
+                vim.keymap.set('n', key, function() require('illuminate')[action](false) end, {
+                    desc = 'illuminate ' .. action,
+                    buffer = buffer,
+                })
             end
+
             map(']]', 'next')
             map('[[', 'prev')
             -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
@@ -366,13 +367,19 @@ return {
         },
     },
 
+    -- highlight hex colors
+    {
+        'echasnovski/mini.hipatterns',
+        event = { 'BufReadPre', 'VeryLazy' },
+        version = false,
+        config = true,
+    },
+
     {
         'shortcuts/no-neck-pain.nvim',
         version = '*',
         event = 'VeryLazy',
-        keys = {
-            { '<leader>tz', function() require('no-neck-pain').toggle() end },
-        },
+        keys = { { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' } },
         opts = {
             width = 130,
             minSideBufferWidth = 6,

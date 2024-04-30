@@ -17,7 +17,7 @@ function M.on_attach(_, buffer)
     map('n', '<leader>cd', vim.diagnostic.open_float, { desc = 'Open diagnostics' })
     map({ 'n', 'v' }, '<leader>ca', '<cmd>FzfLua lsp_code_actions<cr>', { desc = 'Code actions' })
 
-    map('n', '<leader>tli', require('nihil.util.lsp').toggle.inlay_hints, { desc = 'Toggle inlay hints' })
+    map('n', '<leader>tli', require('nihil.util.lsp').toggle.inlay_hints, { desc = 'Inlay Hints' })
 end
 
 return M

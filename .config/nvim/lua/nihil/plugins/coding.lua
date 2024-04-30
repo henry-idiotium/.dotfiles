@@ -1,3 +1,4 @@
+--- Editor plugins but leaning on more editing aspect
 ---@diagnostic disable: no-unknown
 return {
     -- delimiter pairs
@@ -26,8 +27,8 @@ return {
 
     -- meta comment gen
     {
-        enabled = false,
         'danymat/neogen',
+        enabled = false,
         event = 'VeryLazy',
         opts = { snippet_engine = 'luasnip' },
         keys = {

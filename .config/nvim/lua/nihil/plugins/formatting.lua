@@ -18,9 +18,7 @@ return {
         vim.api.nvim_create_user_command('ToggleAutoFormat', function()
             vim.g.disable_autoformat = not vim.g.disable_autoformat
             vim.notify('Conform auto format (global) ' .. (vim.g.disable_autoformat and '❌' or '💪'))
-        end, {
-            desc = 'Toggle Auto Format (globally)',
-        })
+        end, {})
     end,
 
     opts = function()

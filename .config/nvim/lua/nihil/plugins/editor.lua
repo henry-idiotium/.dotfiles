@@ -97,7 +97,7 @@ return {
                 fd_opts = vim.env.FD_DEFAULT_OPTS and vim.env.FD_DEFAULT_OPTS .. ' --type f' or nil,
                 cwd_prompt = false,
                 prompt = ' Files❯ ',
-                winopts = { width = 0.5, layout = 'vertical' },
+                winopts = { width = 0.5, preview = { layout = 'vertical' } },
             },
         },
     },
@@ -330,13 +330,5 @@ return {
                 default = { 'Identifier', '#7C3AED' },
             },
         },
-    },
-
-    -- highlight hex colors
-    {
-        'echasnovski/mini.hipatterns',
-        event = { 'BufReadPre', 'VeryLazy' },
-        version = false,
-        config = true,
     },
 }
