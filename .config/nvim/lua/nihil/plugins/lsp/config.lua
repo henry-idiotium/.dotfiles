@@ -21,6 +21,7 @@ M.mason_lspconfig = {
         'yamlls',
         'tsserver',
         'emmet_ls',
+        'tailwindcss',
     },
 }
 

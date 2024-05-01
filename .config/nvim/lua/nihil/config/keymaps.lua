@@ -92,6 +92,8 @@ map('n', '<c-a-right>', '<cmd>vertical resize +1<cr>', { desc = 'Increase Window
 ---- Tabs
 map('n', '<tab>', '<cmd>tabnext<cr>', { desc = 'Next Tab' })
 map('n', '<s-tab>', '<cmd>tabprev<cr>', { desc = 'Prev Tab' })
+map('n', '<leader><tab>d', '<cmd>tabclose<cr>', { desc = 'Close Tab' })
+map('n', '<leader><tab>q', '<cmd>tabclose<cr>', { desc = 'Close Tab' })
 
 ---- Buffers
 map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })

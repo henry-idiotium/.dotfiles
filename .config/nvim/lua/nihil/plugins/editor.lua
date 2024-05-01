@@ -12,14 +12,15 @@ return {
             { '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
             { '<c-a-[>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
-            { '<c-a-h>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
-            { '<c-a-j>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
-            { '<c-a-k>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
-            { '<c-a-l>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
+            { '<c-a-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
+            { '<c-a-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
+            { '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
+            { '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
         },
         config = function()
             local harpoon = require 'harpoon'
             harpoon:setup {
+                menu = { width = vim.api.nvim_win_get_width(0) - 4 },
                 settings = {
                     save_on_toggle = true,
                     sync_on_ui_close = true,

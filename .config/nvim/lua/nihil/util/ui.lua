@@ -87,7 +87,7 @@ function M.statuscolumn()
             if vim.fn.foldclosed(vim.v.lnum) >= 0 then fold = { text = vim.opt.fillchars:get().foldclose or '', texthl = 'Folded' } end
         end)
         -- Left: mark or non-git sign
-        components[1] = ' ' .. M.icon(M.get_mark(buf, vim.v.lnum) or left)
+        components[1] = M.icon(M.get_mark(buf, vim.v.lnum) or left)
         -- Right: fold icon or git sign (only if file)
         components[3] = is_file and M.icon(fold or right) or ''
     end
@@ -98,7 +98,7 @@ function M.statuscolumn()
     local is_relnum = vim.wo[win].relativenumber
     if (is_num or is_relnum) and vim.v.virtnum == 0 then
         if vim.v.relnum == 0 then
-            components[2] = (is_num and '%l' or '%r') .. '  ' -- the current line
+            components[2] = (is_num and '%l' or '%r') .. ' ' -- the current line
         else
             components[2] = is_relnum and '%r' or '%l' -- other lines
         end

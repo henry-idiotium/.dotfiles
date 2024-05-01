@@ -332,16 +332,17 @@ return {
         config = true,
     },
 
+    -- center buffer
     {
         'shortcuts/no-neck-pain.nvim',
         version = '*',
+        lazy = false,
         keys = { { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' } },
         opts = {
             width = 130,
             minSideBufferWidth = 6,
-
             integrations = {
-                NeoTree = { position = 'right', reopen = true },
+                NeoTree = { position = 'right' },
                 undotree = { position = 'left' },
             },
         },
