@@ -47,7 +47,7 @@ map('v', '<', '<gv')
 map('v', '>', '>gv')
 
 map('n', 'z<s-c>', ':setlocal foldlevel=00 <cr>', { desc = 'Min Fold Level' })
-map('n', 'z<s-o>', ':setlocal foldlevel=99 <cr>', { desc = 'Max Fold Level' })
+map('n', 'z<s-o>', ':setlocal foldlevel=10 <cr>', { desc = 'Max Fold Level' })
 
 -- map({ 'n', 's', 'x', 'o' }, '<a-,>', ',', { desc = 'Alt ;' })
 -- map({ 'n', 's', 'x', 'o' }, '<a-;>', ';', { desc = 'Alt ,' })

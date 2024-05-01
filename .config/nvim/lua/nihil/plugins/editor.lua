@@ -4,21 +4,18 @@ return {
     {
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>h'] = { name = '+harpoon' } end },
-        },
+        dependencies = { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>h'] = { name = '+harpoon' } end },
         keys = {
-            { '<c-e>', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
+            { ';h', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
             { '<leader>hp', function() require('harpoon'):list():prepend() end, desc = 'Harpoon prepend' },
             { '<leader>ha', function() require('harpoon'):list():add() end, desc = 'Harpoon add' },
-            { '<a-}>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
-            { '<a-{>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
+            { '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
+            { '<c-a-[>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
-            { '<c-a-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
-            { '<c-a-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
-            { '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
-            { '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
+            { '<c-a-h>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
+            { '<c-a-j>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
+            { '<c-a-k>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
+            { '<c-a-l>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
         },
         config = function()
             local harpoon = require 'harpoon'
@@ -29,14 +26,13 @@ return {
                     key = function() return vim.loop.cwd() or '' end,
                 },
             }
-
             harpoon:extend {
                 UI_CREATE = function(cx)
                     local opts = { buffer = cx.bufnr }
                     vim.keymap.set({ 'n', 'i' }, '<c-q>', function() harpoon.ui:close_menu() end, opts)
                     vim.keymap.set('n', '<c-l>', function() harpoon.ui:select_menu_item {} end, opts)
-                    vim.keymap.set('n', '<c-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
-                    vim.keymap.set('n', '<c-x>', function() harpoon.ui:select_menu_item { split = true } end, opts)
+                    vim.keymap.set('n', '<a-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
+                    vim.keymap.set('n', '<a-s>', function() harpoon.ui:select_menu_item { split = true } end, opts)
                     vim.keymap.set('n', '<c-t>', function() harpoon.ui:select_menu_item { tabedit = true } end, opts)
                 end,
             }
@@ -49,14 +45,14 @@ return {
         cmd = 'FzfLua',
         version = false,
         keys = {
-            { '\\\\', '<cmd>FzfLua resume<cr>' },
-            { ';b', '<cmd>FzfLua buffers<cr>', desc = 'Find Current Buffers' },
-            { ';r', '<cmd>FzfLua live_grep<cr>', desc = 'Live Grep' },
-            { ';t', '<cmd>FzfLua help_tags<cr>', desc = 'Search Help Tags' },
-            { ';o', '<cmd>FzfLua lsp_document_symbols<cr>', desc = 'LSP Doc Symbols' },
-            { ';<s-o>', '<cmd>FzfLua lsp_workspace_symbols<cr>', desc = 'LSP Workspace Symbols' },
+            { '\\\\', '<cmd>FzfLua resume <cr>' },
+            { ';b', '<cmd>FzfLua buffers <cr>', desc = 'Find Current Buffers' },
+            { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Live Grep' },
+            { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
+            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'LSP Doc Symbols' },
+            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'LSP Workspace Symbols' },
             {
-                ';f',
+                '<c-e>',
                 function()
                     require('fzf-lua').files {
                         winopts = {
@@ -69,40 +65,53 @@ return {
             },
         },
 
-        opts = {
-            winopts = {
-                preview = {
-                    title = true,
-                    wrap = 'nowrap',
-                    hidden = 'hidden',
-                    title_pos = 'center',
-                    vertical = 'down:40%',
-                    horizontal = 'right:50%',
-                    scrollchars = { '┃', '' },
-                },
-            },
-            keymap = {
-                builtin = {
-                    ['<a-/>'] = 'toggle-help',
-                    ['<a-p>'] = 'toggle-preview',
-                    ['<c-u>'] = 'preview-up',
-                    ['<c-d>'] = 'preview-down',
-                    ['<a-z>'] = 'toggle-preview-wrap',
-                },
-            },
+        opts = function()
+            local path_format = 'path.filename_first'
 
-            fzf_args = vim.env.FZF_DEFAULT_OPTS,
+            return {
+                winopts = {
+                    preview = {
+                        title = true,
+                        wrap = 'nowrap',
+                        hidden = 'hidden',
+                        title_pos = 'center',
+                        vertical = 'down:40%',
+                        horizontal = 'right:50%',
+                        scrollchars = { '┃', '' },
+                    },
+                },
+                keymap = {
+                    builtin = {
+                        ['<a-/>'] = 'toggle-help',
+                        ['<a-p>'] = 'toggle-preview',
+                        ['<c-u>'] = 'preview-up',
+                        ['<c-d>'] = 'preview-down',
+                        ['<a-z>'] = 'toggle-preview-wrap',
+                    },
+                },
 
-            -- PROVIDERS
-            files = {
-                -- cmd = 'fd ' .. vim.env.FD_DEFAULT_OPTS .. ' --type f',
-                cmd = 'rg ' .. vim.env.RG_DEFAULT_OPTS,
-                formatter = 'path.filename_first',
-                cwd_prompt = false,
-                prompt = ' Files❯ ',
-                winopts = { width = 0.5, preview = { layout = 'vertical' } },
-            },
-        },
+                fzf_args = vim.env.FZF_DEFAULT_OPTS,
+
+                -- PROVIDERS
+                files = {
+                    -- cmd = 'fd ' .. vim.env.FD_DEFAULT_OPTS .. ' --type f',
+                    cmd = 'rg ' .. vim.env.RG_DEFAULT_OPTS,
+                    formatter = path_format,
+                    cwd_prompt = false,
+                    prompt = ' Files❯ ',
+                    winopts = { width = 0.5, preview = { layout = 'vertical' } },
+                },
+                lsp_finder = {
+                    formatter = path_format,
+                },
+                live_grep = {
+                    formatter = path_format,
+                },
+                grep = {
+                    formatter = path_format,
+                },
+            }
+        end,
     },
 
     -- file explorer
@@ -313,16 +322,15 @@ return {
         },
 
         opts = {
-            --           󰙏  
             keywords = {
-                TODO = { icon = '✨', color = 'todo' },
-                REFAC = { icon = '👺', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
-                HACK = { icon = '🔥', color = 'warning' },
-                FIX = { icon = '👹', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
-                WARN = { icon = '🙀', color = 'warning', alt = { 'WARNING', 'XXX' } },
-                PERF = { icon = '🚀', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
-                NOTE = { icon = '🔖', color = 'hint', alt = { 'INFO' } },
-                TEST = { icon = '🧪', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
+                TODO = { icon = '', color = 'todo' },
+                REFAC = { icon = ' ', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
+                HACK = { icon = '', color = 'warning' },
+                FIX = { icon = '', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
+                WARN = { icon = '', color = 'warning', alt = { 'WARNING', 'XXX' } },
+                PERF = { icon = '', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
+                NOTE = { icon = '󰙏', color = 'hint', alt = { 'INFO' } },
+                TEST = { icon = '', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
             },
             colors = {
                 todo = { 'DiagnosticOk', '#25EBA2' },

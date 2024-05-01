@@ -35,7 +35,7 @@ vim.opt.background = 'dark'
 vim.opt.completeopt = 'menu,menuone,noselect'
 vim.opt.confirm = true
 vim.opt.conceallevel = 0
--- vim.opt.shortmess:append { W = true, I = true, c = true, C = true }
+vim.opt.shortmess = 'ltToOCFWIcCm'
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -61,7 +61,7 @@ vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments
 vim.opt.smoothscroll = true
 vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 
-vim.opt.foldlevel = 99
+vim.opt.foldlevel = 10
 vim.opt.foldmethod = 'expr'
 vim.opt.foldenable = true
 vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]

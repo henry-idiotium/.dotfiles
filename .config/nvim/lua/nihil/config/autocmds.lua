@@ -20,16 +20,22 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Wrap and check for spell in text filetypes
 vim.api.nvim_create_autocmd('FileType', {
-    group = augroup 'text_wrap',
-    pattern = { 'gitcommit', 'markdown', 'noice' },
-    callback = function() vim.opt_local.wrap = true end,
+    group = augroup 'content_wrap',
+    pattern = {
+        'gitcommit',
+        'markdown',
+        'noice',
+        'typescriptreact',
+        'javascriptreact',
+    },
+    command = 'setlocal wrap',
 })
 
 -- content concealment
-vim.api.nvim_create_autocmd({ 'FileType' }, {
+vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_concealment',
     pattern = { 'markdown' },
-    callback = function() vim.opt_local.conceallevel = 2 end,
+    command = 'setlocal conceallevel=2',
 })
 
 local exclude_filetypes = {
