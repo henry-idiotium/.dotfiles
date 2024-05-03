@@ -64,7 +64,7 @@ function fish_user_key_bindings
 
     # custom funcs
     bind -M insert \ce fzf_search_path
-    bind -M insert \cd fzf_change_document
+    bind -M insert \cd fzf_main_dirs
 
     # scripts
     [ -z "$(pgrep tmux)" ] && bind -M insert \e\; start-tmux
