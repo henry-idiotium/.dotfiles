@@ -1,7 +1,6 @@
 ---@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil
 return {
-    -- Better `vim.notify`
-    {
+    { -- better `vim.notify`
         'rcarriga/nvim-notify',
         lazy = false,
         event = 'VeryLazy',
@@ -22,8 +21,7 @@ return {
         },
     },
 
-    -- Better vim.ui
-    {
+    { -- Better vim.ui
         'stevearc/dressing.nvim',
         lazy = true,
         event = 'VeryLazy',
@@ -151,8 +149,7 @@ return {
         end,
     },
 
-    -- Statusline
-    {
+    { -- Statusline
         'nvim-lualine/lualine.nvim',
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
@@ -247,8 +244,7 @@ return {
         },
     },
 
-    -- Tabline
-    {
+    { -- Tabline
         'akinsho/bufferline.nvim',
         event = 'VeryLazy',
         keys = {
@@ -286,8 +282,7 @@ return {
         },
     },
 
-    -- indent guides
-    {
+    { -- indent guides
         'lukas-reineke/indent-blankline.nvim',
         priority = 500,
         event = 'VeryLazy',
@@ -312,8 +307,7 @@ return {
             },
         },
     },
-    -- active indent highlight
-    {
+    { -- active indent highlight
         'echasnovski/mini.indentscope',
         version = false,
         event = 'VeryLazy',
@@ -342,8 +336,7 @@ return {
         end,
     },
 
-    -- floating filename
-    {
+    { -- floating filename
         'b0o/incline.nvim',
         event = 'VeryLazy',
         opts = {
@@ -363,20 +356,21 @@ return {
         },
     },
 
-    -- highlight hex colors
-    {
+    { -- highlight hex colors
         'echasnovski/mini.hipatterns',
         event = { 'BufReadPre', 'VeryLazy' },
         version = false,
         config = true,
     },
 
-    -- center buffer
-    {
+    { -- center buffer
         'shortcuts/no-neck-pain.nvim',
         version = '*',
         lazy = false,
-        keys = { { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' } },
+        keys = {
+            { '<c-a-z>', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
+            { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
+        },
         opts = {
             width = 130,
             minSideBufferWidth = 6,

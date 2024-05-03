@@ -25,8 +25,7 @@ return {
         },
     },
 
-    -- meta comment gen
-    {
+    { -- meta comment gen
         'danymat/neogen',
         enabled = false,
         event = 'VeryLazy',
@@ -40,8 +39,7 @@ return {
         },
     },
 
-    -- ThePrimeagen's refactoring
-    {
+    { -- ThePrimeagen's refactoring
         'ThePrimeagen/refactoring.nvim',
         dependencies = {
             'nvim-lua/plenary.nvim',
