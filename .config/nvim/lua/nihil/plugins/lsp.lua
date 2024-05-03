@@ -27,58 +27,64 @@ return {
 
         config = function()
             local cmp = require 'cmp'
-            local has_cmp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
-            local lsp_util = require 'nihil.util.lsp'
-            local options = require 'nihil.plugins.lsp.config'
-            local lsp_opts = options.lspconfig
+            local cmp_lsp = require 'cmp_nvim_lsp'
+            local opts = Nihil.settings.lspconfig
+            local utils = Nihil.utils
 
-            local capabilities = vim.tbl_deep_extend(
-                'force',
-                {},
+            -- stylua: ignore
+            local capabilities = vim.tbl_deep_extend('force', {},
                 vim.lsp.protocol.make_client_capabilities(),
-                has_cmp and cmp_lsp.default_capabilities() or {},
-                lsp_opts.capabilities or {}
+                cmp_lsp.default_capabilities()
             )
 
             require('lspconfig.ui.windows').default_options.border = 'single'
             require('mason').setup { ui = { border = 'rounded' } }
-            require('mason-tool-installer').setup(options.mason_tool)
-            require('mason-lspconfig').setup(vim.tbl_deep_extend('force', {}, options.mason_lspconfig, {
+            require('mason-lspconfig').setup {
+                ensure_installed = vim.tbl_keys(opts.servers),
                 handlers = {
                     function(server)
-                        local server_opts = lsp_opts.servers[server] or {}
-                        require('lspconfig')[server].setup(vim.tbl_deep_extend('force', {}, server_opts, {
-                            capabilities = vim.deepcopy(capabilities),
-                        }))
+                        local server_opts = vim.deepcopy(opts.servers[server] or {})
+                        server_opts.capabilities = capabilities
+                        require('lspconfig')[server].setup(server_opts)
                     end,
                 },
-            }))
+            }
 
             ---- Setup keymaps
-            lsp_util.on_attach(function(client, buffer) require('nihil.plugins.lsp.keymaps').on_attach(client, buffer) end)
+            local function attach_keymaps(_, buffer)
+                for _, value in pairs(opts.keymaps) do
+                    local args = utils.key.resolve_opts(value)
+                    args.opts.buffer = buffer
+                    args.opts.silent = true
+                    vim.keymap.set(args.mode, args.lhs, args.rhs, args.opts)
+                end
+            end
+
+            utils.lsp.on_attach(attach_keymaps)
 
             ---- Setup diagnostic
-            vim.diagnostic.config(vim.deepcopy(lsp_opts.diagnostics))
-
-            local diagnostic_opts = lsp_opts.diagnostics
+            local diag_opts = opts.diagnostics
             local register_capability = vim.lsp.handlers['client/registerCapability']
+
             vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
                 local ret = register_capability(err, res, ctx)
                 local buffer = vim.api.nvim_get_current_buf()
                 local client = vim.lsp.get_client_by_id(ctx.client_id)
-                require('nihil.plugins.lsp.keymaps').on_attach(client, buffer)
+                attach_keymaps(client, buffer)
                 return ret
             end
 
+            vim.diagnostic.config(diag_opts)
+
             -- inlay hints
-            if lsp_opts.inlay_hints.enabled then
-                lsp_util.on_attach(function(client, buffer)
-                    if client.supports_method 'textDocument/inlayHint' then lsp_util.toggle.inlay_hints(buffer, true) end
+            if opts.inlay_hints.enabled then
+                utils.lsp.on_attach(function(client, buffer)
+                    if client.supports_method 'textDocument/inlayHint' then utils.lsp.toggle.inlay_hints(buffer, true) end
                 end)
             end
 
             -- diagnostics signs
-            for severity, icon in pairs(diagnostic_opts.signs.text) do
+            for severity, icon in pairs(diag_opts.signs.text) do
                 local name = vim.diagnostic.severity[severity]:lower():gsub('^%l', string.upper)
                 name = 'DiagnosticSign' .. name
                 vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })

@@ -1,3 +1,4 @@
+require 'nihil.config.settings'
 require 'nihil.config.options'
 require 'nihil.config.keymaps'
 require 'nihil.config.autocmds'

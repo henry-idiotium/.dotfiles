@@ -1,31 +1,98 @@
----@diagnostic disable: no-unknown, missing-fields
+---@diagnostic disable: missing-fields
 local M = {}
 
----- Mason for tools like formatter, lint, dap
-M.mason_tool = {
-    ensure_installed = {
-        'prettierd',
-        'black',
-        'stylua',
+--- Icons used by plugins
+M.icons = {
+    misc = {
+        dots = '󰇘',
+    },
+    dap = {
+        Stopped = { '󰁕 ', 'DiagnosticWarn', 'DapStoppedLine' },
+        Breakpoint = ' ',
+        BreakpointCondition = ' ',
+        BreakpointRejected = { ' ', 'DiagnosticError' },
+        LogPoint = '.>',
+    },
+    diagnostics = {
+        error = ' ',
+        warn = ' ',
+        hint = ' ',
+        info = ' ',
+    },
+    git = {
+        added = ' ',
+        modified = ' ',
+        removed = ' ',
+    },
+    kinds = {
+        Array = ' ',
+        Boolean = '󰨙 ',
+        Class = ' ',
+        Codeium = '󰘦 ',
+        Color = ' ',
+        Control = ' ',
+        Collapsed = ' ',
+        Constant = '󰏿 ',
+        Constructor = ' ',
+        Copilot = ' ',
+        Enum = ' ',
+        EnumMember = ' ',
+        Event = ' ',
+        Field = ' ',
+        File = ' ',
+        Folder = ' ',
+        Function = '󰊕 ',
+        Interface = ' ',
+        Key = ' ',
+        Keyword = ' ',
+        Method = '󰊕 ',
+        Module = ' ',
+        Namespace = '󰦮 ',
+        Null = ' ',
+        Number = '󰎠 ',
+        Object = ' ',
+        Operator = ' ',
+        Package = ' ',
+        Property = ' ',
+        Reference = ' ',
+        Snippet = ' ',
+        String = ' ',
+        Struct = '󰆼 ',
+        TabNine = '󰏚 ',
+        Text = ' ',
+        TypeParameter = ' ',
+        Unit = ' ',
+        Value = ' ',
+        Variable = '󰀫 ',
     },
 }
 
----- Mason for LspConfig
-M.mason_lspconfig = {
-    ensure_installed = {
-        'lua_ls',
-        'rust_analyzer',
-        'gopls',
-        'pyright',
-        'jsonls',
-        'yamlls',
-        'tsserver',
-        'emmet_ls',
-        'tailwindcss',
-    },
+--- Exclude filetypes
+M.minimal_plugins_filetypes = {
+    'PlenaryTestPopup',
+    'neotest-output-panel',
+    'neotest-output',
+    'no-neck-pain',
+    'neotest-summary',
+    'spectre_panel',
+    'startuptime',
+    'checkhealth',
+    'Trouble',
+    'lspinfo',
+    'lazy',
+    'gitrebase',
+    'gitcommit',
+    'hgcommit',
+    'notify',
+    'query',
+    'netrw',
+    'vim',
+    'help',
+    'svn',
+    'qf',
 }
 
----- LspConfig
+--- Lsp Config
 M.lspconfig = {
     inlay_hints = { enabled = false },
     codelens = { enabled = false },
@@ -38,10 +105,10 @@ M.lspconfig = {
         severity_sort = true,
         signs = {
             text = {
-                [vim.diagnostic.severity.ERROR] = ' ',
-                [vim.diagnostic.severity.WARN] = ' ',
-                [vim.diagnostic.severity.HINT] = ' ',
-                [vim.diagnostic.severity.INFO] = ' ',
+                [vim.diagnostic.severity.ERROR] = M.icons.diagnostics.error,
+                [vim.diagnostic.severity.WARN] = M.icons.diagnostics.warn,
+                [vim.diagnostic.severity.HINT] = M.icons.diagnostics.hint,
+                [vim.diagnostic.severity.INFO] = M.icons.diagnostics.info,
             },
         },
         float = {
@@ -57,6 +124,13 @@ M.lspconfig = {
 
     ---@type lspconfig.options
     servers = {
+        rust_analyzer = {},
+        tailwindcss = {},
+        emmet_ls = {},
+        html = {},
+        gopls = {},
+        pyright = {},
+        jsonls = {},
         tsserver = {
             single_file_support = false,
             root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
@@ -92,9 +166,6 @@ M.lspconfig = {
                 less = { validate = true, lint = { unknownAtRules = 'ignore' } },
             },
         },
-        tailwindcss = {},
-        emmet_ls = {},
-        html = {},
         yamlls = {
             settings = {
                 yaml = {
@@ -152,8 +223,53 @@ M.lspconfig = {
         },
     },
 
-    ---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
-    setup = {},
+    keymaps = {
+        { 'gd', '<cmd>FzfLua lsp_finder<cr>', desc = 'Goto Definition' },
+        { 'g<s-d>', '<cmd>FzfLua lsp_declarations<cr>', desc = 'Goto declaration' },
+        { 'gr', '<cmd>FzfLua lsp_references<cr>', desc = 'Goto/listing references' },
+        { 'gi', '<cmd>FzfLua lsp_implementations<cr>', desc = 'Goto Implementation' },
+
+        { '<s-k>', vim.lsp.buf.hover, desc = 'Hover/Show definition' },
+        { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show signature' },
+        { 'gk', vim.lsp.buf.signature_help, desc = 'Show signature' },
+
+        { '<leader>cl', '<cmd>LspInfo<cr>', desc = 'Lsp Info' },
+        { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename symbol' },
+        { '<leader>cd', vim.diagnostic.open_float, desc = 'Open diagnostics' },
+        { '<leader>ca', '<cmd>FzfLua lsp_code_actions<cr>', mode = { 'n', 'v' }, desc = 'Code actions' },
+
+        -- { '<leader>tli', function() require('nihil.util.lsp').toggle.inlay_hints() end, desc = 'Inlay Hints' },
+    },
 }
 
+--- Formatting (Conform)
+M.conform = {
+    format_on_save = { timeout_ms = 3000, lsp_fallback = false, async = false },
+    mason_tools = {
+        'prettierd',
+        'black',
+        'stylua',
+    },
+}
+
+local prettier_fmt = { 'prettierd', 'prettier' }
+---@type table<string, conform.FiletypeFormatter>
+M.conform.formatters_by_ft = {
+    lua = { 'stylua' },
+    go = { 'goimports', 'gofmt' },
+    rust = { 'rustfmt' },
+    python = { 'isort', 'black' },
+    fish = { 'fish_indent' },
+    markdown = prettier_fmt,
+    typescript = prettier_fmt,
+    typescriptreact = prettier_fmt,
+    javascript = prettier_fmt,
+    javascriptreact = prettier_fmt,
+    json = prettier_fmt,
+    html = prettier_fmt,
+    css = prettier_fmt,
+    ['_'] = { 'trim_whitespace' },
+}
+
+_G.Nihil.settings = M
 return M

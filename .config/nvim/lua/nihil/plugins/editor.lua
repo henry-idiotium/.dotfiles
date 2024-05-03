@@ -1,7 +1,6 @@
 ---@diagnostic disable: no-unknown
 return {
-    -- maneuvering throught files like the flash
-    {
+    { -- Maneuvering throught files like the flash
         'ThePrimeagen/harpoon',
         branch = 'harpoon2',
         dependencies = { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>h'] = { name = '+harpoon' } end },
@@ -20,7 +19,6 @@ return {
         config = function()
             local harpoon = require 'harpoon'
             harpoon:setup {
-                menu = { width = vim.api.nvim_win_get_width(0) - 4 },
                 settings = {
                     save_on_toggle = true,
                     sync_on_ui_close = true,
@@ -40,8 +38,7 @@ return {
         end,
     },
 
-    -- fuzzy picker
-    {
+    { -- Fuzzy picker
         'ibhagwan/fzf-lua',
         cmd = 'FzfLua',
         version = false,
@@ -57,7 +54,7 @@ return {
                 function()
                     require('fzf-lua').files {
                         winopts = {
-                            title = '  ' .. vim.fn.getcwd():gsub(vim.env.HOME, '~') .. '  ',
+                            title = string.format('  %s  ', vim.fn.getcwd():gsub(vim.env.HOME, '~')),
                             title_pos = 'center',
                         },
                     }
@@ -70,12 +67,14 @@ return {
             local path_format = 'path.filename_first'
 
             return {
+                width = 0.8,
+                height = 0.8,
+                sort_lastused = true,
+
                 winopts = {
                     preview = {
-                        title = true,
                         wrap = 'nowrap',
                         hidden = 'hidden',
-                        title_pos = 'center',
                         vertical = 'down:40%',
                         horizontal = 'right:50%',
                         scrollchars = { '┃', '' },
@@ -94,39 +93,29 @@ return {
                 fzf_args = vim.env.FZF_DEFAULT_OPTS,
 
                 -- PROVIDERS
+                lsp_finder = { formatter = path_format },
+                live_grep = { formatter = path_format },
+                grep = { formatter = path_format },
                 files = {
                     -- cmd = 'fd ' .. vim.env.FD_DEFAULT_OPTS .. ' --type f',
                     cmd = 'rg ' .. vim.env.RG_DEFAULT_OPTS,
                     formatter = path_format,
                     cwd_prompt = false,
                     prompt = ' Files❯ ',
-                    winopts = { width = 0.5, preview = { layout = 'vertical' } },
-                },
-                lsp_finder = {
-                    formatter = path_format,
-                },
-                live_grep = {
-                    formatter = path_format,
-                },
-                grep = {
-                    formatter = path_format,
+                    winopts = { width = 0.6, preview = { layout = 'vertical' } },
                 },
             }
         end,
     },
 
-    -- file explorer
-    {
+    { -- File explorer
         'nvim-neo-tree/neo-tree.nvim',
 
         cmd = 'Neotree',
         keys = {
-            { ';s', '<cmd>Neotree reveal<cr>', desc = 'Explorer reveal current file (root dir)' },
-            {
-                'sf',
-                function() require('neo-tree.command').execute { toggle = true, dir = vim.fn.getcwd() } end,
-                desc = 'Explorer (Root Dir)',
-            },
+            { ';s', '<cmd>Neotree reveal show<cr>', desc = 'File Explorer Reveal Current File' },
+            { 'sf', '<cmd>Neotree toggle right<cr>', desc = 'File Explorer' },
+            { 'sF', '<cmd>Neotree float<cr>', desc = 'File Explorer (Popup)' },
         },
 
         deactivate = function() vim.cmd [[Neotree close]] end,
@@ -145,23 +134,16 @@ return {
             popup_border_style = 'rounded',
 
             default_component_configs = {
-                indent = { indent_size = 2, padding = 0 },
-            },
-
-            event_handlers = {
-                {
-                    event = 'neo_tree_popup_input_ready',
-                    handler = function(args)
-                        vim.cmd 'stopinsert'
-                        vim.keymap.set('i', '<esc>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr })
-                    end,
+                indent = {
+                    with_markers = false,
+                    indent_size = 2,
+                    padding = 0,
                 },
             },
 
             -- neo-tree neo-tree-popup
             use_default_mappings = false,
             window = {
-                position = 'right',
                 mappings = {
                     ['sf'] = 'close_window',
                     ['q'] = 'close_window',
@@ -214,7 +196,7 @@ return {
             },
 
             filesystem = {
-                bind_to_cwd = false,
+                bind_to_cwd = true,
                 hijack_netrw_behavior = 'open_current',
                 follow_current_file = { enabled = false },
                 use_libuv_file_watcher = true,
@@ -232,8 +214,7 @@ return {
         },
     },
 
-    -- git status hunks in linenumber buffer
-    {
+    { -- Git status in line number
         'lewis6991/gitsigns.nvim',
         opts = {
             signs = {
@@ -264,8 +245,7 @@ return {
         },
     },
 
-    -- easy location list
-    {
+    { -- Easy location list
         'folke/trouble.nvim',
         cmd = { 'TroubleToggle', 'Trouble' },
         opts = {
@@ -310,8 +290,7 @@ return {
         },
     },
 
-    -- highlighted commentes
-    {
+    { -- Highlighted comments
         'folke/todo-comments.nvim',
         cmd = 'TodoTrouble',
         event = 'VeryLazy',
@@ -345,8 +324,7 @@ return {
         },
     },
 
-    -- highlight symbols on cursor
-    {
+    { -- Highlight symbols on cursor
         'RRethy/vim-illuminate',
         event = 'VeryLazy',
         lazy = false,
@@ -388,8 +366,7 @@ return {
         end,
     },
 
-    -- improved ft
-    {
+    { -- Better FT
         'backdround/improved-ft.nvim',
         event = 'VeryLazy',
         opts = {

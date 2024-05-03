@@ -28,43 +28,23 @@ vim.api.nvim_create_autocmd('FileType', {
         'typescriptreact',
         'javascriptreact',
     },
-    command = 'setlocal wrap',
+    callback = function() vim.opt_local.wrap = true end,
 })
 
 -- content concealment
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_concealment',
     pattern = { 'markdown' },
-    command = 'setlocal conceallevel=2',
+    callback = function()
+        vim.opt_local.conceallevel = 2
+        vim.opt_local.spell = true
+    end,
 })
-
-local exclude_filetypes = {
-    'qf',
-    'vim',
-    'help',
-    'hgcommit',
-    'gitcommit',
-    'gitrebase',
-    'svn',
-    'netrw',
-    'notify',
-    'query',
-    'lazy',
-    'lspinfo',
-    'checkhealth',
-    'spectre_panel',
-    'startuptime',
-    'neotest-output',
-    'neotest-summary',
-    'neotest-output-panel',
-    'PlenaryTestPopup',
-    'Trouble',
-}
 
 -- Easy closing
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'easy_closing',
-    pattern = exclude_filetypes,
+    pattern = Nihil.settings.minimal_plugins_filetypes,
     callback = function(event)
         vim.bo[event.buf].buflisted = false
         local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
@@ -77,7 +57,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('BufReadPost', {
     group = augroup 'last_loc',
     callback = function(event)
-        if vim.tbl_contains(exclude_filetypes, vim.bo.filetype) then return end
+        if vim.tbl_contains(Nihil.settings.minimal_plugins_filetypes, vim.bo.filetype) then return end
 
         local buf = event.buf
         local has_mark, mark = pcall(vim.api.nvim_buf_get_mark, buf, '"')

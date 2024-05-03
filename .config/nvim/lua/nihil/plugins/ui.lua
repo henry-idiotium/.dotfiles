@@ -45,7 +45,7 @@ return {
                 ['<c-q>'] = 'Close',
                 ['<c-c>'] = 'Close',
                 ['<cr>'] = 'Confirm',
-                ['<c-o>'] = 'Confirm',
+                ['<c-j>'] = 'Confirm',
                 ['<c-h>'] = 'HistoryPrev',
                 ['<c-l>'] = 'HistoryNext',
                 ['<up>'] = 'HistoryPrev',
@@ -242,6 +242,45 @@ return {
                 },
                 lualine_z = {
                     { 'location' },
+                },
+            },
+        },
+    },
+
+    -- Tabline
+    {
+        'akinsho/bufferline.nvim',
+        event = 'VeryLazy',
+        keys = {
+            { '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer' },
+            { '<s-tab>', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer' },
+            { '[b', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer' },
+            { ']b', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer' },
+        },
+        opts = {
+            options = {
+                mode = 'tabs',
+                always_show_bufferline = false,
+                show_buffer_close_icons = false,
+                show_close_icon = false,
+                show_tab_indicators = false,
+                indicator = { style = 'underline' },
+                separator_style = { nil, nil },
+
+                diagnostics = 'nvim_lsp',
+                diagnostics_indicator = function(_, _, diag)
+                    local icons = Nihil.settings.icons.diagnostics
+                    local ret = (diag.error and icons.error .. diag.error .. ' ' or '') .. (diag.warning and icons.warn .. diag.warning or '')
+                    return vim.trim(ret)
+                end,
+
+                offsets = {
+                    {
+                        filetype = 'neo-tree',
+                        text = 'File Explorer',
+                        highlight = 'Directory',
+                        text_align = 'center',
+                    },
                 },
             },
         },

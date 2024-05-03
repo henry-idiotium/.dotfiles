@@ -46,11 +46,10 @@ map('n', '-', '<c-x>')
 map('v', '<', '<gv')
 map('v', '>', '>gv')
 
+-- folding
 map('n', 'z<s-c>', ':setlocal foldlevel=00 <cr>', { desc = 'Min Fold Level' })
 map('n', 'z<s-o>', ':setlocal foldlevel=10 <cr>', { desc = 'Max Fold Level' })
-
--- map({ 'n', 's', 'x', 'o' }, '<a-,>', ',', { desc = 'Alt ;' })
--- map({ 'n', 's', 'x', 'o' }, '<a-;>', ';', { desc = 'Alt ,' })
+map('n', '1zl', ':setlocal foldlevel=1 <cr>', { desc = 'Fold Level 1' })
 
 -- register
 map({ 'n', 's', 'x' }, 'x', '"_x', { desc = 'Void yank x' })
@@ -94,6 +93,8 @@ map('n', '<tab>', '<cmd>tabnext<cr>', { desc = 'Next Tab' })
 map('n', '<s-tab>', '<cmd>tabprev<cr>', { desc = 'Prev Tab' })
 map('n', '<leader><tab>d', '<cmd>tabclose<cr>', { desc = 'Close Tab' })
 map('n', '<leader><tab>q', '<cmd>tabclose<cr>', { desc = 'Close Tab' })
+map('n', '<c-s-right>', '<cmd>tabm +1 <cr>', { desc = 'Move Tab Right' })
+map('n', '<c-s-left>', '<cmd>tabm -1 <cr>', { desc = 'Move Tab Left' })
 
 ---- Buffers
 map('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })

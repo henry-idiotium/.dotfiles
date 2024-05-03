@@ -17,7 +17,18 @@ require('lazy').setup {
     change_detection = { notify = false },
     performance = {
         cache = { enabled = true },
-        rtp = { disabled_plugins = { 'gzip', 'tarPlugin', 'tohtml', 'tutor', 'zipPlugin' } },
+        rtp = {
+            disabled_plugins = {
+                'gzip',
+                'matchit',
+                'matchparen',
+                'netrwPlugin',
+                'tarPlugin',
+                'tohtml',
+                'tutor',
+                'zipPlugin',
+            },
+        },
     },
     ui = {
         border = 'rounded',
