@@ -2,6 +2,31 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+local fonts = {
+	iosevka_wizard = "IosevkaWizard Nerd Font",
+	segoe_ui_emoji = "Segoe UI Emoji",
+	firacode = "FiraCode Nerd Font",
+	Ligamononoki = "Ligamononoki Nerd Font",
+	operator_mono = "OperatorMonoLig Nerd Font",
+}
+local themes = {
+	cat = "Catppuccin Mocha",
+	rose_pine = "rose-pine-moon",
+	nightowl = "Night Owl (Gogh)",
+	nebula = "Nebula (base16)",
+	rouge = "Rouge 2",
+	palenight = "Palenight (Gogh)",
+	material = "Material Darker (base16)",
+	nord = "Nord (Gogh)",
+	tmr_nite_burns = "Tomorrow Night Burns", -- Very RED
+	nightly = "Nightfly (Gogh)",
+	nucolors = "Nucolors (terminal.sexy)",
+	ocean_dark = "Ocean Dark (Gogh)",
+	operator_mono = "Operator Mono Dark",
+	overnight = "Overnight Slumber",
+	poimandres = "Poimandres Storm",
+}
+
 return {
 	default_prog = {
 		"arch.exe",
@@ -23,16 +48,13 @@ return {
 	warn_about_missing_glyphs = false,
 
 	---- Font ____
-	-- combination between font_size and line_height may "cut off" font char height
+	-- NOTE: combination between font_size and line_height may "cut off" font char height
 	font_size = 12,
 	cell_width = 1,
 	line_height = 1.5,
 	font = wezterm.font_with_fallback({
-		"IosevkaWizard Nerd Font",
-		"Segoe UI Emoji",
-		"FiraCode Nerd Font",
-		"Ligamononoki Nerd Font",
-		"OperatorMonoLig Nerd Font",
+		fonts.iosevka_wizard,
+		fonts.segoe_ui_emoji,
 	}),
 
 	use_cap_height_to_scale_fallback_fonts = true,
@@ -66,7 +88,7 @@ return {
 
 	---- Theme
 	enable_tab_bar = false,
-	color_scheme = "Catppuccin Mocha",
+	color_scheme = themes.cat,
 	colors = { background = "#000000" },
 
 	---- Keymaps
