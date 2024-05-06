@@ -43,29 +43,39 @@ function fish_user_key_bindings
     fish_vi_key_bindings
 
     set -l keys_to_unbind \cd \cs
+
     # unbind keys (run in fish_user_key_bindings to ensure it works)
     for key in $keys_to_unbind
         bind -e --preset $key
         bind -e --preset -M insert $key
         bind -e --preset -M visual $key
     end
-
-    # actions
-    bind \cq exit
-    bind -M insert -m default jj ''
-    bind -M insert -m default jk ''
-
-    bind L end-of-line
-    bind H beginning-of-line
-    bind -M visual L end-of-line
-    bind -M visual H beginning-of-line
-
-    bind -M insert \cy forward-char # accept inline suggestion
-
-    # custom funcs
-    bind -M insert \ce fzf_search_path
-    bind -M insert \cd fzf_main_dirs
-
-    # scripts
-    [ -z "$(pgrep tmux)" ] && bind -M insert \e\; start-tmux
 end
+
+
+# actions
+bind \cq exit
+bind -M insert -m default jj ''
+bind -M insert -m default jk ''
+
+bind L end-of-line
+bind H beginning-of-line
+bind -M visual L end-of-line
+bind -M visual H beginning-of-line
+
+bind -M insert \cy forward-char # accept inline suggestion
+
+# custom funcs
+bind -M insert \ce fzf_search_path
+bind -M insert \cd fzf_main_dirs
+
+# scripts
+function bind-script
+    argparse -n bind-script 'M=+' -- $argv; or return
+    bind -M $_flag_M $argv[1] "$argv[2]; echo; commandline -t ''; commandline -f repaint-mode"
+end
+
+bind-script -M insert \e\; start-tmux
+
+
+functions -e bind-script
