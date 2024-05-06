@@ -3,14 +3,15 @@
 # TODO:
 # - check for external lib packages
 # - add logs
-# - add GO
 
+# System (built with Rust) package manager
 paru
-
-
+# System builtin package manager
 sudo pacman -Syu
 
-
+# Rust package manager
+rustup update
 cargo install-update -a
 
+# NeoVim version manager
 bob update nightly

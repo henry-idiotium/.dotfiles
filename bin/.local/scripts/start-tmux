@@ -1,13 +1,16 @@
 #!/usr/bin/env fish
 
+## Check if TMUX exists
 if not type -q tmux
-    set_color red
-    echo Not found (set_color -o cyan)tmux(set_color red) in PATH !!
-    set_color normal
-    echo -e '\n'
+    echo -e \
+        (set_color red)Not found \
+        (set_color -o cyan)`tmux` \
+        (set_color red)in PATH !! \n
     return
 end
 
+
+## Get an unused session name
 set -l cool_unused_names \
     もない \
     ひきこもり \
@@ -29,22 +32,43 @@ while tmux has-session -t $session_name 2>/dev/null
 end
 
 
-set -l prompt \
-    "$(set_color cyan)New tmux session name:" \
-    "$(set_color 828282)($session_name)" \
+## Ask user if they want to change name
+set -l prompt_session_name \
+    (set_color cyan)New tmux session name: \
+    (set_color brblack)"($session_name)" \
     (set_color normal)
 
-read -lP "$prompt" user_session_name
-or exit 69
-[ -n "$user_session_name" ] && set session_name $user_session_name
+read -lP "$prompt_session_name" user_session_name
+or return
 
-
-tmux new-session -d -c "$HOME" -s "$session_name"
-if [ -n "$TMUX" ]
-    tmux switch-client -t $session_name
-else
-    tmux attach-session -t $session_name
+if [ -n "$user_session_name" ]
+    set session_name $user_session_name
 end
 
 
-echo
+## Attach if no session; otherwise, ask to switch to the new session
+set -l switch_cmd_opts -t $session_name
+
+if [ -z "$(pgrep tmux)" ]
+    set -p switch_cmd_opts attach-session
+
+else
+    set -l prompt_switch_session \
+        Switch to the new session \
+        (set_color cyan)$session_name \
+        (set_color normal)"?" (set_color brblack)"[Y/n] "
+
+    read -lP "$prompt_switch_session" switch_confirm
+    or return
+
+    if string match -qri '(^$)|(y)|(yes)' $switch_confirm
+        set -p switch_cmd_opts switch-client
+
+        echo -e \
+            Switching to \
+            (set_color -o cyan)$session_name ...
+    end
+end
+
+tmux new-session -d -c $HOME -s $session_name
+[ -n "$switch_cmd_opts" ]; and tmux $switch_cmd_opts
