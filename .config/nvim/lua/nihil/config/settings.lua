@@ -24,6 +24,7 @@ M.icons = {
         modified = ' ',
         removed = ' ',
     },
+    -- TODO: add to lsp
     kinds = {
         Array = ' ',
         Boolean = '󰨙 ',
@@ -67,31 +68,6 @@ M.icons = {
     },
 }
 
---- Exclude filetypes
-M.minimal_plugins_filetypes = {
-    'PlenaryTestPopup',
-    'neotest-output-panel',
-    'neotest-output',
-    'no-neck-pain',
-    'neotest-summary',
-    'spectre_panel',
-    'startuptime',
-    'checkhealth',
-    'Trouble',
-    'lspinfo',
-    'lazy',
-    'gitrebase',
-    'gitcommit',
-    'hgcommit',
-    'notify',
-    'query',
-    'netrw',
-    'vim',
-    'help',
-    'svn',
-    'qf',
-}
-
 --- Lsp Config
 M.lspconfig = {
     inlay_hints = { enabled = false },
@@ -130,7 +106,7 @@ M.lspconfig = {
         html = {},
         gopls = {},
         pyright = {},
-        jsonls = {},
+
         tsserver = {
             single_file_support = false,
             root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
@@ -166,13 +142,55 @@ M.lspconfig = {
                 less = { validate = true, lint = { unknownAtRules = 'ignore' } },
             },
         },
+
         yamlls = {
+            -- Have to add this for yamlls to understand that we support line folding
+            capabilities = {
+                textDocument = {
+                    foldingRange = {
+                        dynamicRegistration = false,
+                        lineFoldingOnly = true,
+                    },
+                },
+            },
+            -- lazy-load schemastore when needed
+            on_new_config = function(new_config)
+                new_config.settings.yaml.schemas = vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
+            end,
             settings = {
+                redhat = { telemetry = { enabled = false } },
                 yaml = {
                     keyOrdering = false,
+                    format = {
+                        enable = true,
+                    },
+                    validate = true,
+                    schemaStore = {
+                        -- Must disable built-in schemaStore support to use
+                        -- schemas from SchemaStore.nvim plugin
+                        enable = false,
+                        -- Avoid TypeError: Cannot read properties of undefined (reading 'length')
+                        url = '',
+                    },
                 },
             },
         },
+        jsonls = {
+            -- lazy-load schemastore when needed
+            on_new_config = function(new_config)
+                new_config.settings.json.schemas = new_config.settings.json.schemas or {}
+                vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
+            end,
+            settings = {
+                json = {
+                    format = {
+                        enable = true,
+                    },
+                    validate = { enable = true },
+                },
+            },
+        },
+
         lua_ls = {
             -- enabled = false,
             single_file_support = true,
@@ -269,6 +287,31 @@ M.conform.formatters_by_ft = {
     html = prettier_fmt,
     css = prettier_fmt,
     ['_'] = { 'trim_whitespace' },
+}
+
+--- Exclude filetypes
+M.minimal_plugins_filetypes = {
+    'PlenaryTestPopup',
+    'neotest-output-panel',
+    'neotest-output',
+    'no-neck-pain',
+    'neotest-summary',
+    'spectre_panel',
+    'startuptime',
+    'checkhealth',
+    'Trouble',
+    'lspinfo',
+    'lazy',
+    'gitrebase',
+    'gitcommit',
+    'hgcommit',
+    'notify',
+    'query',
+    'netrw',
+    'vim',
+    'help',
+    'svn',
+    'qf',
 }
 
 _G.Nihil.settings = M

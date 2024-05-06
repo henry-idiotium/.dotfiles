@@ -27,6 +27,14 @@ map({ 'n', 'v' }, '<c-j>', '5j')
 -- highlights under cursor
 map('n', '<leader>ui', vim.show_pos, { desc = 'Inspect highlight under cursor' })
 
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
+map('n', 'n', "'Nn'[v:searchforward].'zv'", { expr = true, desc = 'Next Search Result' })
+map('x', 'n', "'Nn'[v:searchforward]", { expr = true, desc = 'Next Search Result' })
+map('o', 'n', "'Nn'[v:searchforward]", { expr = true, desc = 'Next Search Result' })
+map('n', 'N', "'nN'[v:searchforward].'zv'", { expr = true, desc = 'Prev Search Result' })
+map('x', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result' })
+map('o', 'N', "'nN'[v:searchforward]", { expr = true, desc = 'Prev Search Result' })
+
 ---- Editor
 map('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit All' })
 map({ 'i', 'x', 'n', 's' }, '<c-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })

@@ -65,6 +65,7 @@ return {
 
         opts = function()
             local path_format = 'path.filename_first'
+            local actions = require 'fzf-lua.actions'
 
             return {
                 width = 0.8,
@@ -103,6 +104,10 @@ return {
                     cwd_prompt = false,
                     prompt = ' Files❯ ',
                     winopts = { width = 0.6, preview = { layout = 'vertical' } },
+                    acitons = {
+                        ['ctrl-g'] = false,
+                        ['alt-h'] = { actions.toggle_ignore },
+                    },
                 },
             }
         end,

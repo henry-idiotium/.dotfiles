@@ -4,7 +4,6 @@ return {
         'rose-pine/neovim',
         name = 'rose-pine',
         event = 'VeryLazy',
-        enabled = true,
         init = function() vim.cmd.colorscheme 'rose-pine-main' end,
         opts = {
             variant = 'auto', -- auto, main, moon, or dawn
@@ -39,6 +38,7 @@ return {
                 IlluminatedWordText = { bg = 'highlight_low' },
                 IlluminatedWordRead = { bg = 'highlight_low' },
                 IlluminatedWordWrite = { bg = 'highlight_low' },
+                NeoTreeCursorLine = { bg = 'base', bold = true },
             },
         },
     },
