@@ -3,26 +3,22 @@ return {
     {
         'neovim/nvim-lspconfig',
         dependencies = {
-            'williamboman/mason.nvim',
+            { 'williamboman/mason.nvim', opts = { ui = { border = 'rounded' } } },
             'williamboman/mason-lspconfig.nvim',
-            'WhoIsSethDaniel/mason-tool-installer.nvim',
 
-            { 'folke/neodev.nvim', config = true },
-            { 'folke/neoconf.nvim', dependencies = { 'nvim-lspconfig' }, cmd = 'Neoconf', config = true },
+            { 'folke/neodev.nvim', event = 'VeryLazy', config = true },
+            { 'folke/neoconf.nvim', event = 'VeryLazy', cmd = 'Neoconf', config = true },
 
-            {
-                'hrsh7th/nvim-cmp',
-                version = false,
-                event = 'InsertEnter',
-                dependencies = {
-                    'hrsh7th/cmp-path',
-                    'hrsh7th/cmp-cmdline',
-                    'hrsh7th/cmp-nvim-lsp',
-                    'hrsh7th/cmp-buffer',
-                    'L3MON4D3/LuaSnip',
-                    'saadparwaiz1/cmp_luasnip',
-                },
-            },
+            { 'hrsh7th/nvim-cmp', version = false, event = 'InsertEnter' },
+            'hrsh7th/cmp-path',
+            'hrsh7th/cmp-cmdline',
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-buffer',
+            'saadparwaiz1/cmp_luasnip',
+
+            'L3MON4D3/LuaSnip',
+
+            { 'onsails/lspkind.nvim', event = 'VeryLazy', lazy = true },
         },
 
         config = function()
@@ -38,14 +34,13 @@ return {
             )
 
             require('lspconfig.ui.windows').default_options.border = 'single'
-            require('mason').setup { ui = { border = 'rounded' } }
             require('mason-lspconfig').setup {
                 ensure_installed = vim.tbl_keys(opts.servers),
                 handlers = {
-                    function(server)
-                        local server_opts = vim.deepcopy(opts.servers[server] or {})
-                        server_opts.capabilities = capabilities
-                        require('lspconfig')[server].setup(server_opts)
+                    function(server_name)
+                        require('lspconfig')[server_name].setup(vim.tbl_deep_extend('force', {}, opts.servers[server_name], {
+                            capabilities = capabilities,
+                        }))
                     end,
                 },
             }
@@ -92,7 +87,9 @@ return {
 
             ---- Setup completion
             local cmp_select = { behavior = cmp.SelectBehavior.Select }
-            local cmp_default = require 'cmp.config.default'()
+            local compare = cmp.config.compare
+            local lspkind = require 'lspkind'
+            local cmp_types = require 'cmp.types'
             cmp.setup {
                 mapping = cmp.mapping.preset.insert {
                     ['<c-space>'] = cmp.mapping.complete(),
@@ -111,14 +108,24 @@ return {
                 snippet = {
                     expand = function(args) require('luasnip').lsp_expand(args.body) end,
                 },
-                sources = cmp.config.sources({
+
+                sources = cmp.config.sources {
                     { name = 'nvim_lsp' },
-                    { name = 'luasnip' },
-                }, {
                     { name = 'buffer' },
-                    { name = 'markman' },
+                    { name = 'luasnip' },
                     { name = 'path' },
-                }),
+                },
+
+                formatting = {
+                    fields = { 'kind', 'abbr', 'menu' },
+                    format = function(entry, item)
+                        local kind = lspkind.cmp_format { mode = 'symbol_text', maxwidth = 50 }(entry, item)
+                        local strings = vim.split(kind.kind, '%s', { trimempty = true })
+                        kind.kind = (strings[1] or '') .. ' '
+                        kind.menu = strings[2] or ''
+                        return kind
+                    end,
+                },
 
                 window = {
                     completion = { border = 'rounded' },
@@ -126,12 +133,46 @@ return {
                 },
 
                 completion = { completeopt = 'menu,menuone,noinsert' },
+
                 experimental = {
-                    ghost_text = {
-                        hl_group = 'CmpGhostText',
+                    ghost_text = { hl_group = 'CmpGhostText' },
+                },
+
+                sorting = {
+                    comparators = {
+                        compare.locality,
+                        compare.recently_used,
+
+                        function(entry1, entry2)
+                            local kind1 = entry1:get_kind()
+                            local kind2 = entry2:get_kind()
+                            if kind1 ~= kind2 then
+                                if kind1 == cmp_types.lsp.CompletionItemKind.Snippet then return false end
+                                if kind2 == cmp_types.lsp.CompletionItemKind.Snippet then return true end
+                                local diff = kind1 - kind2
+                                return not diff == 0 and diff < 0 or nil
+                            end
+                        end,
+
+                        compare.exact,
+                        compare.offset,
+                        compare.score,
+                        -- function(entry1, entry2)
+                        --     local _, entry1_under = entry1.completion_item.label:find '^_+'
+                        --     local _, entry2_under = entry2.completion_item.label:find '^_+'
+                        --
+                        --     entry1_under = entry1_under or 0
+                        --     entry2_under = entry2_under or 0
+                        --
+                        --     return not entry1_under == entry2_under and entry1_under > entry2_under or nil
+                        -- end,
+                        compare.locality,
+                        compare.recently_used,
+                        compare.kind,
+                        compare.sort_text,
+                        compare.order,
                     },
                 },
-                sorting = cmp_default.sorting,
             }
         end,
     },

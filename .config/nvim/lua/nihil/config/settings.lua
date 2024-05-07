@@ -24,48 +24,6 @@ M.icons = {
         modified = ' ',
         removed = ' ',
     },
-    -- TODO: add to lsp
-    kinds = {
-        Array = ' ',
-        Boolean = '󰨙 ',
-        Class = ' ',
-        Codeium = '󰘦 ',
-        Color = ' ',
-        Control = ' ',
-        Collapsed = ' ',
-        Constant = '󰏿 ',
-        Constructor = ' ',
-        Copilot = ' ',
-        Enum = ' ',
-        EnumMember = ' ',
-        Event = ' ',
-        Field = ' ',
-        File = ' ',
-        Folder = ' ',
-        Function = '󰊕 ',
-        Interface = ' ',
-        Key = ' ',
-        Keyword = ' ',
-        Method = '󰊕 ',
-        Module = ' ',
-        Namespace = '󰦮 ',
-        Null = ' ',
-        Number = '󰎠 ',
-        Object = ' ',
-        Operator = ' ',
-        Package = ' ',
-        Property = ' ',
-        Reference = ' ',
-        Snippet = ' ',
-        String = ' ',
-        Struct = '󰆼 ',
-        TabNine = '󰏚 ',
-        Text = ' ',
-        TypeParameter = ' ',
-        Unit = ' ',
-        Value = ' ',
-        Variable = '󰀫 ',
-    },
 }
 
 --- Lsp Config
@@ -192,7 +150,6 @@ M.lspconfig = {
         },
 
         lua_ls = {
-            -- enabled = false,
             single_file_support = true,
             settings = {
                 Lua = {
@@ -251,7 +208,6 @@ M.lspconfig = {
         { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show signature' },
         { 'gk', vim.lsp.buf.signature_help, desc = 'Show signature' },
 
-        { '<leader>cl', '<cmd>LspInfo<cr>', desc = 'Lsp Info' },
         { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename symbol' },
         { '<leader>cd', vim.diagnostic.open_float, desc = 'Open diagnostics' },
         { '<leader>ca', '<cmd>FzfLua lsp_code_actions<cr>', mode = { 'n', 'v' }, desc = 'Code actions' },
@@ -263,30 +219,30 @@ M.lspconfig = {
 --- Formatting (Conform)
 M.conform = {
     format_on_save = { timeout_ms = 3000, lsp_fallback = false, async = false },
-    mason_tools = {
+
+    mason_ensure_installed = {
         'prettierd',
         'black',
         'stylua',
     },
-}
 
-local prettier_fmt = { 'prettierd', 'prettier' }
----@type table<string, conform.FiletypeFormatter>
-M.conform.formatters_by_ft = {
-    lua = { 'stylua' },
-    go = { 'goimports', 'gofmt' },
-    rust = { 'rustfmt' },
-    python = { 'isort', 'black' },
-    fish = { 'fish_indent' },
-    markdown = prettier_fmt,
-    typescript = prettier_fmt,
-    typescriptreact = prettier_fmt,
-    javascript = prettier_fmt,
-    javascriptreact = prettier_fmt,
-    json = prettier_fmt,
-    html = prettier_fmt,
-    css = prettier_fmt,
-    ['_'] = { 'trim_whitespace' },
+    ---@type table<string, conform.FiletypeFormatter>
+    formatters_by_ft = {
+        lua = { 'stylua' },
+        go = { 'goimports', 'gofmt' },
+        rust = { 'rustfmt' },
+        python = { 'isort', 'black' },
+        fish = { 'fish_indent' },
+        markdown = { 'prettierd' },
+        typescript = { 'prettierd' },
+        typescriptreact = { 'prettierd' },
+        javascript = { 'prettierd' },
+        javascriptreact = { 'prettierd' },
+        json = { 'prettierd' },
+        html = { 'prettierd' },
+        css = { 'prettierd' },
+        ['_'] = { 'trim_whitespace' },
+    },
 }
 
 --- Exclude filetypes

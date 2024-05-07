@@ -30,15 +30,21 @@ return {
                 Visual = { bg = '#343242' },
                 Normal = { bg = 'none' },
                 NormalFloat = { bg = 'none' },
+                PmenuSel = { bg = 'highlight_low', fg = 'none' },
 
                 -- others
                 TroubleNormal = { bg = 'none' },
-                CmpGhostText = { link = 'Comment', default = true },
                 VirtColumn = { fg = 'base' },
                 IlluminatedWordText = { bg = 'highlight_low' },
                 IlluminatedWordRead = { bg = 'highlight_low' },
                 IlluminatedWordWrite = { bg = 'highlight_low' },
                 NeoTreeCursorLine = { bg = 'base', bold = true },
+
+                CmpGhostText = { link = 'Comment', default = true },
+                CmpItemAbbrDeprecated = { fg = 'muted', bg = 'none', strikethrough = true },
+                CmpItemAbbrMatch = { fg = 'foam', bg = 'none', bold = true },
+                CmpItemAbbrMatchFuzzy = { fg = 'foam', bg = 'none', bold = true },
+                CmpItemMenu = { fg = 'rose', bg = 'none', italic = true },
             },
         },
     },

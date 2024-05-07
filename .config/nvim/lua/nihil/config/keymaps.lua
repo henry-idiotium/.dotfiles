@@ -57,7 +57,7 @@ map('v', '>', '>gv')
 -- folding
 map('n', 'z<s-c>', ':setlocal foldlevel=00 <cr>', { desc = 'Min Fold Level' })
 map('n', 'z<s-o>', ':setlocal foldlevel=10 <cr>', { desc = 'Max Fold Level' })
-map('n', '1zl', ':setlocal foldlevel=1 <cr>', { desc = 'Fold Level 1' })
+map('n', 'zl', ':<c-u>let &l:foldlevel = v:count<cr>', { desc = 'Set Fold Level' })
 
 -- register
 map({ 'n', 's', 'x' }, 'x', '"_x', { desc = 'Void yank x' })
@@ -114,6 +114,7 @@ map('n', '<leader>b<s-d>', ':%bd | e#<cr>', { desc = 'Delete all buffers except 
 ---- Others
 map('n', '<leader>ol', '<cmd>Lazy<cr>', { desc = 'Lazy' })
 map('n', '<leader>om', '<cmd>Mason<cr>', { desc = 'Mason' })
+map('n', '<leader>os', '<cmd>LspInfo<cr>', { desc = 'Lsp Info' })
 
 ---- Diagnostics
 ---@param dir 'next'|'prev'

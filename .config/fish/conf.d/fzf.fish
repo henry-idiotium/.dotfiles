@@ -27,6 +27,7 @@ set -g __find_cmd fd $FD_DEFAULT_OPTS
 
 set -g fzf_main_dirs \
     ~/.config/ \
+    ~/documents/ \
     ~/documents/personal/ \
     ~/documents/work/ \
     ~/documents/projects/ \
@@ -43,10 +44,8 @@ function fzf_main_dirs
         string join \n $fzf_main_dirs
         $__find_cmd --max-depth 1 -- . $fzf_main_dirs
     end \
-        # # remove duplicates
-        # | awk '!arr[$1]++' \
+        | path sort --unique \
         | string replace "$HOME/" '' \
-        | path sort \
         | $__fzf_cmd \
         | read -l result; or return
 
