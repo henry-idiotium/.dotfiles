@@ -4,6 +4,6 @@ if not functions -q fundle
 end
 
 fundle plugin IlanCosman/tide@v6
-fundle plugin ankitsumitg/docker-fish-completions
+fundle plugin jorgebucaran/autopair.fish
 
 fundle init

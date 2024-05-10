@@ -1,3 +1,5 @@
+not functions -q tide; and return
+
 set -l prompt_bg normal # transparent
 
 # prompt config

@@ -1,3 +1,7 @@
+bind -M insert \ce fzf_search_path
+bind -M insert \cd fzf_main_dirs
+
+
 set -gx FZF_DEFAULT_OPTS \
     --ansi --cycle --reverse --inline-info \
     --color header:italic,gutter:-1 \
@@ -13,11 +17,9 @@ set -gx FZF_DEFAULT_OPTS \
     --bind tab:toggle+down,btab:toggle+up
 
 set -gx FD_DEFAULT_OPTS \
-    --follow --hidden \
-    --ignore-file ~/.config/git/ignore
+    --follow --hidden
 
-set -gx RG_DEFAULT_OPTS \
-    $FD_DEFAULT_OPTS \
+set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS \
     --files --sortr modified
 
 set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS
@@ -53,8 +55,6 @@ end
 function fzf_search_path
     set -f token (eval echo -- (commandline -t)) # expand vars & tidle
     set token (string unescape -- $token) # unescape to void compromise the path
-
-    set -fa __find_cmd --no-ignore
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
