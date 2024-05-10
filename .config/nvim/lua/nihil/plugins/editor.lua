@@ -98,15 +98,20 @@ return {
                 live_grep = { formatter = path_format },
                 grep = { formatter = path_format },
                 files = {
-                    -- cmd = 'fd ' .. vim.env.FD_DEFAULT_OPTS .. ' --type f',
-                    cmd = 'rg ' .. vim.env.RG_DEFAULT_OPTS,
+                    -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
+                    cmd = 'rg --no-require-git ' .. vim.env.RG_DEFAULT_OPTS,
                     formatter = path_format,
                     cwd_prompt = false,
                     prompt = ' Files❯ ',
-                    winopts = { width = 0.6, preview = { layout = 'vertical' } },
-                    acitons = {
+                    actions = {
                         ['ctrl-g'] = false,
                         ['alt-h'] = { actions.toggle_ignore },
+                    },
+                    winopts = {
+                        width = 0.6,
+                        preview = {
+                            layout = 'vertical',
+                        },
                     },
                 },
             }
@@ -118,7 +123,7 @@ return {
 
         cmd = 'Neotree',
         keys = {
-            { ';s', '<cmd>Neotree reveal show<cr>', desc = 'File Explorer Reveal Current File' },
+            { ';s', '<cmd>Neotree reveal<cr>', desc = 'File Explorer Reveal Current File' },
             { 'sf', '<cmd>Neotree toggle right<cr>', desc = 'File Explorer' },
             { 'sF', '<cmd>Neotree float<cr>', desc = 'File Explorer (Popup)' },
         },
@@ -135,6 +140,7 @@ return {
             sources = { 'filesystem', 'git_status' },
             source_selector = { winbar = true },
             hide_root_node = true,
+            show_path = 'relative',
             retain_hidden_root_indent = true, -- IF the root node is hidden, keep the indentation anyhow.
             popup_border_style = 'rounded',
 
@@ -149,6 +155,7 @@ return {
             -- neo-tree neo-tree-popup
             use_default_mappings = false,
             window = {
+                width = 30,
                 mappings = {
                     ['sf'] = 'close_window',
                     ['q'] = 'close_window',
@@ -168,10 +175,11 @@ return {
                     ['z<s-c>'] = 'close_all_nodes',
                     ['z<s-o>'] = 'expand_all_nodes',
 
-                    ['<a-n>'] = 'add',
-                    ['<a-c>'] = 'copy',
+                    -- none, relative, absolute
+                    ['<a-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
+                    ['<a-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
+                    ['<a-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
                     ['<a-d>'] = 'delete',
-                    ['<a-m>'] = 'move',
                     ['<a-i>'] = 'show_file_details',
                     ['<a-r>'] = 'rename',
 

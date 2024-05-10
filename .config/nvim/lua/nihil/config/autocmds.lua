@@ -83,3 +83,4 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 local function ft_pattern(pattern, ft) vim.cmd(' autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft) end
 ft_pattern('*.astro', 'astro')
 ft_pattern('Podfile', 'ruby')
+ft_pattern('.env*.local', 'sh')

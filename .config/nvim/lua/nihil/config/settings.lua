@@ -24,6 +24,47 @@ M.icons = {
         modified = ' ',
         removed = ' ',
     },
+    kinds = {
+        Array = ' ',
+        Boolean = '󰨙 ',
+        Class = ' ',
+        Codeium = '󰘦 ',
+        Color = ' ',
+        Control = ' ',
+        Collapsed = ' ',
+        Constant = '󰏿 ',
+        Constructor = ' ',
+        Copilot = ' ',
+        Enum = ' ',
+        EnumMember = ' ',
+        Event = ' ',
+        Field = ' ',
+        File = ' ',
+        Folder = ' ',
+        Function = '󰊕 ',
+        Interface = ' ',
+        Key = ' ',
+        Keyword = ' ',
+        Method = '󰊕 ',
+        Module = ' ',
+        Namespace = '󰦮 ',
+        Null = ' ',
+        Number = '󰎠 ',
+        Object = ' ',
+        Operator = ' ',
+        Package = ' ',
+        Property = ' ',
+        Reference = ' ',
+        Snippet = ' ',
+        String = ' ',
+        Struct = '󰆼 ',
+        TabNine = '󰏚 ',
+        Text = ' ',
+        TypeParameter = ' ',
+        Unit = ' ',
+        Value = ' ',
+        Variable = '󰀫 ',
+    },
 }
 
 --- Lsp Config
@@ -59,11 +100,35 @@ M.lspconfig = {
     ---@type lspconfig.options
     servers = {
         rust_analyzer = {},
-        tailwindcss = {},
         emmet_ls = {},
         html = {},
         gopls = {},
         pyright = {},
+
+        prismals = {},
+
+        tailwindcss = {
+            filetypes = {
+                'astro',
+                'django-html',
+                'htmldjango',
+                'html',
+                'css',
+                'less',
+                'postcss',
+                'sass',
+                'scss',
+                'stylus',
+                'sugarss',
+                'javascript',
+                'javascriptreact',
+                'rescript',
+                'typescript',
+                'typescriptreact',
+                'vue',
+                'svelte',
+            },
+        },
 
         tsserver = {
             single_file_support = false,
@@ -225,24 +290,26 @@ M.conform = {
         'black',
         'stylua',
     },
+}
 
-    ---@type table<string, conform.FiletypeFormatter>
-    formatters_by_ft = {
-        lua = { 'stylua' },
-        go = { 'goimports', 'gofmt' },
-        rust = { 'rustfmt' },
-        python = { 'isort', 'black' },
-        fish = { 'fish_indent' },
-        markdown = { 'prettierd' },
-        typescript = { 'prettierd' },
-        typescriptreact = { 'prettierd' },
-        javascript = { 'prettierd' },
-        javascriptreact = { 'prettierd' },
-        json = { 'prettierd' },
-        html = { 'prettierd' },
-        css = { 'prettierd' },
-        ['_'] = { 'trim_whitespace' },
-    },
+local prettier_fmt = { 'prettierd' }
+---@type table<string, conform.FiletypeFormatter>
+M.conform.formatters_by_ft = {
+    lua = { 'stylua' },
+    go = { 'goimports', 'gofmt' },
+    rust = { 'rustfmt' },
+    python = { 'isort', 'black' },
+    fish = { 'fish_indent' },
+    markdown = prettier_fmt,
+    typescript = prettier_fmt,
+    typescriptreact = prettier_fmt,
+    javascript = prettier_fmt,
+    javascriptreact = prettier_fmt,
+    json = prettier_fmt,
+    html = prettier_fmt,
+    css = prettier_fmt,
+    prisma = prettier_fmt,
+    ['_'] = { 'trim_whitespace' },
 }
 
 --- Exclude filetypes

@@ -4,4 +4,5 @@ fishd.tmp*
 themes/
 completions/
 functions/
+fundle/
 conf.d/_*

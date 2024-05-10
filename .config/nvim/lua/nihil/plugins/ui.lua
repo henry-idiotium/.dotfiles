@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil
 return {
-    { -- better `vim.notify`
+    { -- better vim.notify
         'rcarriga/nvim-notify',
         lazy = false,
         event = 'VeryLazy',
@@ -21,7 +21,7 @@ return {
         },
     },
 
-    { -- Better vim.ui
+    { -- better vim.ui
         'stevearc/dressing.nvim',
         lazy = true,
         event = 'VeryLazy',
@@ -61,9 +61,7 @@ return {
         end,
     },
 
-    -- Highly experimental plugin that completely replaces the UI for
-    -- messages, cmdline and the popupmenu.
-    {
+    { -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
         'folke/noice.nvim',
         lazy = false,
         event = 'VeryLazy',
@@ -378,6 +376,20 @@ return {
                 NeoTree = { position = 'right' },
                 undotree = { position = 'left' },
             },
+        },
+    },
+
+    { -- better folding
+        'kevinhwang91/nvim-ufo',
+        dependencies = 'kevinhwang91/promise-async',
+        event = 'VeryLazy',
+        lazy = false,
+        keys = {
+            { 'zO', function() require('ufo').openAllFolds() end, desc = 'UFO Open All Fold' },
+            { 'zC', function() require('ufo').closeAllFolds() end, desc = 'UFO Close All Fold' },
+        },
+        opts = {
+            open_fold_hl_timeout = 0,
         },
     },
 }

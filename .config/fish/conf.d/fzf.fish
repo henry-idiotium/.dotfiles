@@ -12,15 +12,13 @@ set -gx FZF_DEFAULT_OPTS \
     --bind alt-g:first,alt-G:last \
     --bind tab:toggle+down,btab:toggle+up
 
-set -gx RG_DEFAULT_OPTS \
-    --sortr accessed --files --hidden --follow \
-    --iglob !.git
-
-# --color always \
 set -gx FD_DEFAULT_OPTS \
-    --follow --hidden --no-require-git \
-    --exclude .git \
-    --exclude node_modules
+    --follow --hidden \
+    --ignore-file ~/.config/git/ignore
+
+set -gx RG_DEFAULT_OPTS \
+    $FD_DEFAULT_OPTS \
+    --files --sortr modified
 
 set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS
 set -g __find_cmd fd $FD_DEFAULT_OPTS
@@ -55,6 +53,8 @@ end
 function fzf_search_path
     set -f token (eval echo -- (commandline -t)) # expand vars & tidle
     set token (string unescape -- $token) # unescape to void compromise the path
+
+    set -fa __find_cmd --no-ignore
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.

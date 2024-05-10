@@ -64,7 +64,7 @@ vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 vim.opt.foldlevel = 10
 vim.opt.foldmethod = 'expr'
 vim.opt.foldenable = true
-vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+-- vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
 vim.opt.foldtext = ''
 vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }

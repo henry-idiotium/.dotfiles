@@ -1,4 +1,4 @@
-column_width = 160
+column_width = 130
 indent_type = 'Spaces'
 indent_width = 4
 quote_style = 'AutoPreferSingle'              # AutoPreferDouble, AutoPreferSingle, ForceDouble, ForceSingle
