@@ -1,5 +1,4 @@
 # vim:ft=gitignore
 
-.git
-.dotfiles
-# ignore first level
+.git/
+.dotfiles/
