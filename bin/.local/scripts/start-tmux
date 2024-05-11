@@ -24,6 +24,7 @@ set -l cool_unused_names \
     ゲンキキ \
     イクドキ \
     ハッピー \
+    ダーク \
     ノラ
 
 set -f session_name (random choice $cool_unused_names)
