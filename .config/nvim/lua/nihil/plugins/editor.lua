@@ -30,9 +30,9 @@ return {
                     local opts = { buffer = cx.bufnr }
                     vim.keymap.set({ 'n', 'i' }, '<c-q>', function() harpoon.ui:close_menu() end, opts)
                     vim.keymap.set('n', '<c-l>', function() harpoon.ui:select_menu_item {} end, opts)
-                    vim.keymap.set('n', '<a-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
-                    vim.keymap.set('n', '<a-s>', function() harpoon.ui:select_menu_item { split = true } end, opts)
-                    vim.keymap.set('n', '<c-t>', function() harpoon.ui:select_menu_item { tabedit = true } end, opts)
+                    vim.keymap.set('n', 'v', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
+                    vim.keymap.set('n', 's', function() harpoon.ui:select_menu_item { split = true } end, opts)
+                    vim.keymap.set('n', 't', function() harpoon.ui:select_menu_item { tabedit = true } end, opts)
                 end,
             }
         end,
@@ -45,10 +45,12 @@ return {
         keys = {
             { '\\\\', '<cmd>FzfLua resume <cr>' },
             { ';b', '<cmd>FzfLua buffers <cr>', desc = 'Find Current Buffers' },
-            { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Live Grep' },
+            { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Grep' },
+            { ';R', '<cmd>FzfLua grep_cWORD <cr>', desc = 'Grep word' },
+            { ';r', '<cmd>FzfLua grep_visual <cr>', desc = 'Grep', mode = 'v' },
             { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
-            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'LSP Doc Symbols' },
-            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'LSP Workspace Symbols' },
+            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'Document Symbols' },
+            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'Workspace Symbols' },
             {
                 '<c-e>',
                 function()
@@ -63,58 +65,63 @@ return {
             },
         },
 
-        opts = function()
-            local path_format = 'path.filename_first'
-            local actions = require 'fzf-lua.actions'
+        opts = {
+            width = 0.8,
+            height = 0.8,
+            sort_lastused = true,
 
-            return {
-                width = 0.8,
-                height = 0.8,
-                sort_lastused = true,
+            winopts = {
+                preview = {
+                    wrap = 'nowrap',
+                    hidden = 'hidden',
+                    vertical = 'down:40%',
+                    horizontal = 'right:50%',
+                    scrollchars = { '┃', '' },
+                },
+            },
+            keymap = {
+                builtin = {
+                    ['<a-/>'] = 'toggle-help',
+                    ['<a-p>'] = 'toggle-preview',
+                    ['<c-u>'] = 'preview-up',
+                    ['<c-d>'] = 'preview-down',
+                    ['<a-z>'] = 'toggle-preview-wrap',
+                },
+            },
 
+            fzf_args = vim.env.FZF_DEFAULT_OPTS,
+
+            -- PROVIDERS
+            lsp_finder = {},
+            live_grep = {},
+            grep = {},
+            files = {
+                -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
+                cmd = 'rg --no-require-git ' .. vim.env.RG_DEFAULT_OPTS,
+                cwd_prompt = false,
+                prompt = ' Files❯ ',
+                actions = {
+                    ['ctrl-g'] = false,
+                },
                 winopts = {
-                    preview = {
-                        wrap = 'nowrap',
-                        hidden = 'hidden',
-                        vertical = 'down:40%',
-                        horizontal = 'right:50%',
-                        scrollchars = { '┃', '' },
-                    },
+                    width = 0.6,
+                    preview = { layout = 'vertical' },
                 },
-                keymap = {
-                    builtin = {
-                        ['<a-/>'] = 'toggle-help',
-                        ['<a-p>'] = 'toggle-preview',
-                        ['<c-u>'] = 'preview-up',
-                        ['<c-d>'] = 'preview-down',
-                        ['<a-z>'] = 'toggle-preview-wrap',
-                    },
-                },
+            },
+        },
 
-                fzf_args = vim.env.FZF_DEFAULT_OPTS,
+        config = function(_, opts)
+            local actions = require 'fzf-lua.actions'
+            local path_format = 'path.filename_first'
 
-                -- PROVIDERS
-                lsp_finder = { formatter = path_format },
-                live_grep = { formatter = path_format },
-                grep = { formatter = path_format },
-                files = {
-                    -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
-                    cmd = 'rg --no-require-git ' .. vim.env.RG_DEFAULT_OPTS,
-                    formatter = path_format,
-                    cwd_prompt = false,
-                    prompt = ' Files❯ ',
-                    actions = {
-                        ['ctrl-g'] = false,
-                        ['alt-h'] = { actions.toggle_ignore },
-                    },
-                    winopts = {
-                        width = 0.6,
-                        preview = {
-                            layout = 'vertical',
-                        },
-                    },
-                },
-            }
+            opts.lsp_finder.formatter = path_format
+            opts.live_grep.formatter = path_format
+            opts.grep.formatter = path_format
+
+            opts.files.formatter = path_format
+            opts.files.actions['alt-h'] = { actions.toggle_ignore }
+
+            require('fzf-lua').setup(opts)
         end,
     },
 
@@ -164,9 +171,9 @@ return {
                     ['l'] = 'open',
                     ['<cr>'] = 'open',
                     ['<2-leftmouse>'] = 'open',
-                    ['<a-t>'] = 'open_tabnew',
-                    ['<a-s>'] = 'open_split',
-                    ['<a-v>'] = 'open_vsplit',
+                    ['t'] = 'open_tabnew',
+                    ['s'] = 'open_split',
+                    ['v'] = 'open_vsplit',
                     ['?'] = 'show_help',
                     ['<'] = 'prev_source',
                     ['>'] = 'next_source',

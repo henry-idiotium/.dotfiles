@@ -1,5 +1,46 @@
 ---@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil
 return {
+    { -- better vim.ui
+        'stevearc/dressing.nvim',
+        lazy = true,
+        event = 'VeryLazy',
+        init = function()
+            vim.ui.select = function(...)
+                require('lazy').load { plugins = { 'dressing.nvim' } }
+                return vim.ui.select(...)
+            end
+            vim.ui.input = function(...)
+                require('lazy').load { plugins = { 'dressing.nvim' } }
+                return vim.ui.input(...)
+            end
+        end,
+        opts = {
+            input = {
+                mappings = {
+                    ['<esc>'] = 'Close',
+                    ['<c-q>'] = 'Close',
+                    ['<c-c>'] = 'Close',
+                    ['<cr>'] = 'Confirm',
+                    ['<c-j>'] = 'Confirm',
+                    ['<c-h>'] = 'HistoryPrev',
+                    ['<c-l>'] = 'HistoryNext',
+                    ['<up>'] = 'HistoryPrev',
+                    ['<down>'] = 'HistoryNext',
+                },
+            },
+        },
+        config = function(_, opts)
+            require('dressing').setup {
+                input = {
+                    mappings = {
+                        n = opts.input.mappings,
+                        i = opts.input.mappings,
+                    },
+                },
+            }
+        end,
+    },
+
     { -- better vim.notify
         'rcarriga/nvim-notify',
         lazy = false,
@@ -21,57 +62,16 @@ return {
         },
     },
 
-    { -- better vim.ui
-        'stevearc/dressing.nvim',
-        lazy = true,
-        event = 'VeryLazy',
-        init = function()
-            vim.ui.select = function(...)
-                require('lazy').load { plugins = { 'dressing.nvim' } }
-                return vim.ui.select(...)
-            end
-
-            vim.ui.input = function(...)
-                require('lazy').load { plugins = { 'dressing.nvim' } }
-                return vim.ui.input(...)
-            end
-        end,
-
-        opts = function()
-            local mappings = {
-                ['<esc>'] = 'Close',
-                ['<c-q>'] = 'Close',
-                ['<c-c>'] = 'Close',
-                ['<cr>'] = 'Confirm',
-                ['<c-j>'] = 'Confirm',
-                ['<c-h>'] = 'HistoryPrev',
-                ['<c-l>'] = 'HistoryNext',
-                ['<up>'] = 'HistoryPrev',
-                ['<down>'] = 'HistoryNext',
-            }
-
-            return {
-                input = {
-                    mappings = {
-                        n = mappings,
-                        i = mappings,
-                    },
-                },
-            }
-        end,
-    },
-
     { -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
         'folke/noice.nvim',
-        lazy = false,
         event = 'VeryLazy',
+        lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
         keys = {
-            { '<s-enter>', function() require('noice').redirect(vim.fn.getcmdline()) end, mode = 'c', desc = 'Redirect Cmdline' },
-            { '<leader>snl', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
-            { '<leader>snh', function() require('noice').cmd 'history' end, desc = 'Noice History' },
-            { '<leader>sna', function() require('noice').cmd 'all' end, desc = 'Noice All' },
-            { '<leader>snd', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All' },
+            { '<leader>ud', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
+            { '<leader>uh', function() require('noice').cmd 'history' end, desc = 'Noice History' },
+            { '<leader>ua', function() require('noice').cmd 'all' end, desc = 'Noice All' },
+            { '<leader>ud', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All' },
         },
 
         opts = {
@@ -264,7 +264,8 @@ return {
                 diagnostics = 'nvim_lsp',
                 diagnostics_indicator = function(_, _, diag)
                     local icons = Nihil.settings.icons.diagnostics
-                    local ret = (diag.error and icons.error .. diag.error .. ' ' or '') .. (diag.warning and icons.warn .. diag.warning or '')
+                    local ret = (diag.error and icons.error .. diag.error .. ' ' or '')
+                        .. (diag.warning and icons.warn .. diag.warning or '')
                     return vim.trim(ret)
                 end,
 
@@ -376,20 +377,6 @@ return {
                 NeoTree = { position = 'right' },
                 undotree = { position = 'left' },
             },
-        },
-    },
-
-    { -- better folding
-        'kevinhwang91/nvim-ufo',
-        dependencies = 'kevinhwang91/promise-async',
-        event = 'VeryLazy',
-        lazy = false,
-        keys = {
-            { 'zO', function() require('ufo').openAllFolds() end, desc = 'UFO Open All Fold' },
-            { 'zC', function() require('ufo').closeAllFolds() end, desc = 'UFO Close All Fold' },
-        },
-        opts = {
-            open_fold_hl_timeout = 0,
         },
     },
 }

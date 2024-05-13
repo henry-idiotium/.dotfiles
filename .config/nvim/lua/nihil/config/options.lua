@@ -31,6 +31,7 @@ vim.opt.termguicolors = true
 vim.opt.wildoptions = 'pum'
 vim.opt.winblend = 0
 vim.opt.pumblend = 0
+vim.opt.pumheight = 7
 vim.opt.background = 'dark'
 vim.opt.completeopt = 'menu,menuone,noselect'
 vim.opt.confirm = true
@@ -64,7 +65,7 @@ vim.opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 vim.opt.foldlevel = 10
 vim.opt.foldmethod = 'expr'
 vim.opt.foldenable = true
--- vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
+vim.opt.foldexpr = [[v:lua.vim.treesitter.foldexpr()]]
 vim.opt.foldtext = ''
 vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }

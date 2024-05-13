@@ -104,8 +104,15 @@ M.lspconfig = {
         html = {},
         gopls = {},
         pyright = {},
-
         prismals = {},
+
+        markdown_oxide = {
+            workspace = {
+                didChangeWatchedFiles = {
+                    dynamicRegistration = true,
+                },
+            },
+        },
 
         tailwindcss = {
             filetypes = {
@@ -132,7 +139,9 @@ M.lspconfig = {
 
         tsserver = {
             single_file_support = false,
-            root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
+            root_dir = function(...)
+                return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...)
+            end,
             settings = {
                 typescript = {
                     inlayHints = {
@@ -176,24 +185,20 @@ M.lspconfig = {
                     },
                 },
             },
+
             -- lazy-load schemastore when needed
             on_new_config = function(new_config)
-                new_config.settings.yaml.schemas = vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
+                new_config.settings.yaml.schemas =
+                    vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
             end,
             settings = {
                 redhat = { telemetry = { enabled = false } },
                 yaml = {
                     keyOrdering = false,
-                    format = {
-                        enable = true,
-                    },
                     validate = true,
                     schemaStore = {
-                        -- Must disable built-in schemaStore support to use
-                        -- schemas from SchemaStore.nvim plugin
-                        enable = false,
-                        -- Avoid TypeError: Cannot read properties of undefined (reading 'length')
-                        url = '',
+                        enable = false, -- Must disable built-in schemaStore support to use schemas from SchemaStore.nvim plugin
+                        url = '', -- Avoid TypeError: Cannot read properties of undefined (reading 'length')
                     },
                 },
             },
@@ -335,6 +340,20 @@ M.minimal_plugins_filetypes = {
     'help',
     'svn',
     'qf',
+}
+
+--- filetypes stuffs?
+M.autocmd = {
+    ft_pattern = {
+        astro = '*.astro',
+        ruby = 'Podfile',
+        sh = '.env*.local',
+        tmux = '*.tmux',
+        gitignore = '.ignore',
+    },
+    ft_cmnt_str = {
+        prisma = [[//\ %s]],
+    },
 }
 
 _G.Nihil.settings = M

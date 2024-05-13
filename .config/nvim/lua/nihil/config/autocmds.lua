@@ -80,7 +80,11 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 })
 
 -- Set filetypes
-local function ft_pattern(pattern, ft) vim.cmd(' autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft) end
-ft_pattern('*.astro', 'astro')
-ft_pattern('Podfile', 'ruby')
-ft_pattern('.env*.local', 'sh')
+for ft, pattern in pairs(Nihil.settings.autocmd.ft_pattern) do
+    vim.cmd('autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft)
+end
+
+-- Set commentstring
+for ft, cmnt_str in pairs(Nihil.settings.autocmd.ft_cmnt_str) do
+    vim.cmd('autocmd FileType ' .. ft .. ' setlocal commentstring=' .. cmnt_str)
+end

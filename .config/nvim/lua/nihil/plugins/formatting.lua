@@ -12,9 +12,18 @@ return {
 
         cmd = { 'ConformInfo' },
         keys = {
-            { '<leader>of', '<cmd>ConformInfo<cr>', desc = 'Conform Info' },
-            { '<a-s-f>', function() require('conform').format(Nihil.settings.conform.format_on_save) end, mode = { 'i', 'n', 'v' }, desc = 'Format buffer' },
-            { '<leader>cf', function() require('conform').format(Nihil.settings.conform.format_on_save) end, mode = { 'n', 'v' }, desc = 'Format buffer' },
+            {
+                '<a-s-f>',
+                function() require('conform').format(Nihil.settings.conform.format_on_save) end,
+                mode = { 'i', 'n', 'v' },
+                desc = 'Format buffer',
+            },
+            {
+                '<leader>cf',
+                function() require('conform').format(Nihil.settings.conform.format_on_save) end,
+                mode = { 'n', 'v' },
+                desc = 'Format buffer',
+            },
             { '<leader>tf', '<cmd>ToggleAutoFormat<cr>', mode = { 'n', 'v' }, desc = 'Toggle Auto Format Globally' },
         },
 

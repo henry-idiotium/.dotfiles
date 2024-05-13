@@ -53,24 +53,16 @@ return {
 
     { -- ThePrimeagen's refactoring
         'ThePrimeagen/refactoring.nvim',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            'nvim-treesitter/nvim-treesitter',
-            { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>r'] = { name = '+refactoring' } end },
-        },
+        dependencies = 'nvim-lua/plenary.nvim',
+        opts = { show_success_message = true },
         keys = {
             {
-                '<leader>rr',
-                function()
-                    require('refactoring').select_refactor {
-                        show_success_message = true,
-                    }
-                end,
+                '<leader>cA',
+                [[:lua require 'refactoring'.select_refactor() <cr>]],
                 mode = { 'n', 'v' },
-                desc = 'Refactoring actions',
+                desc = 'Refactoring Actions',
             },
         },
-        opts = { show_success_message = true },
     },
 
     { -- Comments
