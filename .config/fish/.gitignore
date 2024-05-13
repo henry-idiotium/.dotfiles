@@ -1,8 +1,7 @@
-fish_variables
-fish_plugins
-fishd.tmp*
 themes/
 completions/
 functions/
 fundle/
-conf.d/_*
+fish_variables
+fish_plugins
+fishd.tmp*

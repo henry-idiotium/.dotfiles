@@ -1,5 +1,3 @@
-not status is-interactive; and exit 0
-
 set -U fish_greeting ''
 set -U fish_vi_force_cursor true
 set -U fish_cursor_insert line blink
@@ -7,15 +5,20 @@ set -U fish_cursor_default block blink
 
 
 ## env
-set -gx XDG_CONFIG_HOME "$HOME/.config"
-set -gx XDG_CACHE_HOME "$HOME/.cache"
-set -gx XDG_DATA_HOME "$HOME/.local/share"
-set -gx XDG_STATE_HOME "$HOME/.local/state"
+set -gx XDG_CONFIG_HOME ~/.config
+set -gx XDG_CACHE_HOME ~/.cache
+set -gx XDG_DATA_HOME ~/.local/share
+set -gx XDG_STATE_HOME ~/.local/state
 set -gx TERM wezterm # enable undercurl  ~/.terminfo/w/wezterm
 set -gx GIT_EDITOR nvim # git doesn't understand aliases
 set -gx EDITOR vi
 
-fish_add_path -g ~/.local/bin ~/bin ~/bin/.local/ ~/bin/.local/scripts/
+set -gx MY_NOTE_HOME ~/documents/personal/notes
+set -gx MY_PROJECT_HOME ~/documents/projects
+set -gx MY_WORK_HOME ~/documents/works
+set -gx MY_THROWAWAY_HOME ~/documents/throwaways
+
+fish_add_path -g ~/.local/bin ~/bin ~/bin/.local ~/bin/.local/scripts
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/go/bin
@@ -66,11 +69,11 @@ bind -M visual H beginning-of-line
 bind -M insert \cy forward-char # accept inline suggestion
 
 # scripts
-function bind-script
-    argparse -n bind-script 'M=+' -- $argv; or return
-    bind -M $_flag_M $argv[1] "$argv[2]; echo; commandline -t ''; commandline -f repaint-mode"
+set -l _script_suffix '; echo; commandline -t ''; commandline -f repaint-mode'
+bind -M insert \e\; "start-tmux $_script_suffix"
+
+
+## OS
+if string match -q 'Linux*WSL*' -- (uname -sr)
+    set -gx CLIPBOARD (command -vq win32yank.exe && echo win32yank.exe -i || echo clip.exe)
 end
-
-bind-script -M insert \e\; start-tmux
-
-functions -e bind-script

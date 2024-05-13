@@ -1,5 +1,5 @@
-bind -M insert \ce fzf_search_path
-bind -M insert \cd fzf_main_dirs
+bind -M insert \ce fzf-search-path
+bind -M insert \cd fzf-main-dirs
 
 
 set -gx FZF_DEFAULT_OPTS \
@@ -25,24 +25,24 @@ set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS \
 set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS
 set -g __find_cmd fd $FD_DEFAULT_OPTS
 
-set -g fzf_main_dirs \
+set -g __fzf_main_dirs \
     ~/.config/ \
     ~/documents/ \
     ~/documents/personal/ \
-    ~/documents/work/ \
+    ~/documents/works/ \
     ~/documents/projects/ \
     ~/documents/throwaways/
 
 
 
 # -------- FUNCTIONS ------------------------------------------------
-function fzf_main_dirs
+function fzf-main-dirs
     set -fa __fzf_cmd --prompt ' Documents> '
     set -fa __find_cmd --type directory
 
     begin
-        string join \n $fzf_main_dirs
-        $__find_cmd --max-depth 1 -- . $fzf_main_dirs
+        string join \n $__fzf_main_dirs
+        $__find_cmd --max-depth 1 -- . $__fzf_main_dirs
     end \
         | path sort --unique \
         | string replace "$HOME/" '' \
@@ -52,7 +52,7 @@ function fzf_main_dirs
     __fzf_open_path ~/$result
 end
 
-function fzf_search_path
+function fzf-search-path
     set -f token (eval echo -- (commandline -t)) # expand vars & tidle
     set token (string unescape -- $token) # unescape to void compromise the path
 
