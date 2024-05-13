@@ -39,6 +39,7 @@ set -l prompt_session_name \
     (set_color brblack)"($session_name)" \
     (set_color normal)
 
+echo
 read -lP "$prompt_session_name" user_session_name
 or return
 
@@ -59,6 +60,7 @@ else
         (set_color cyan)$session_name \
         (set_color normal)"?" (set_color brblack)"[Y/n] "
 
+    echo
     read -lP "$prompt_switch_session" switch_confirm
     or return
 
