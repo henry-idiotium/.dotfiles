@@ -46,6 +46,7 @@ return {
             { '\\\\', '<cmd>FzfLua resume <cr>' },
             { ';b', '<cmd>FzfLua buffers <cr>', desc = 'Find Current Buffers' },
             { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Grep' },
+            { ';c', '<cmd>FzfLua colorschemes <cr>', desc = 'Colorschemes' },
             { ';R', '<cmd>FzfLua grep_cWORD <cr>', desc = 'Grep word' },
             { ';r', '<cmd>FzfLua grep_visual <cr>', desc = 'Grep', mode = 'v' },
             { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
@@ -163,6 +164,7 @@ return {
             use_default_mappings = false,
             window = {
                 width = 30,
+                position = 'right',
                 mappings = {
                     ['sf'] = 'close_window',
                     ['q'] = 'close_window',
@@ -170,10 +172,9 @@ return {
                     ['h'] = 'close_node',
                     ['l'] = 'open',
                     ['<cr>'] = 'open',
-                    ['<2-leftmouse>'] = 'open',
                     ['t'] = 'open_tabnew',
-                    ['s'] = 'open_split',
-                    ['v'] = 'open_vsplit',
+                    ['<a-s>'] = 'open_split',
+                    ['<a-v>'] = 'open_vsplit',
                     ['?'] = 'show_help',
                     ['<'] = 'prev_source',
                     ['>'] = 'next_source',
@@ -190,6 +191,49 @@ return {
                     ['<a-i>'] = 'show_file_details',
                     ['<a-r>'] = 'rename',
 
+                    ['<a-s-o>'] = {
+                        function(state) vim.ui.open(state.tree:get_node().path) end,
+                        desc = 'Open w/ system explorer',
+                    },
+
+                    -- https://github.com/nvim-neo-tree/neo-tree.nvim/discussions/370#discussioncomment-4144005
+                    ['<a-y>'] = {
+                        function(state)
+                            local node = state.tree:get_node()
+                            local filepath = node:get_id()
+                            local filename = node.name
+                            local modify = vim.fn.fnamemodify
+
+                            local options_map = {
+                                ['Extension of the filename'] = modify(filename, ':e'),
+                                ['File path URI'] = vim.uri_from_fname(filepath),
+                                ['Absolute path'] = filepath,
+                                ['Path relative to HOME'] = modify(filepath, ':~'),
+                                ['Filename without extention'] = modify(filename, ':r'),
+                                ['Filename'] = filename,
+                                ['Path relative to CWD'] = modify(filepath, ':.'),
+                            }
+
+                            local options = vim.tbl_filter(
+                                function(val) return not options_map[val] or options_map[val] ~= '' end,
+                                vim.tbl_keys(options_map)
+                            )
+                            if vim.tbl_isempty(options) then
+                                vim.notify('No values to copy', vim.log.levels.WARN)
+                                return
+                            end
+
+                            vim.ui.select(options, {
+                                prompt = 'Choose to copy to clipboard:',
+                                format_item = function(item) return ('%s  (%s)'):format(item, options_map[item]) end,
+                            }, function(choice)
+                                local result = options_map[choice]
+                                if result then vim.fn.setreg('+', result) end
+                            end)
+                        end,
+                        desc = 'Path Copy Selctor (System Clipboard)',
+                    },
+
                     ['<a-o>c'] = 'order_by_created',
                     ['<a-o>d'] = 'order_by_diagnostics',
                     ['<a-o>g'] = 'order_by_git_status',
@@ -200,7 +244,6 @@ return {
 
                     ----
                     -- ['A'] = 'add_directory',
-                    -- ['C'] = 'close_node',
                     -- ['D'] = 'fuzzy_finder_directory',
                     -- ['P'] = 'toggle_preview',
                     -- ['S'] = 'open_split',
@@ -210,8 +253,6 @@ return {
                     -- ['e'] = 'toggle_auto_expand_width',
                     -- ['p'] = 'paste_from_clipboard',
                     -- ['x'] = 'cut_to_clipboard',
-                    -- ['<c-y>'] = 'Copy Path to Clipboard',
-                    -- ['<s-o>'] = 'Open with System Application',
                 },
             },
 
@@ -226,8 +267,9 @@ return {
                         ['#'] = 'fuzzy_sorter',
                         ['/'] = 'fuzzy_finder',
                         ['<a-f>'] = 'filter_on_submit',
-                        ['<a-h>'] = 'toggle_hidden',
-                        ['<a-s-h>'] = 'navigate_up',
+                        ['<c-h>'] = 'toggle_hidden',
+                        -- ['H'] = 'navigate_up',
+                        -- ['.'] = 'set_root',
                     },
                 },
             },
@@ -310,40 +352,6 @@ return {
         },
     },
 
-    { -- Highlighted comments
-        'folke/todo-comments.nvim',
-        cmd = 'TodoTrouble',
-        event = 'VeryLazy',
-        keys = {
-            { ']t', function() require('todo-comments').jump_next() end, desc = 'Next Todo Comment' },
-            { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous Todo Comment' },
-            { '<leader>xt', '<cmd>TodoTrouble<cr>', desc = 'Todo (Trouble)' },
-            { '<leader>x<s-t>', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-        },
-
-        opts = {
-            keywords = {
-                TODO = { icon = '', color = 'todo' },
-                REFAC = { icon = ' ', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
-                HACK = { icon = '', color = 'warning' },
-                FIX = { icon = '', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
-                WARN = { icon = '', color = 'warning', alt = { 'WARNING', 'XXX' } },
-                PERF = { icon = '', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
-                NOTE = { icon = '󰙏', color = 'hint', alt = { 'INFO' } },
-                TEST = { icon = '', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
-            },
-            colors = {
-                todo = { 'DiagnosticOk', '#25EBA2' },
-                info = { 'DiagnosticInfo', '#2563EB' },
-                hint = { 'DiagnosticHint', '#10B981' },
-                test = { 'DiagnosticHint', '#C4A7E7' },
-                error = { 'DiagnosticError', 'ErrorMsg', '#DC2626' },
-                warning = { 'DiagnosticWarn', 'WarningMsg', '#FBBF24' },
-                default = { 'Identifier', '#7C3AED' },
-            },
-        },
-    },
-
     { -- Highlight symbols on cursor
         'RRethy/vim-illuminate',
         event = 'VeryLazy',
@@ -386,26 +394,10 @@ return {
         end,
     },
 
-    { -- Better FT
-        'backdround/improved-ft.nvim',
+    {
+        'kevinhwang91/nvim-ufo',
+        dependencies = 'kevinhwang91/promise-async',
         event = 'VeryLazy',
-        opts = {
-            use_default_mappings = false,
-            ignore_char_case = false,
-            use_relative_repetition = true,
-            use_relative_repetition_offsets = true,
-        },
-        config = function(_, opts)
-            local ft = require 'improved-ft'
-            ft.setup(opts)
-
-            local function map(key, action, desc) vim.keymap.set({ 'n', 'x', 'o' }, key, action, { desc = desc, expr = true }) end
-            map('f', ft.hop_forward_to_char, 'Hop forward to a given char')
-            map('F', ft.hop_backward_to_char, 'Hop backward to a given char')
-            map('t', ft.hop_forward_to_pre_char, 'Hop forward before a given char')
-            map('T', ft.hop_backward_to_pre_char, 'Hop backward before a given char')
-            map('<a-;>', ft.repeat_forward, 'Repeat hop forward to a last given char')
-            map('<a-,>', ft.repeat_backward, 'Repeat hop backward to a last given char')
-        end,
+        opts = { open_fold_hl_timeout = 0 },
     },
 }

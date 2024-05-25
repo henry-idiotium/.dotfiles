@@ -34,6 +34,7 @@ map({ 'x', 'o' }, 'n', [['Nn'[v:searchforward].'zz']], { expr = true, desc = 'Ne
 map({ 'x', 'o' }, 'N', [['nN'[v:searchforward].'zz']], { expr = true, desc = 'Prev Search Result' })
 
 ---- Editor
+map('n', '<c-q>', function() pcall(vim.cmd.close) end, { desc = 'Close' })
 map('n', '<leader>qq', ':close <cr>', { desc = 'Close' })
 map('n', '<leader>qQ', ':quitall <cr>', { desc = 'Quit All' })
 map({ 'i', 'x', 'n', 's' }, '<c-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })

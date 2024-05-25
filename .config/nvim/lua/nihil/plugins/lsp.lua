@@ -17,17 +17,14 @@ return {
             local opts = Nihil.settings.lspconfig
             local utils = Nihil.utils
 
-            --stylua: ignore
-            local capabilities = vim.tbl_deep_extend('force', {},
-                vim.lsp.protocol.make_client_capabilities(),
-                cmp_lsp.default_capabilities(), {
+            local capabilities = vim.tbl_deep_extend('force', {
                 textDocument = {
                     foldingRange = {
                         dynamicRegistration = false,
                         lineFoldingOnly = true,
                     },
                 },
-            })
+            }, vim.lsp.protocol.make_client_capabilities(), cmp_lsp.default_capabilities())
 
             require('lspconfig.ui.windows').default_options.border = 'single'
             require('mason-lspconfig').setup {

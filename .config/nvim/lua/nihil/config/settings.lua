@@ -1,5 +1,7 @@
----@diagnostic disable: missing-fields
+---@diagnostic disable: missing-fields, no-unknown
 local M = {}
+
+M.theme = 'rose-pine'
 
 --- Icons used by plugins
 M.icons = {
@@ -211,9 +213,7 @@ M.lspconfig = {
             end,
             settings = {
                 json = {
-                    format = {
-                        enable = true,
-                    },
+                    format = { enable = true },
                     validate = { enable = true },
                 },
             },
@@ -311,6 +311,7 @@ M.conform.formatters_by_ft = {
     javascript = prettier_fmt,
     javascriptreact = prettier_fmt,
     json = prettier_fmt,
+    jsonc = prettier_fmt,
     html = prettier_fmt,
     css = prettier_fmt,
     prisma = prettier_fmt,
@@ -336,9 +337,10 @@ M.minimal_plugins_filetypes = {
     'notify',
     'query',
     'netrw',
-    'vim',
+    'text',
     'help',
     'svn',
+    'vim',
     'qf',
 }
 

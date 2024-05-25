@@ -1,6 +1,16 @@
 ---@diagnostic disable: no-unknown
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
+-- Set filetypes
+for ft, pattern in pairs(Nihil.settings.autocmd.ft_pattern) do
+    vim.cmd('autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft)
+end
+
+-- Set commentstring
+for ft, cmnt_str in pairs(Nihil.settings.autocmd.ft_cmnt_str) do
+    vim.cmd('autocmd FileType ' .. ft .. ' setlocal commentstring=' .. cmnt_str)
+end
+
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
     group = augroup 'checktime',
@@ -18,9 +28,19 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
--- Wrap and check for spell in text filetypes
+-- spell
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup 'content_spell',
+    callback = function() vim.opt_local.spell = true end,
+    pattern = {
+        'markdown',
+    },
+})
+
+-- wrap
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_wrap',
+    callback = function() vim.opt_local.wrap = true end,
     pattern = {
         'gitcommit',
         'markdown',
@@ -28,17 +48,16 @@ vim.api.nvim_create_autocmd('FileType', {
         'typescriptreact',
         'javascriptreact',
     },
-    callback = function() vim.opt_local.wrap = true end,
 })
 
 -- content concealment
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_concealment',
-    pattern = { 'markdown' },
-    callback = function()
-        vim.opt_local.conceallevel = 2
-        vim.opt_local.spell = true
-    end,
+    callback = function() vim.opt_local.conceallevel = 2 end,
+    pattern = {
+        'markdown',
+        'notify',
+    },
 })
 
 -- Easy closing
@@ -71,7 +90,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 
 -- Auto create dir when saving a file, in case some intermediate directory does not exist
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-    group = augroup 'auto_create_interm_absent_dirs',
+    group = augroup 'auto_create_intermediate_absent_dirs',
     callback = function(event)
         if event.match:match '^%w%w+:[\\/][\\/]' then return end
         local file = vim.uv.fs_realpath(event.match) or event.match
@@ -79,12 +98,10 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
     end,
 })
 
--- Set filetypes
-for ft, pattern in pairs(Nihil.settings.autocmd.ft_pattern) do
-    vim.cmd('autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft)
-end
-
--- Set commentstring
-for ft, cmnt_str in pairs(Nihil.settings.autocmd.ft_cmnt_str) do
-    vim.cmd('autocmd FileType ' .. ft .. ' setlocal commentstring=' .. cmnt_str)
-end
+-- NOTE: FIX bun hot/watch reload BUG in nvim
+-- https://github.com/oven-sh/bun/issues/8520#issuecomment-2002325950
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup 'bugfix_bun_hot_reload',
+    pattern = { 'javascript', 'typescript' },
+    command = 'setlocal backupcopy=yes',
+})

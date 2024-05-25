@@ -22,6 +22,7 @@ return {
                     ['<c-c>'] = 'Close',
                     ['<cr>'] = 'Confirm',
                     ['<c-j>'] = 'Confirm',
+                    ['<c-o>'] = 'Confirm',
                     ['<c-h>'] = 'HistoryPrev',
                     ['<c-l>'] = 'HistoryNext',
                     ['<up>'] = 'HistoryPrev',
@@ -30,14 +31,12 @@ return {
             },
         },
         config = function(_, opts)
-            require('dressing').setup {
-                input = {
-                    mappings = {
-                        n = opts.input.mappings,
-                        i = opts.input.mappings,
-                    },
-                },
+            opts.input.mappings = {
+                n = opts.input.mappings,
+                i = opts.input.mappings,
             }
+
+            require('dressing').setup(opts)
         end,
     },
 
@@ -68,9 +67,9 @@ return {
         lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
         keys = {
-            { '<leader>ud', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
+            { '<leader>ul', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
             { '<leader>uh', function() require('noice').cmd 'history' end, desc = 'Noice History' },
-            { '<leader>ua', function() require('noice').cmd 'all' end, desc = 'Noice All' },
+            { '<leader>ua', function() require('noice').cmd 'all' end, desc = 'Noice History All' },
             { '<leader>ud', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All' },
         },
 
@@ -124,12 +123,8 @@ return {
         },
         config = function(_, opts)
             local focused = true
-            vim.api.nvim_create_autocmd('FocusGained', {
-                callback = function() focused = true end,
-            })
-            vim.api.nvim_create_autocmd('FocusLost', {
-                callback = function() focused = false end,
-            })
+            vim.api.nvim_create_autocmd('FocusGained', { callback = function() focused = true end })
+            vim.api.nvim_create_autocmd('FocusLost', { callback = function() focused = false end })
             table.insert(opts.routes, 4, {
                 filter = { cond = function() return not focused end },
                 view = 'notify_send',
@@ -352,6 +347,41 @@ return {
 
                 return { { icon, guifg = color }, '  ', filename }
             end,
+        },
+    },
+
+    { -- Highlighted comments
+        'folke/todo-comments.nvim',
+        cmd = 'TodoTrouble',
+        event = 'VeryLazy',
+        keys = {
+            { ']t', function() require('todo-comments').jump_next() end, desc = 'Next Todo Comment' },
+            { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous Todo Comment' },
+            { '<leader>xt', '<cmd>TodoTrouble<cr>', desc = 'Todo (Trouble)' },
+            { '<leader>x<s-t>', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
+        },
+
+        opts = {
+            keywords = {
+                TODO = { icon = '', color = 'todo' },
+                DESC = { icon = '󰑉', color = 'todo', alt = { 'DESCRIPTION' } },
+                REFAC = { icon = '', color = 'todo', alt = { 'REFACTOR', 'REFA' } },
+                HACK = { icon = '', color = 'warning' },
+                FIX = { icon = '', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
+                WARN = { icon = '', color = 'warning', alt = { 'WARNING', 'XXX' } },
+                PERF = { icon = '', color = 'test', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
+                NOTE = { icon = '󰙏', color = 'hint', alt = { 'INFO' } },
+                TEST = { icon = '', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
+            },
+            colors = {
+                todo = { 'DiagnosticOk', '#25EBA2' },
+                info = { 'DiagnosticInfo', '#2563EB' },
+                hint = { 'DiagnosticHint', '#10B981' },
+                test = { 'DiagnosticHint', '#C4A7E7' },
+                error = { 'DiagnosticError', 'ErrorMsg', '#DC2626' },
+                warning = { 'DiagnosticWarn', 'WarningMsg', '#FBBF24' },
+                default = { 'Identifier', '#7C3AED' },
+            },
         },
     },
 

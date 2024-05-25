@@ -37,9 +37,31 @@ return {
         end,
     },
 
+    { -- Better FT
+        'backdround/improved-ft.nvim',
+        event = 'VeryLazy',
+        opts = {
+            use_default_mappings = false,
+            ignore_char_case = false,
+            use_relative_repetition = true,
+            use_relative_repetition_offsets = true,
+        },
+        config = function(_, opts)
+            local ft = require 'improved-ft'
+            ft.setup(opts)
+
+            local function map(key, action, desc) vim.keymap.set({ 'n', 'x', 'o' }, key, action, { desc = desc, expr = true }) end
+            map('f', ft.hop_forward_to_char, 'Hop forward to a given char')
+            map('F', ft.hop_backward_to_char, 'Hop backward to a given char')
+            map('t', ft.hop_forward_to_pre_char, 'Hop forward before a given char')
+            map('T', ft.hop_backward_to_pre_char, 'Hop backward before a given char')
+            map('<a-;>', ft.repeat_forward, 'Repeat hop forward to a last given char')
+            map('<a-,>', ft.repeat_backward, 'Repeat hop backward to a last given char')
+        end,
+    },
+
     { -- Meta comment gen
         'danymat/neogen',
-        enabled = false,
         event = 'VeryLazy',
         opts = { snippet_engine = 'luasnip' },
         keys = {
@@ -47,6 +69,8 @@ return {
                 '<leader>cg',
                 function() require('neogen').generate {} end,
                 desc = 'Neogen Comment',
+                noremap = true,
+                silent = true,
             },
         },
     },
@@ -65,21 +89,32 @@ return {
         },
     },
 
-    { -- Comments
-        'echasnovski/mini.comment',
-        event = 'VeryLazy',
-        opts = {
-            options = {
-                custom_commentstring = function()
-                    return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
-                end,
-            },
-        },
-    },
     { -- Comment treesitter context
         'JoosepAlviste/nvim-ts-context-commentstring',
         opts = { enable_autocmd = false },
         lazy = true,
+    },
+    { -- Comments
+        'numToStr/Comment.nvim',
+        keys = {
+            { 'gb', desc = 'Comment toggle blockwise' },
+            { 'gbc', desc = 'Comment toggle current block' },
+            { 'gc', desc = 'Comment toggle linewise' },
+            { 'gcc', desc = 'Comment toggle current line' },
+            { 'gb', mode = 'x', desc = 'Comment toggle blockwise (visual)' },
+            { 'gc', mode = 'x', desc = 'Comment toggle linewise (visual)' },
+        },
+        opts = {
+            padding = true, -- Add a space b/w comment and the line
+            sticky = true, -- Whether the cursor should stay at its position
+
+            mappings = { basic = true, extra = false },
+            -- toggler = { line = 'gcc', block = 'gbc' }, -- LHS of toggle mappings in NORMAL mode
+            -- opleader = { line = 'gc', block = 'gb' }, -- LHS of operator-pending mappings in NORMAL and VISUAL mode
+            -- extra = { above = 'gcO', below = 'gco', eol = 'gcA' }, -- LHS of extra mappings
+
+            pre_hook = function(ctx) return require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook()(ctx) end,
+        },
     },
 
     { -- Completion
@@ -177,5 +212,32 @@ return {
 
             cmp.setup(opts)
         end,
+    },
+
+    { -- symbols outline
+        'hedyhli/outline.nvim',
+        keys = { { '<leader>cs', '<cmd>Outline<cr>', desc = 'Symbols Outline' } },
+        cmd = { 'Outline', 'OutlineOpen' },
+        opts = {
+            outline_window = {
+                position = 'right',
+            },
+        },
+    },
+
+    { -- display typescript type
+        'marilari88/twoslash-queries.nvim',
+        ft = { 'typescript', 'javascript' },
+        cmd = {
+            'TwoslashQueriesEnable',
+            'TwoslashQueriesDisable',
+            'TwoslashQueriesInspect',
+            'TwoslashQueriesRemove',
+        },
+        opts = {
+            multi_line = true, -- to print types in multi line mode
+            is_enabled = false, -- to keep disabled at startup and enable it on request with the TwoslashQueriesEnable
+            highlight = 'Type', -- to set up a highlight group for the virtual text
+        },
     },
 }
