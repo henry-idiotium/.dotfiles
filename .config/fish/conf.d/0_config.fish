@@ -71,9 +71,3 @@ bind -M insert \cy forward-char # accept inline suggestion
 # scripts
 set -l _script_suffix '; echo; commandline -t ''; commandline -f repaint-mode'
 bind -M insert \e\; "start-tmux $_script_suffix"
-
-
-## OS
-if string match -q 'Linux*WSL*' -- (uname -sr)
-    set -gx CLIPBOARD (command -vq win32yank.exe && echo win32yank.exe -i || echo clip.exe)
-end
