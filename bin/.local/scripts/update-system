@@ -5,13 +5,13 @@
 # - add logs
 
 # System (built with Rust) package manager
-paru
+paru; or return
 # System builtin package manager
-sudo pacman -Syu
+sudo pacman -Syu; or return
 
 # Rust package manager
-rustup update
-cargo install-update -a
+rustup update; or return
+cargo install-update -a; or return
 
 # NeoVim version manager
-bob update nightly
+bob update nightly; or return
