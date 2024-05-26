@@ -222,6 +222,28 @@ return {
             outline_window = {
                 position = 'right',
             },
+            keymaps = {
+                -- show_help = '?',
+                -- peek_location = 'o',
+                -- restore_location = '<c-g>',
+                -- hover_symbol = '<c-space>',
+                -- rename_symbol = 'r',
+                -- code_actions = 'a',
+
+                close = { '<esc>', 'q', '<c-q>' },
+                goto_location = '<cr>',
+                goto_and_close = '<s-cr>',
+                toggle_preview = 'K',
+                fold = { 'h', 'zc' },
+                unfold = { 'l', 'zo' },
+                fold_toggle = 'zm',
+                fold_toggle_all = 'zM',
+                fold_all = 'zC',
+                unfold_all = 'zO',
+                fold_reset = 'zr',
+                down_and_jump = '<c-j>',
+                up_and_jump = '<c-k>',
+            },
         },
     },
 
