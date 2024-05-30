@@ -20,7 +20,7 @@ set -gx FD_DEFAULT_OPTS \
     --follow --hidden
 
 set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS \
-    --files --sortr modified
+    --files --sortr accessed
 
 set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS
 set -g __find_cmd fd $FD_DEFAULT_OPTS
