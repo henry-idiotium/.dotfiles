@@ -1,0 +1,16 @@
+#!/usr/bin/env fish
+
+if not string match -q 'Linux*WSL*' -- (uname -sr)
+    echo (set_color red)"Should be in WSL to run this script !!"
+    return
+end
+
+if [ -z "$WINDOWS_HOME" ]
+    echo (set_color red)'Not found $WINDOWS_HOME env !!'
+    return
+end
+
+set WINDOWS_CONFIG_PATH $WINDOWS_HOME/.config/wezterm/wezterm.lua
+set WSL_CONFIG_PATH ~/.config/wezterm/wezterm.lua
+
+cat $WINDOWS_CONFIG_PATH >$WSL_CONFIG_PATH

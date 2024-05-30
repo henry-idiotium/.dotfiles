@@ -51,9 +51,8 @@ end
 ## Attach if no session; otherwise, ask to switch to the new session
 set -l switch_cmd_opts -t $session_name
 
-if [ -z "$(pgrep tmux)" ]
+if not tmux list-sessions 2>/dev/null
     set -p switch_cmd_opts attach-session
-
 else
     set -l prompt_switch_session \
         Switch to the new session \
