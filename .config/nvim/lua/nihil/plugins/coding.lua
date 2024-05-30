@@ -5,58 +5,57 @@ return {
     { 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {} },
     { -- Delimiter pairs surroundability
         'kylechui/nvim-surround',
-        version = '*',
+        version = false,
         keys = {
-            { 'S', desc = 'Surround Visual', mode = 'v' },
-            { 'ds', desc = 'Surround Delete' },
-            { 'cs', desc = 'Surround Change' },
+            { 'sa', desc = 'Add Surround', mode = { 'v', 'n' } },
+            { 'sc', desc = 'Delete Surround' },
+            { 'sd', desc = 'Change Surround' },
         },
         opts = {
             keymaps = {
-                visual = 'S',
-                delete = 'ds',
-                change = 'cs',
+                visual = 'sa',
+                change = 'sc',
+                delete = 'sd',
+                insert = false,
+                insert_line = false,
+                normal = false,
+                normal_cur = false,
+                normal_line = false,
+                normal_cur_line = false,
+                visual_line = false,
+                change_line = false,
             },
         },
-        config = function(_, opts)
-            -- disable actions
-            for _, action in pairs {
-                'visual_line',
-                'change_line',
-                'insert',
-                'insert_line',
-                'normal',
-                'normal_cur',
-                'normal_line',
-                'normal_cur_line',
-            } do
-                opts.keymaps[action] = false
-            end
-
-            require('nvim-surround').setup(opts)
-        end,
     },
 
     { -- Better FT
         'backdround/improved-ft.nvim',
-        event = 'VeryLazy',
         opts = {
             use_default_mappings = false,
             ignore_char_case = false,
             use_relative_repetition = true,
             use_relative_repetition_offsets = true,
         },
+        keys = {
+            { 'f', desc = 'Hop forward to a given char', mode = { 'n', 'x', 'o' } },
+            { 'F', desc = 'Hop backward to a given char', mode = { 'n', 'x', 'o' } },
+            { 't', desc = 'Hop forward before a given char', mode = { 'n', 'x', 'o' } },
+            { 'T', desc = 'Hop backward before a given char', mode = { 'n', 'x', 'o' } },
+            { '<a-;>', desc = 'Repeat hop forward to a last given char', mode = { 'n', 'x', 'o' } },
+            { '<a-,>', desc = 'Repeat hop backward to a last given char', mode = { 'n', 'x', 'o' } },
+        },
         config = function(_, opts)
             local ft = require 'improved-ft'
             ft.setup(opts)
 
-            local function map(key, action, desc) vim.keymap.set({ 'n', 'x', 'o' }, key, action, { desc = desc, expr = true }) end
-            map('f', ft.hop_forward_to_char, 'Hop forward to a given char')
-            map('F', ft.hop_backward_to_char, 'Hop backward to a given char')
-            map('t', ft.hop_forward_to_pre_char, 'Hop forward before a given char')
-            map('T', ft.hop_backward_to_pre_char, 'Hop backward before a given char')
-            map('<a-;>', ft.repeat_forward, 'Repeat hop forward to a last given char')
-            map('<a-,>', ft.repeat_backward, 'Repeat hop backward to a last given char')
+            -- Keybinds have to be set after plugin setup!! WHAT?
+            local function map(lhs, rhs) vim.keymap.set({ 'n', 'x', 'o' }, lhs, rhs, { expr = true }) end
+            map('f', ft.hop_forward_to_char)
+            map('F', ft.hop_backward_to_char)
+            map('t', ft.hop_forward_to_pre_char)
+            map('T', ft.hop_backward_to_pre_char)
+            map('<a-;>', ft.repeat_forward)
+            map('<a-,>', ft.repeat_backward)
         end,
     },
 
@@ -128,6 +127,10 @@ return {
             'hrsh7th/cmp-buffer',
             'saadparwaiz1/cmp_luasnip',
             'L3MON4D3/LuaSnip',
+            {
+                'rafamadriz/friendly-snippets',
+                config = function() require('luasnip.loaders.from_vscode').lazy_load() end,
+            },
         },
         opts = {
             snippet = {
@@ -146,6 +149,19 @@ return {
         config = function(_, opts)
             local cmp = require 'cmp'
 
+            ---- UI, Icon
+            local icons = Nihil.settings.icons.kinds
+            opts.formatting = { ---@type cmp.FormattingConfig
+                expandable_indicator = false,
+                fields = { 'kind', 'abbr', 'menu' },
+                format = function(_, item)
+                    item.menu = item.menu or item.kind or ''
+                    if icons[item.kind] then item.kind = icons[item.kind] end
+                    return item
+                end,
+            }
+
+            ---- Keybinds
             local cmp_select = { behavior = cmp.SelectBehavior.Select }
             opts.mapping = cmp.mapping.preset.insert {
                 ['<c-space>'] = cmp.mapping.complete(),
@@ -161,52 +177,34 @@ return {
                 end,
             }
 
+            ---- Sources
             opts.sources = cmp.config.sources {
-                { name = 'nvim_lsp' },
-                { name = 'buffer' },
-                { name = 'luasnip' },
-                { name = 'path' },
+                { name = 'nvim_lsp', priority = 10000 },
+                { name = 'buffer', priority = 8 },
+                { name = 'luasnip', priority = 0 },
+                { name = 'path', priority = 5 },
             }
 
-            local icons = Nihil.settings.icons.kinds
-            ---@type cmp.FormattingConfig
-            opts.formatting = {
-                expandable_indicator = false,
-                fields = { 'kind', 'abbr', 'menu' },
-                format = function(_, item)
-                    item.menu = item.menu or item.kind or ''
-                    if icons[item.kind] then item.kind = icons[item.kind] end
-                    return item
-                end,
-            }
-
+            ---- Order/Sorting
             local compare = cmp.config.compare
-            local cmp_types = require 'cmp.types'
-            opts.sorting = {
+            local cmp_lsp_kind = require('cmp.types').lsp.CompletionItemKind
+            local kinds_priority = Nihil.settings.kinds.priority
+            opts.sorting = { ---@type cmp.SortingConfig
+                priority_weight = 1,
                 comparators = {
-                    compare.exact,
-                    compare.offset,
-                    compare.score,
-
-                    function(entry1, entry2)
-                        local kind1 = entry1:get_kind()
-                        local kind2 = entry2:get_kind()
-                        if kind1 == kind2 then return end
-
-                        if kind1 == cmp_types.lsp.CompletionItemKind.Snippet then return false end
-                        if kind2 == cmp_types.lsp.CompletionItemKind.Snippet then return true end
-
-                        local diff = kind1 - kind2
-                        return diff == 0 and nil or diff < 0
+                    function(entry1, entry2) -- kind priority
+                        local prio1 = kinds_priority[cmp_lsp_kind[entry1:get_kind()]]
+                        local prio2 = kinds_priority[cmp_lsp_kind[entry2:get_kind()]]
+                        if not (prio1 or prio2) and prio1 == prio2 then return end
+                        local diff = prio1 - prio2
+                        return diff > 0
                     end,
 
                     compare.locality,
                     compare.recently_used,
-                    compare.locality,
-                    compare.recently_used,
+                    compare.order,
                     compare.kind,
                     compare.sort_text,
-                    compare.order,
                 },
             }
 
@@ -231,11 +229,11 @@ return {
                 -- code_actions = 'a',
 
                 close = { '<esc>', 'q', '<c-q>' },
-                goto_location = '<cr>',
+                goto_location = { '<cr>', '<c-l>', 'l' },
                 goto_and_close = '<s-cr>',
                 toggle_preview = 'K',
                 fold = { 'h', 'zc' },
-                unfold = { 'l', 'zo' },
+                unfold = 'zo',
                 fold_toggle = 'zm',
                 fold_toggle_all = 'zM',
                 fold_all = 'zC',

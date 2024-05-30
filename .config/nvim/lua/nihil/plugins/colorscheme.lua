@@ -3,8 +3,7 @@ return {
     { -- Rose Pine
         'rose-pine/neovim',
         name = 'rose-pine',
-        event = 'VeryLazy',
-        enabled = true,
+        priority = 1000,
         opts = {
             variant = 'auto', -- auto, main, moon, or dawn
             dark_variant = 'main', -- main, moon, or dawn
@@ -51,8 +50,7 @@ return {
     { -- Catppuccin
         'catppuccin/nvim',
         name = 'catppuccin',
-        event = 'VeryLazy',
-        enabled = false,
+        priority = 1000,
         opts = {
             flavour = 'mocha', -- latte, frappe, macchiato, mocha
             transparent_background = true,
@@ -65,54 +63,9 @@ return {
         },
     },
 
-    { -- Tokyonight
-        'folke/tokyonight.nvim',
-        event = 'VeryLazy',
-        enabled = false,
-        opts = {
-            style = 'moon', -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
-            transparent = true, -- Enable this to disable setting the background color
-            terminal_colors = true, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
-            styles = {
-                -- Background styles. Can be "dark", "transparent" or "normal"
-                sidebars = 'transparent',
-                floats = 'transparent',
-
-                comments = { italic = true },
-                keywords = { italic = true, bold = true },
-                functions = { italic = true },
-                variables = {},
-            },
-        },
-    },
-
-    { -- Kanagawa
-        'rebelot/kanagawa.nvim',
-        event = 'VeryLazy',
-        enabled = false,
-        opts = {
-            theme = 'wave', -- Load "wave" theme when 'background' option is not set
-            compile = true, -- enable compiling the colorscheme
-            undercurl = true, -- enable undercurls
-            commentStyle = { italic = true },
-            keywordStyle = { italic = true },
-            statementStyle = { bold = true },
-            transparent = true, -- do not set background color
-            terminalColors = true, -- define vim.g.terminal_color_{0,17}
-            colors = { -- add/modify theme and palette colors
-                theme = {
-                    all = {
-                        ui = { bg_gutter = 'none' },
-                    },
-                },
-            },
-        },
-    },
-
     { -- Nightfox
         'EdenEast/nightfox.nvim',
-        event = 'VeryLazy',
-        enabled = false,
+        priority = 1000,
         opts = {
             options = {
                 transparent = true,
@@ -123,26 +76,6 @@ return {
                     constants = 'italic,bold',
                     keywords = 'italic',
                 },
-            },
-        },
-    },
-
-    { -- Nordic
-        'AlexvZyl/nordic.nvim',
-        event = 'VeryLazy',
-        enabled = false,
-        opts = {
-            bold_keywords = true,
-            italic_comments = true,
-            transparent_bg = true,
-            reduced_blue = true,
-            override = {},
-            -- Cursorline options.  Also includes visual/selection.
-            cursorline = {
-                bold = false,
-                bold_number = true,
-                theme = 'dark',
-                blend = 0,
             },
         },
     },

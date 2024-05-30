@@ -1,6 +1,9 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
 vim.g.disable_autoformat = false
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
+vim.g.markdown_recommended_style = 0 -- Fix markdown indentation settings
 
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
@@ -69,9 +72,3 @@ vim.opt.foldenable = true
 vim.opt.foldtext = ''
 vim.opt.statuscolumn = [[%!v:lua.require'nihil.util.ui'.statuscolumn()]]
 vim.opt.fillchars = { fold = ' ', eob = ' ' }
-
--- Fix markdown indentation settings
-vim.g.markdown_recommended_style = 0
-
-vim.g.loaded_netrwPlugin = 1
-vim.g.loaded_netrw = 1

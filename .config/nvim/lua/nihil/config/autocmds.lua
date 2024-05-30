@@ -1,20 +1,13 @@
 ---@diagnostic disable: no-unknown
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
--- Set filetypes
-for ft, pattern in pairs(Nihil.settings.autocmd.ft_pattern) do
-    vim.cmd('autocmd BufNewFile,BufRead ' .. pattern .. ' setfiletype ' .. ft)
-end
-
--- Set commentstring
-for ft, cmnt_str in pairs(Nihil.settings.autocmd.ft_cmnt_str) do
-    vim.cmd('autocmd FileType ' .. ft .. ' setlocal commentstring=' .. cmnt_str)
-end
-
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
     group = augroup 'checktime',
-    callback = function() return vim.o.buftype ~= 'nofile' and vim.cmd 'checktime' end,
+    callback = function()
+        if vim.o.buftype == 'nofile' then return end
+        vim.cmd.checktime()
+    end,
 })
 
 -- Highlight yanked text
@@ -31,32 +24,31 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- spell
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_spell',
-    callback = function() vim.opt_local.spell = true end,
+    command = 'setlocal spell',
     pattern = {
         'markdown',
+        'text',
+    },
+})
+
+-- concealment
+vim.api.nvim_create_autocmd('FileType', {
+    group = augroup 'content_concealment',
+    command = 'setlocal conceallevel=2',
+    pattern = {
+        'markdown',
+        'notify',
     },
 })
 
 -- wrap
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_wrap',
-    callback = function() vim.opt_local.wrap = true end,
+    command = 'setlocal wrap',
     pattern = {
-        'gitcommit',
-        'markdown',
-        'noice',
         'typescriptreact',
         'javascriptreact',
-    },
-})
-
--- content concealment
-vim.api.nvim_create_autocmd('FileType', {
-    group = augroup 'content_concealment',
-    callback = function() vim.opt_local.conceallevel = 2 end,
-    pattern = {
-        'markdown',
-        'notify',
+        'gitcommit',
     },
 })
 
@@ -67,8 +59,8 @@ vim.api.nvim_create_autocmd('FileType', {
     callback = function(event)
         vim.bo[event.buf].buflisted = false
         local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
-        map('n', 'q')
         map('n', '<c-q>')
+        map('n', 'q')
     end,
 })
 

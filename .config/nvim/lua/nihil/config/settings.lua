@@ -27,45 +27,82 @@ M.icons = {
         removed = ' ',
     },
     kinds = {
-        Array = ' ',
-        Boolean = '󰨙 ',
-        Class = ' ',
-        Codeium = '󰘦 ',
-        Color = ' ',
-        Control = ' ',
-        Collapsed = ' ',
+        Variable = '󰀫 ',
         Constant = '󰏿 ',
-        Constructor = ' ',
-        Copilot = ' ',
+        Function = '󰊕 ',
+        TypeParameter = ' ',
+        Interface = ' ',
+        Class = ' ',
+        Field = ' ',
+        Key = ' ',
+        Method = '󰊕 ',
         Enum = ' ',
         EnumMember = ' ',
-        Event = ' ',
-        Field = ' ',
-        File = ' ',
-        Folder = ' ',
-        Function = '󰊕 ',
-        Interface = ' ',
-        Key = ' ',
+        Reference = ' ',
+        Constructor = ' ',
         Keyword = ' ',
-        Method = '󰊕 ',
         Module = ' ',
         Namespace = '󰦮 ',
-        Null = ' ',
-        Number = '󰎠 ',
-        Object = ' ',
-        Operator = ' ',
-        Package = ' ',
         Property = ' ',
-        Reference = ' ',
-        Snippet = ' ',
+        Control = ' ',
+        Collapsed = ' ',
+        File = ' ',
+        Folder = ' ',
+        Package = ' ',
+        Event = ' ',
+
+        Boolean = '󰨙 ',
+        Color = ' ',
+        Operator = ' ',
         String = ' ',
         Struct = '󰆼 ',
-        TabNine = '󰏚 ',
-        Text = ' ',
-        TypeParameter = ' ',
-        Unit = ' ',
         Value = ' ',
-        Variable = '󰀫 ',
+        Unit = ' ',
+        Null = ' ',
+        Number = '󰎠 ',
+        Array = ' ',
+        Object = ' ',
+        Text = ' ',
+
+        Codeium = '󰘦 ',
+        TabNine = '󰏚 ',
+        Copilot = ' ',
+        Snippet = ' ',
+    },
+}
+
+-- kinds
+M.kinds = {
+    --NOTE: lua has no concepts of in-order array (order as written in source)
+    priority = {
+        Variable = 80,
+        Reference = 78,
+        Constant = 76,
+        Interface = 74,
+        TypeParameter = 72,
+        Function = 70,
+        Class = 66,
+        Property = 63,
+        Field = 62,
+        Method = 61,
+
+        Enum = 60,
+        EnumMember = 57,
+        Constructor = 56,
+        Struct = 54,
+        Module = 53,
+
+        Color = 30,
+        Unit = 28,
+        Keyword = 27,
+        Value = 24,
+        File = 22,
+        Folder = 20,
+        Event = 18,
+        Operator = 17,
+
+        Snippet = 10,
+        Text = 0,
     },
 }
 
@@ -269,27 +306,24 @@ M.lspconfig = {
     },
 
     keymaps = {
-        { 'gd', '<cmd>FzfLua lsp_finder<cr>', desc = 'Goto Definition' },
-        { 'g<s-d>', '<cmd>FzfLua lsp_declarations<cr>', desc = 'Goto declaration' },
-        { 'gr', '<cmd>FzfLua lsp_references<cr>', desc = 'Goto/listing references' },
-        { 'gi', '<cmd>FzfLua lsp_implementations<cr>', desc = 'Goto Implementation' },
+        { 'gd', '<cmd>FzfLua lsp_finder <cr>', desc = 'Goto Definition' },
+        { 'g<s-d>', '<cmd>FzfLua lsp_declarations <cr>', desc = 'Goto Declaration' },
+        { 'gr', '<cmd>FzfLua lsp_references <cr>', desc = 'Goto Reference' },
+        { 'gi', '<cmd>FzfLua lsp_implementations <cr>', desc = 'Goto Implementation' },
 
-        { '<s-k>', vim.lsp.buf.hover, desc = 'Hover/Show definition' },
-        { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show signature' },
-        { 'gk', vim.lsp.buf.signature_help, desc = 'Show signature' },
+        { '<s-k>', vim.lsp.buf.hover, desc = 'Show Definition' },
+        { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show Signature' },
+        { 'gk', vim.lsp.buf.signature_help, desc = 'Show Signature' },
 
-        { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename symbol' },
-        { '<leader>cd', vim.diagnostic.open_float, desc = 'Open diagnostics' },
+        { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename Symbol' },
+        { '<leader>cd', vim.diagnostic.open_float, desc = 'Open Diagnostics' },
         { '<leader>ca', '<cmd>FzfLua lsp_code_actions<cr>', mode = { 'n', 'v' }, desc = 'Code actions' },
-
-        -- { '<leader>tli', function() require('nihil.util.lsp').toggle.inlay_hints() end, desc = 'Inlay Hints' },
     },
 }
 
 --- Formatting (Conform)
 M.conform = {
     format_on_save = { timeout_ms = 3000, lsp_fallback = false, async = false },
-
     mason_ensure_installed = {
         'prettierd',
         'black',
@@ -347,17 +381,29 @@ M.minimal_plugins_filetypes = {
     'qf',
 }
 
---- filetypes stuffs?
-M.autocmd = {
-    ft_pattern = {
-        astro = '*.astro',
-        ruby = 'Podfile',
-        sh = '.env*.local',
-        tmux = '*.tmux',
-        gitignore = '.ignore',
+--- vim filetype settings
+---@type vim.filetype.add.filetypes
+---      | { register: table<string, string | string[]> }
+M.filetype = { -- {matching} = {filetype}
+    pattern = {
+        ['.env*.local'] = 'sh',
     },
-    ft_cmnt_str = {
-        prisma = [[//\ %s]],
+    filename = {
+        ['.ignore'] = 'gitignore',
+        ['Podfile'] = 'ruby',
+    },
+    extension = {
+        mdx = 'mdx',
+        astro = 'astro',
+        tmux = 'tmux',
+        prisma = function(_, bufnr)
+            vim.b[bufnr].comment_string = '// %s'
+            return 'prisma'
+        end,
+    },
+    -- Register a parser named {lang} to be used for {filetype}(s).
+    register = {
+        markdown = 'mdx',
     },
 }
 

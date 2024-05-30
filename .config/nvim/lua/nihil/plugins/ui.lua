@@ -1,4 +1,4 @@
----@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil
+---@diagnostic disable: duplicate-set-field, no-unknown, undefined-field, need-check-nil, missing-fields
 return {
     { -- better vim.ui
         'stevearc/dressing.nvim',
@@ -86,8 +86,9 @@ return {
                 },
             },
 
+            ---@type table<any, NoiceRouteConfig>
             routes = {
-                {
+                { -- show messages in mini
                     view = 'mini',
                     filter = {
                         event = 'msg_show',
@@ -95,12 +96,12 @@ return {
                             { find = '%d+L, %d+B' },
                             { find = '; after #%d+' },
                             { find = '; before #%d+' },
+                            { find = 'Already at newest change' },
+                            { find = '%d+ more' },
+                            { find = '%d+ fewer' },
+                            { find = '%d+ lines' },
                         },
                     },
-                },
-                {
-                    filter = { event = 'notify', find = 'No information available' },
-                    opts = { skip = true },
                 },
             },
 

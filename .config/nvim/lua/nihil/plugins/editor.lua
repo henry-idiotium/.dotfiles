@@ -131,9 +131,10 @@ return {
 
         cmd = 'Neotree',
         keys = {
-            { ';s', '<cmd>Neotree reveal<cr>', desc = 'File Explorer Reveal Current File' },
-            { 'sf', '<cmd>Neotree toggle right<cr>', desc = 'File Explorer' },
-            { 'sF', '<cmd>Neotree float<cr>', desc = 'File Explorer (Popup)' },
+            { ';s', '<cmd>Neotree reveal <cr>', desc = 'File Explorer Reveal Current File' },
+            { ';f', '<cmd>Neotree filesystem float <cr>', desc = 'File Explorer Reveal Current File' },
+            { 'sf', '<cmd>Neotree toggle float <cr>', desc = 'File Explorer' },
+            { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Popup)' },
         },
 
         deactivate = function() vim.cmd [[Neotree close]] end,
@@ -145,7 +146,7 @@ return {
         end,
 
         opts = {
-            sources = { 'filesystem', 'git_status' },
+            sources = { 'filesystem', 'git_status', 'buffers', 'document_symbols' },
             source_selector = { winbar = true },
             hide_root_node = true,
             show_path = 'relative',
@@ -160,79 +161,94 @@ return {
                 },
             },
 
+            commands = {
+                open_with_file_explorer = function(state) vim.ui.open(state.tree:get_node().path) end,
+                -- https://github.com/nvim-neo-tree/neo-tree.nvim/discussions/370#discussioncomment-4144005
+                path_copy_selector = function(state)
+                    local node = state.tree:get_node()
+                    local filepath = node:get_id()
+                    local filename = node.name
+                    local modify = vim.fn.fnamemodify
+
+                    local options_map = {
+                        ['Extension of the filename'] = modify(filename, ':e'),
+                        ['File path URI'] = vim.uri_from_fname(filepath),
+                        ['Absolute path'] = filepath,
+                        ['Path relative to HOME'] = modify(filepath, ':~'),
+                        ['Filename without extention'] = modify(filename, ':r'),
+                        ['Filename'] = filename,
+                        ['Path relative to CWD'] = modify(filepath, ':.'),
+                    }
+
+                    local options = vim.tbl_filter(
+                        function(val) return not options_map[val] or options_map[val] ~= '' end,
+                        vim.tbl_keys(options_map)
+                    )
+                    if vim.tbl_isempty(options) then
+                        vim.notify('No values to copy', vim.log.levels.WARN)
+                        return
+                    end
+
+                    vim.ui.select(options, {
+                        prompt = 'Choose to copy to clipboard:',
+                        format_item = function(item) return ('%s  (%s)'):format(item, options_map[item]) end,
+                    }, function(choice)
+                        local result = options_map[choice]
+                        if result then vim.fn.setreg('+', result) end
+                    end)
+                end,
+
+                open_without_losing_focus = function(state)
+                    local node = state.tree:get_node()
+                    if require('neo-tree.utils').is_expandable(node) then
+                        state.commands['toggle_node'](state)
+                    else
+                        state.commands['open'](state)
+                        vim.cmd 'Neotree reveal'
+                    end
+                end,
+
+                better_open = function(state)
+                    local node = state.tree:get_node()
+                    if node.type == 'directory' then
+                        if not node:is_expanded() then
+                            require('neo-tree.sources.filesystem').toggle_directory(state, node)
+                        elseif node:has_children() then
+                            require('neo-tree.ui.renderer').focus_node(state, node:get_child_ids()[1])
+                        end
+                    else
+                        state.commands['open'](state)
+                    end
+                end,
+            },
+
             -- neo-tree neo-tree-popup
             use_default_mappings = false,
             window = {
-                width = 30,
-                position = 'right',
+                position = 'float',
                 mappings = {
+                    ['?'] = 'show_help',
                     ['sf'] = 'close_window',
                     ['q'] = 'close_window',
                     ['<c-q>'] = 'close_window',
+                    ['<esc>'] = 'cancel',
+                    ['<s-r>'] = 'refresh',
+                    ['<'] = 'prev_source',
+                    ['>'] = 'next_source',
+
                     ['h'] = 'close_node',
-                    ['l'] = 'open',
+                    ['l'] = 'better_open',
+                    ['o'] = 'open_without_losing_focus',
                     ['<cr>'] = 'open',
                     ['t'] = 'open_tabnew',
                     ['<a-s>'] = 'open_split',
                     ['<a-v>'] = 'open_vsplit',
-                    ['?'] = 'show_help',
-                    ['<'] = 'prev_source',
-                    ['>'] = 'next_source',
-                    ['<esc>'] = 'cancel',
-                    ['<s-r>'] = 'refresh',
                     ['z<s-c>'] = 'close_all_nodes',
                     ['z<s-o>'] = 'expand_all_nodes',
 
-                    -- none, relative, absolute
-                    ['<a-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
-                    ['<a-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
-                    ['<a-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
-                    ['<a-d>'] = 'delete',
                     ['<a-i>'] = 'show_file_details',
-                    ['<a-r>'] = 'rename',
-
-                    ['<a-s-o>'] = {
-                        function(state) vim.ui.open(state.tree:get_node().path) end,
-                        desc = 'Open w/ system explorer',
-                    },
-
-                    -- https://github.com/nvim-neo-tree/neo-tree.nvim/discussions/370#discussioncomment-4144005
-                    ['<a-y>'] = {
-                        function(state)
-                            local node = state.tree:get_node()
-                            local filepath = node:get_id()
-                            local filename = node.name
-                            local modify = vim.fn.fnamemodify
-
-                            local options_map = {
-                                ['Extension of the filename'] = modify(filename, ':e'),
-                                ['File path URI'] = vim.uri_from_fname(filepath),
-                                ['Absolute path'] = filepath,
-                                ['Path relative to HOME'] = modify(filepath, ':~'),
-                                ['Filename without extention'] = modify(filename, ':r'),
-                                ['Filename'] = filename,
-                                ['Path relative to CWD'] = modify(filepath, ':.'),
-                            }
-
-                            local options = vim.tbl_filter(
-                                function(val) return not options_map[val] or options_map[val] ~= '' end,
-                                vim.tbl_keys(options_map)
-                            )
-                            if vim.tbl_isempty(options) then
-                                vim.notify('No values to copy', vim.log.levels.WARN)
-                                return
-                            end
-
-                            vim.ui.select(options, {
-                                prompt = 'Choose to copy to clipboard:',
-                                format_item = function(item) return ('%s  (%s)'):format(item, options_map[item]) end,
-                            }, function(choice)
-                                local result = options_map[choice]
-                                if result then vim.fn.setreg('+', result) end
-                            end)
-                        end,
-                        desc = 'Path Copy Selctor (System Clipboard)',
-                    },
+                    ['<a-y>'] = 'path_copy_selector',
+                    ['<a-s-o>'] = 'open_with_file_explorer',
 
                     ['<a-o>c'] = 'order_by_created',
                     ['<a-o>d'] = 'order_by_diagnostics',
@@ -243,16 +259,9 @@ return {
                     ['<a-o>t'] = 'order_by_type',
 
                     ----
-                    -- ['A'] = 'add_directory',
-                    -- ['D'] = 'fuzzy_finder_directory',
                     -- ['P'] = 'toggle_preview',
-                    -- ['S'] = 'open_split',
-                    -- ['[g'] = 'prev_git_modified',
-                    -- [']g'] = 'next_git_modified',
                     -- ['l'] = 'focus_preview',
                     -- ['e'] = 'toggle_auto_expand_width',
-                    -- ['p'] = 'paste_from_clipboard',
-                    -- ['x'] = 'cut_to_clipboard',
                 },
             },
 
@@ -263,13 +272,34 @@ return {
                 use_libuv_file_watcher = true,
                 window = {
                     mappings = {
+                        -- none, relative, absolute
+                        ['<a-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-d>'] = 'delete',
+                        ['<a-r>'] = 'rename',
+
+                        ['<a-p>'] = 'paste_from_clipboard',
+                        ['<a-x>'] = 'cut_to_clipboard',
+
                         ['<c-c>'] = 'clear_filter',
-                        ['#'] = 'fuzzy_sorter',
                         ['/'] = 'fuzzy_finder',
+                        ['#'] = 'fuzzy_sorter',
                         ['<a-f>'] = 'filter_on_submit',
                         ['<c-h>'] = 'toggle_hidden',
-                        -- ['H'] = 'navigate_up',
-                        -- ['.'] = 'set_root',
+                        -- ['A'] = 'add_directory',
+                        -- ['D'] = 'fuzzy_finder_directory',
+
+                        ['H'] = 'navigate_up',
+                        ['.'] = 'set_root',
+                    },
+                },
+            },
+            git_status = {
+                window = {
+                    mappings = {
+                        ['['] = 'prev_git_modified',
+                        [']'] = 'next_git_modified',
                     },
                 },
             },
@@ -394,10 +424,10 @@ return {
         end,
     },
 
-    {
+    { -- VSCode like folding
         'kevinhwang91/nvim-ufo',
         dependencies = 'kevinhwang91/promise-async',
-        event = 'VeryLazy',
+        event = 'BufReadPost',
         opts = { open_fold_hl_timeout = 0 },
     },
 }
