@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
 
 # TODO:
 # - check for external lib packages
@@ -6,6 +6,7 @@
 
 # System (built with Rust) package manager
 paru; or return
+
 # System builtin package manager
 sudo pacman -Syu; or return
 

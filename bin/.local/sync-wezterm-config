@@ -5,12 +5,8 @@ if not string match -q 'Linux*WSL*' -- (uname -sr)
     return
 end
 
-if [ -z "$WINDOWS_HOME" ]
-    echo (set_color red)'Not found $WINDOWS_HOME env !!'
-    return
-end
-
+set WINDOWS_HOME (wslpath (cmd.exe /c '<nul set /p=%UserProfile%' 2>/dev/null))
 set WINDOWS_CONFIG_PATH $WINDOWS_HOME/.config/wezterm/wezterm.lua
 set WSL_CONFIG_PATH ~/.config/wezterm/wezterm.lua
 
-cat $WINDOWS_CONFIG_PATH >$WSL_CONFIG_PATH
+command cat $WINDOWS_CONFIG_PATH >$WSL_CONFIG_PATH
