@@ -5,20 +5,23 @@ set -U fish_cursor_default block blink
 
 
 ## env
-set -gx XDG_CONFIG_HOME ~/.config
-set -gx XDG_CACHE_HOME ~/.cache
-set -gx XDG_DATA_HOME ~/.local/share
-set -gx XDG_STATE_HOME ~/.local/state
-set -gx TERM wezterm # enable undercurl  ~/.terminfo/w/wezterm
-set -gx GIT_EDITOR nvim # git doesn't understand aliases
+set -gx XDG_CONFIG_HOME ~/.config/
+set -gx XDG_CACHE_HOME ~/.cache/
+set -gx XDG_DATA_HOME ~/.local/share/
+set -gx XDG_STATE_HOME ~/.local/state/
+set -gx XDG_RUNTIME_DIR /run/user/1000/
+
+set -gx MY_NOTE_HOME ~/documents/notes/
+set -gx MY_PROJECT_HOME ~/documents/projects/
+set -gx MY_WORK_HOME ~/documents/works/
+set -gx MY_THROWAWAY_HOME ~/documents/throwaways/
+
+set -gx TERM wezterm # enable undercurl ~/.terminfo/w/wezterm
+set -gx GIT_EDITOR nvim # nvim cus git uses sh internally
 set -gx EDITOR vi
 
-set -gx MY_NOTE_HOME ~/documents/personal/notes
-set -gx MY_PROJECT_HOME ~/documents/projects
-set -gx MY_WORK_HOME ~/documents/works
-set -gx MY_THROWAWAY_HOME ~/documents/throwaways
-
-fish_add_path -g ~/.local/bin ~/bin ~/bin/.local ~/bin/.local/scripts
+fish_add_path -g ~/.local/bin # third parties' stuffs
+fish_add_path -g ~/bin/.local # user scripts
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/go/bin
@@ -69,5 +72,5 @@ bind -M visual H beginning-of-line
 bind -M insert \cy forward-char # accept inline suggestion
 
 # scripts
-set -l _script_suffix '; echo; commandline -t ''; commandline -f repaint-mode'
-bind -M insert \e\; "start-tmux $_script_suffix"
+set -l __script_suffix '; echo; commandline -t ''; commandline -f repaint-mode'
+bind -M insert \e\; "start-tmux $__script_suffix"
