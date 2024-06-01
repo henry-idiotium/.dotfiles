@@ -11,8 +11,8 @@ end
 
 
 ## Display
-set -l left ' マフル' # ノラ
-set -l right '%a %d %b %H:%M'
+set -l left_content ' マフル' # ノラ
+set -l right_content '%a %d %b %H:%M'
 set -l sep_left_fill 
 set -l sep_right_fill 
 set -l sep_left_tail_fill 
@@ -21,15 +21,15 @@ set -l sep_right 
 
 ## Color palette
 set -l bg default
-set -l fg \#cdd6f4
-set -l fg1 \##7f849c
-set -l violet \#945eff
-set -l teal \#31ebb8
-set -l null \#0c0c0c
-set -l black \#26272e
-set -l gray \#343540
-set -l gray1 \#494952
-set -l gray2 \#51585e
+set -l fg '#cdd6f4'
+set -l fg1 '#7f849c'
+set -l violet '#945eff'
+set -l teal '#31ebb8'
+set -l null '#0c0c0c'
+set -l black '#26272e'
+set -l gray '#343540'
+set -l gray1 '#494952'
+set -l gray2 '#51585e'
 
 
 ## Modes (also includes selection style)
@@ -53,15 +53,15 @@ t-set status-right-style
 
 t-set status-left (string join '' \
     "#[bg=$black bold]#{?client_prefix," \
-    "#[fg=$violet]$left" "," \
-    "#[fg=$teal]$left}" \
+    "#[fg=$violet]$left_content" "," \
+    "#[fg=$teal]$left_content}" \
     "#[fg=$black bg=$gray none]$sep_left_fill" \
     "#[fg=$gray bg=$gray1]$sep_left_fill" \
     "#[fg=$gray1 bg=$bg]$sep_left_fill" \
 )
 
 t-set status-right (string join '' \
-    "#[fg=$fg1 italics] $right " \
+    "#[fg=$fg1 italics] $right_content " \
     "#[none]" \
     "#[fg=$gray1 bg=$bg]$sep_right_fill" \
     "#[fg=$gray bg=$gray1]$sep_right_fill" \
