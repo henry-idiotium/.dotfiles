@@ -146,7 +146,7 @@ return {
         end,
 
         opts = {
-            sources = { 'filesystem', 'git_status', 'buffers', 'document_symbols' },
+            sources = { 'filesystem', 'git_status', 'buffers' },
             source_selector = { winbar = true },
             hide_root_node = true,
             show_path = 'relative',

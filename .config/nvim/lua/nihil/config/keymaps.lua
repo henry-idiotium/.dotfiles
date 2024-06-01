@@ -5,6 +5,8 @@ local function map(mode, lhs, rhs, opts)
     vim.keymap.set(mode, lhs, rhs, opts)
 end
 
+map('n', 'K', '<nop>')
+
 ----- Bindings
 map('i', 'jj', '<esc>')
 map('i', 'jk', '<esc>')
