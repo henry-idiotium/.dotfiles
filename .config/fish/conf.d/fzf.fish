@@ -26,7 +26,7 @@ set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS --files --sortr modified
 
 set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS \
     # NOTE: setting these in FZF_DEFAULT_OPTS makes `fzf` confused?
-    --bind alt-y:execute"(echo {}|clip.exe)"
+    --bind alt-y:execute'(echo {} | win32yank.exe -i)'
 
 set -g __find_cmd fd $FD_DEFAULT_OPTS
 
@@ -40,8 +40,8 @@ set -g __fzf_home_projects \
 
 # -------- Actions ------------------------------------------------
 function fzf-home-projects
-    set -fa __fzf_cmd --prompt ' Documents> '
-    set -fa __find_cmd --type directory
+    set -fa __fzf_cmd --prompt " > "
+    set -fa __find_cmd
 
     begin
         string unescape $__fzf_home_projects
@@ -78,24 +78,32 @@ end
 # -------- Helpers ------------------------------------------------
 function vicd-path -d 'FZF helper to open path'
     set -f path $argv[1]
+    set -f token
 
     if [ -f "$path" -a -w "$path" ] # file
-        set -f token $EDITOR
+        set token $EDITOR
     else if [ -d "$path" ] # dir
-        not status is-interactive; and set -f token cd
+        # not status is-interactive; and set token cd
     else
         return
     end
 
-    set -fa token (string replace $HOME '~' (string escape -n $path))
+    set -a token (string replace $HOME '~' (string escape -n $path))
 
-    if status is-interactive
-        # add to history via executing input token
-        commandline -t "$token "
-        commandline -f repaint execute
-    else
-        eval "$token"
-    end
+    history-add $token
+    eval $token
+    commandline -f repaint-mode
+end
+
+function history-add
+    set -f hist_file $XDG_DATA_HOME/fish/fish_history
+
+    # append our command 
+    echo "- cmd:" (string unescape -n $argv) >>$hist_file
+    echo "  when:" (date "+%s") >>$hist_file
+
+    # merge history file with (empty) internal history
+    history --merge
 end
 
 # alias sort-paths "xargs -I {} stat --printf '%Y\t%n\n' '{}' | sort -gr -S 10% --parallel 4 | cut -f2"
