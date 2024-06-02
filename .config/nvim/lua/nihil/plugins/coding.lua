@@ -170,11 +170,7 @@ return {
                 ['<tab>'] = cmp.mapping.confirm { select = true },
                 ['<c-y>'] = cmp.mapping.confirm { select = true },
                 ['<cr>'] = cmp.mapping.confirm { select = true },
-                ['<c-e>'] = function(fallback)
-                    if not cmp.visible() then return end
-                    cmp.abort()
-                    fallback()
-                end,
+                ['<c-e>'] = cmp.mapping.abort(),
             }
 
             ---- Sources
