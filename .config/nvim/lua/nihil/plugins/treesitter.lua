@@ -1,7 +1,4 @@
 return {
-    -- Automatically add closing tags for HTML and JSX
-    { 'windwp/nvim-ts-autotag', lazy = true, config = true },
-
     {
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',

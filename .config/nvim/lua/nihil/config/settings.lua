@@ -64,6 +64,7 @@ M.icons = {
         Object = ' ',
         Text = ' ',
 
+        Supermaven = ' ',
         Codeium = '󰘦 ',
         TabNine = '󰏚 ',
         Copilot = ' ',

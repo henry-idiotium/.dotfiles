@@ -73,10 +73,16 @@ map({ 'n', 's', 'x', 'o' }, ',s', '"+', { desc = 'System Clipboard Register' })
 map({ 'i', 'n' }, '<esc>', '<cmd>noh<cr><esc>', { desc = 'Escape and Clear hlsearch' })
 
 -- Clear search, diff update and redraw taken from runtime/lua/_editor.lua
-map('n', '<leader>ur', ':nohlsearch | diffupdate | normal! <c-l><cr>', { desc = 'Redraw / Clear hlsearch / Diff Update' })
+-- map('n', '<leader>ur', ':nohlsearch | diffupdate | normal! <c-l><cr>', { desc = 'Redraw / Clear hlsearch / Diff Update' })
 map('n', '<leader>uc', function()
-    vim.cmd [[ nohlsearch | diffupdate | redraw ]]
     require('notify').dismiss { silent = true, pending = true }
+
+    vim.cmd [[
+        nohlsearch     " Clear the search highlighting
+        diffupdate     " Redraw the screen
+        redraw         " Update the diff highlighting and folds.
+        NoiceDismiss   " Clear noice mini view
+    ]]
 end, { desc = 'Clear UI Noises', nowait = true })
 
 -- move lines

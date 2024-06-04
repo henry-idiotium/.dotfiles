@@ -46,7 +46,7 @@ return {
         event = 'VeryLazy',
         keys = {
             {
-                '<leader>un',
+                '<leader>unn',
                 function() require('notify').dismiss { silent = true, pending = true } end,
                 desc = 'Dismiss All Notifications',
             },
@@ -67,13 +67,19 @@ return {
         lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
         keys = {
-            { '<leader>ul', function() require('noice').cmd 'last' end, desc = 'Noice Last Message' },
-            { '<leader>uh', function() require('noice').cmd 'history' end, desc = 'Noice History' },
-            { '<leader>ua', function() require('noice').cmd 'all' end, desc = 'Noice History All' },
-            { '<leader>ud', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All' },
+            { '<leader>unh', '<cmd>NoiceHistory <cr>', desc = 'Noice History' },
+            { '<leader>unl', '<cmd>NoiceLast <cr>', desc = 'Noice Last Message' },
+            { '<leader>una', '<cmd>NoiceAll <cr>', desc = 'Noice History All' },
+            { '<leader>unm', '<cmd>NoiceDismiss <cr>', desc = 'Noice Dismiss' },
         },
 
         opts = {
+            views = {
+                notify = {
+                    replace = true,
+                },
+            },
+
             lsp = {
                 override = {
                     ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
@@ -83,6 +89,13 @@ return {
                 signature = {
                     enabled = true,
                     auto_open = { enabled = false },
+                },
+                progress = {
+                    enabled = true,
+                    format = 'lsp_progress',
+                    format_done = 'lsp_progress_done',
+                    -- throttle = 1000 / 30,
+                    view = 'notify',
                 },
             },
 
@@ -126,12 +139,11 @@ return {
             local focused = true
             vim.api.nvim_create_autocmd('FocusGained', { callback = function() focused = true end })
             vim.api.nvim_create_autocmd('FocusLost', { callback = function() focused = false end })
-            table.insert(opts.routes, 4, {
+            table.insert(opts.routes, {
                 filter = { cond = function() return not focused end },
                 view = 'notify_send',
                 opts = { stop = false },
             })
-
             vim.api.nvim_create_autocmd('FileType', {
                 pattern = 'markdown',
                 callback = function(event)
@@ -387,10 +399,36 @@ return {
     },
 
     { -- highlight hex colors
-        'echasnovski/mini.hipatterns',
-        event = { 'BufReadPre', 'VeryLazy' },
-        version = false,
-        config = true,
+        'brenoprata10/nvim-highlight-colors',
+        event = 'VeryLazy',
+        lazy = false,
+        keys = {
+            { '<leader>uh', '<cmd>HighlightColors Toggle <cr>', desc = 'Toggle color highlight (HEX, RGB, etc.)' },
+        },
+        opts = {
+            render = 'virtual', --- background | foreground | virtual
+            virtual_symbol = '', -- requires `vitual` mode
+            virtual_symbol_prefix = '',
+            virtual_symbol_suffix = ' ',
+            virtual_symbol_position = 'inline',
+
+            enable_hex = true, ---Highlight hex colors, e.g. '#FFFFFF'
+            enable_short_hex = true, ---Highlight short hex colors e.g. '#fff'
+            enable_rgb = true, ---Highlight rgb colors, e.g. 'rgb(0 0 0)'
+            enable_hsl = true, ---Highlight hsl colors, e.g. 'hsl(150deg 30% 40%)'
+            enable_var_usage = true, ---Highlight CSS variables, e.g. 'var(--testing-color)'
+            enable_named_colors = true, ---Highlight named colors, e.g. 'green'
+            enable_tailwind = true, ---Highlight tailwind colors, e.g. 'bg-blue-500'
+
+            ---Set custom colors
+            ---Label must be properly escaped with '%' to adhere to `string.gmatch`
+            --- :help string.gmatch
+            custom_colors = {},
+
+            -- Exclude filetypes or buftypes from highlighting e.g. 'exclude_buftypes = {'text'}'
+            exclude_filetypes = { 'text' },
+            exclude_buftypes = {},
+        },
     },
 
     { -- center buffer
@@ -398,8 +436,7 @@ return {
         version = '*',
         lazy = false,
         keys = {
-            { '<c-a-z>', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
-            { '<leader>tz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
+            { '<leader>uz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
         },
         opts = {
             width = 130,

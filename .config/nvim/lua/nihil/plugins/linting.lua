@@ -1,6 +1,7 @@
 return {
     'mfussenegger/nvim-lint',
     lazy = true,
+    enabled = false,
 
     opts = {
         -- Event to trigger linters
