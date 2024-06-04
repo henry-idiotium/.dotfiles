@@ -92,6 +92,7 @@ function vicd-path -d 'FZF helper to open path'
 
     history-add $token
     eval $token
+    set fish_bind_mode insert
     commandline -f repaint-mode
 end
 
@@ -99,8 +100,10 @@ function history-add
     set -f hist_file $XDG_DATA_HOME/fish/fish_history
 
     # append our command 
-    echo "- cmd:" (string unescape -n $argv) >>$hist_file
-    echo "  when:" (date "+%s") >>$hist_file
+    begin
+        echo "- cmd:" (string unescape -n $argv)
+        echo "  when:" (date "+%s")
+    end >>$hist_file
 
     # merge history file with (empty) internal history
     history --merge
