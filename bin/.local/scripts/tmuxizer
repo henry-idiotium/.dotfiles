@@ -1,0 +1,24 @@
+#!/usr/bin/env fish
+
+begin
+    string unescape $FZF_HOME_PROJECTS
+    fd --type dir --absolute-path --max-depth 1 -- . $FZF_HOME_PROJECTS
+end \
+    | sort -ur \
+    | string replace "$HOME/" '' \
+    | fzf --prompt " New Session> " \
+    | read -l selected_path
+or return
+
+set selected_path (realpath ~/$selected_path)
+set selected_name (basename $selected_path | tr . _)
+
+if not tmux has-session -t $selected_name 2>/dev/null
+    tmux new-session -c $selected_path -s $selected_name -d
+end
+
+if [ -n "$TMUX" ]
+    tmux switch-client -t $selected_name
+else
+    tmux attach-session -t $selected_name
+end
