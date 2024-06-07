@@ -29,7 +29,6 @@ return {
                 documentation = { border = 'rounded' },
             },
             experimental = {
-                -- ghost_text = { hl_group = 'CmpGhostText' },
                 ghost_text = false,
             },
         },
@@ -44,48 +43,53 @@ return {
                 fields = { 'kind', 'abbr', 'menu' },
                 format = function(_, item)
                     item.menu = item.menu or item.kind or ''
-                    if icons[item.kind] then item.kind = icons[item.kind] end
+                    item.kind = icons[item.kind] or ''
                     return item
                 end,
             }
 
             ---- Keybinds
             local cmp_select = { behavior = cmp.SelectBehavior.Select }
+            local cmp_close = {
+                i = cmp.mapping.abort(),
+                c = cmp.mapping.close(),
+            }
             opts.mapping = cmp.mapping.preset.insert {
                 ['<c-space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
                 ['<c-j>'] = cmp.mapping.select_next_item(cmp_select),
                 ['<c-k>'] = cmp.mapping.select_prev_item(cmp_select),
-                -- ['<tab>'] = cmp.mapping.confirm { select = true },
                 ['<c-y>'] = cmp.mapping.confirm { select = true },
                 ['<cr>'] = cmp.mapping.confirm { select = true },
+                ['<c-q>'] = cmp_close,
+                ['<c-e>'] = cmp_close,
 
-                ['<c-e>'] = {
-                    i = cmp.mapping.abort(),
-                    c = cmp.mapping.close(),
-                },
                 ['<c-g>'] = function() return cmp.visible_docs() and cmp.close_docs() or cmp.open_docs() end,
-                ['<tab>'] = function()
+                ['<tab>'] = function(fallback)
                     local sm = require 'supermaven-nvim.completion_preview'
                     local ls = require 'luasnip'
 
-                    if ls.expandable() then
-                        ls.expand()
-                    elseif sm.has_suggestion() then
+                    if not cmp.visible() and sm.has_suggestion() then
                         sm.on_accept_suggestion()
+                    elseif cmp.visible() then
+                        if ls.expandable() then
+                            ls.expand()
+                        else
+                            cmp.confirm { select = true }
+                        end
                     else
-                        cmp.confirm { select = true }
+                        fallback()
                     end
                 end,
             }
 
             ---- Sources
             opts.sources = cmp.config.sources({
-                { name = 'nvim_lsp', priority = 10000 },
+                { name = 'nvim_lsp' },
                 { name = 'supermaven' },
-                { name = 'luasnip', priority = 0 },
+                { name = 'luasnip' },
             }, {
-                { name = 'buffer', priority = 8 },
-                { name = 'path', priority = 5 },
+                { name = 'buffer' },
+                { name = 'path' },
             })
 
             ---- Order/Sorting
@@ -118,18 +122,14 @@ return {
     {
         'supermaven-inc/supermaven-nvim',
         event = 'VeryLazy',
+        lazy = false,
+        keys = {
+            { '<leader>us', '<cmd>SupermavenToggle <cr>', desc = 'Toggle Smart Suggestion' },
+        },
         opts = {
             disable_inline_completion = false,
             disable_keymaps = true,
-
-            color = {
-                suggestion_color = '#ffffff',
-                cterm = 200,
-            },
-
-            ignore_filetypes = {
-                cpp = true,
-            },
+            ignore_filetypes = {},
         },
     },
 }

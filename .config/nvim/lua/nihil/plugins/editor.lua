@@ -46,7 +46,6 @@ return {
             { '\\\\', '<cmd>FzfLua resume <cr>' },
             { ';b', '<cmd>FzfLua buffers <cr>', desc = 'Find Current Buffers' },
             { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Grep' },
-            { ';c', '<cmd>FzfLua colorschemes <cr>', desc = 'Colorschemes' },
             { ';R', '<cmd>FzfLua grep_cWORD <cr>', desc = 'Grep word' },
             { ';r', '<cmd>FzfLua grep_visual <cr>', desc = 'Grep', mode = 'v' },
             { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },

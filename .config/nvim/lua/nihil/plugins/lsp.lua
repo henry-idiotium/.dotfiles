@@ -15,7 +15,6 @@ return {
         config = function()
             local cmp_lsp = require 'cmp_nvim_lsp'
             local opts = Nihil.settings.lspconfig
-            local utils = Nihil.utils
 
             local capabilities = vim.tbl_deep_extend('force', {
                 textDocument = {
@@ -40,15 +39,15 @@ return {
 
             ---- Setup keymaps
             local function attach_keymaps(_, buffer)
-                for _, value in pairs(opts.keymaps) do
-                    local args = utils.key.resolve_opts(value)
-                    args.opts.buffer = buffer
-                    args.opts.silent = true
-                    vim.keymap.set(args.mode, args.lhs, args.rhs, args.opts)
+                for _, raw_map_opts in pairs(opts.keymaps) do
+                    local mode, lhs, rhs, map_opts = Nihil.utils.key.resolve_raw_keymap_opts(raw_map_opts)
+                    map_opts.buffer = buffer
+                    map_opts.silent = true
+                    vim.keymap.set(mode, lhs, rhs, map_opts)
                 end
             end
 
-            utils.lsp.on_attach(attach_keymaps)
+            Nihil.utils.lsp.on_attach(attach_keymaps)
 
             ---- Setup diagnostic
             local diag_opts = opts.diagnostics
@@ -66,8 +65,8 @@ return {
 
             -- inlay hints
             if opts.inlay_hints.enabled then
-                utils.lsp.on_attach(function(client, buffer)
-                    if client.supports_method 'textDocument/inlayHint' then utils.lsp.toggle.inlay_hints(buffer, true) end
+                Nihil.utils.lsp.on_attach(function(client, buffer)
+                    if client.supports_method 'textDocument/inlayHint' then Nihil.utils.lsp.toggle.inlay_hints(buffer, true) end
                 end)
             end
 

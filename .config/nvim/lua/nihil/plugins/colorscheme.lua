@@ -44,7 +44,7 @@ return {
                 CmpItemAbbrMatchFuzzy = { fg = 'foam', bg = 'none', bold = true },
                 CmpItemMenu = { fg = 'rose', bg = 'none', italic = true },
 
-                CmpItemKindSupermaven = { fg = 'gold' },
+                CmpItemKindSupermaven = { link = 'CmpGhostText', default = true },
             },
         },
     },

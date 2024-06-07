@@ -46,7 +46,7 @@ return {
         event = 'VeryLazy',
         keys = {
             {
-                '<leader>unn',
+                '<leader>nc',
                 function() require('notify').dismiss { silent = true, pending = true } end,
                 desc = 'Dismiss All Notifications',
             },
@@ -67,10 +67,10 @@ return {
         lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
         keys = {
-            { '<leader>unh', '<cmd>NoiceHistory <cr>', desc = 'Noice History' },
-            { '<leader>unl', '<cmd>NoiceLast <cr>', desc = 'Noice Last Message' },
-            { '<leader>una', '<cmd>NoiceAll <cr>', desc = 'Noice History All' },
-            { '<leader>unm', '<cmd>NoiceDismiss <cr>', desc = 'Noice Dismiss' },
+            { '<leader>nh', '<cmd>NoiceHistory <cr>', desc = 'Noice History' },
+            { '<leader>nl', '<cmd>NoiceLast <cr>', desc = 'Noice Last Message' },
+            { '<leader>na', '<cmd>NoiceAll <cr>', desc = 'Noice History All' },
+            { '<leader>nm', '<cmd>NoiceDismiss <cr>', desc = 'Noice Dismiss' },
         },
 
         opts = {
@@ -109,10 +109,11 @@ return {
                             { find = '%d+L, %d+B' },
                             { find = '; after #%d+' },
                             { find = '; before #%d+' },
-                            { find = 'Already at newest change' },
                             { find = '%d+ more' },
                             { find = '%d+ fewer' },
                             { find = '%d+ lines' },
+                            { find = 'Already at' },
+                            { find = 'Supermaven' },
                         },
                     },
                 },
@@ -434,9 +435,8 @@ return {
     { -- center buffer
         'shortcuts/no-neck-pain.nvim',
         version = '*',
-        lazy = false,
         keys = {
-            { '<leader>uz', function() require('no-neck-pain').toggle() end, desc = 'Focus Mode' },
+            { '<leader>uz', '<cmd>NoNeckPain <cr>', desc = 'Focus Mode' },
         },
         opts = {
             width = 130,

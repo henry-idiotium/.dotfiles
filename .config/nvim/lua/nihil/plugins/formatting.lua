@@ -1,3 +1,4 @@
+---@diagnostic disable: no-unknown
 return {
     {
         'stevearc/conform.nvim',
@@ -24,30 +25,42 @@ return {
                 mode = { 'n', 'v' },
                 desc = 'Format buffer',
             },
-            { '<leader>tf', '<cmd>ToggleAutoFormat<cr>', mode = { 'n', 'v' }, desc = 'Toggle Auto Format Globally' },
+            { '<leader>uf', '<cmd>ToggleAutoFormat <cr>', desc = 'Toggle Auto Format (local)' },
+            { '<leader>uF', '<cmd>ToggleAutoFormat! <cr>', desc = 'Toggle Auto Format (global)' },
         },
 
         init = function()
             vim.opt.formatexpr = "v:lua.require'conform'.formatexpr()"
-
-            vim.api.nvim_create_user_command('ToggleAutoFormat', function()
-                vim.g.disable_autoformat = not vim.g.disable_autoformat
-                vim.notify('Conform auto format (global) ' .. (vim.g.disable_autoformat and '❌' or '👍'))
-            end, {})
+            vim.api.nvim_create_user_command('ToggleAutoFormat', function(args)
+                local vim_loc = args.bang and 'g' or 'b'
+                vim[vim_loc].disable_autoformat = not vim[vim_loc].disable_autoformat
+                vim.notify(
+                    string.format(
+                        '📄 %s  Auto Format (%s) !',
+                        vim[vim_loc].disable_autoformat and 'Disabled' or 'Enabled',
+                        args.bang and 'global' or 'local'
+                    )
+                )
+            end, { bang = true })
         end,
 
-        opts = vim.tbl_deep_extend('force', Nihil.settings.conform, {
+        ---@type conform.setupOpts
+        opts = {
             format_on_save = function(bufnr)
-                -- Disable autoformat on certain filetypes
-                if vim.tbl_contains(Nihil.settings.minimal_plugins_filetypes, vim.bo[bufnr].filetype) then return end
-
-                -- Disable autoformat for files in a certain path
+                -- for files in a certain path
                 local bufname = vim.api.nvim_buf_get_name(bufnr)
-                if bufname:match '/node_modules/' or bufname:match '/dist/' then return end
+                if bufname:match '/node_modules/' or bufname:match '/dist/' then return {} end
 
-                if vim.g.disable_autoformat then return end
+                -- on certain filetypes
+                if vim.tbl_contains(Nihil.settings.minimal_plugins_filetypes, vim.bo[bufnr].filetype) then return {} end
+
+                -- toggle
+                if vim.g.disable_autoformat or vim.b.disable_autoformat then return {} end
+
                 return Nihil.settings.conform.format_on_save
             end,
-        }),
+        },
+
+        config = function(_, opts) require('conform').setup(vim.tbl_deep_extend('force', {}, Nihil.settings.conform, opts)) end,
     },
 }
