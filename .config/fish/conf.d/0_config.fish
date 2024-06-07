@@ -21,7 +21,7 @@ set -gx GIT_EDITOR nvim # nvim cus git uses sh internally
 set -gx EDITOR vi
 
 fish_add_path -g ~/.local/bin # third parties' stuffs
-fish_add_path -g ~/bin/.local # user scripts
+fish_add_path -g ~/bin/.local/scripts # user scripts
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/go/bin
@@ -64,13 +64,23 @@ bind \cq exit
 bind -M insert -m default jj ''
 bind -M insert -m default jk ''
 
+bind -M insert \cy forward-char # accept inline suggestion
+
 bind L end-of-line
 bind H beginning-of-line
 bind -M visual L end-of-line
 bind -M visual H beginning-of-line
 
-bind -M insert \cy forward-char # accept inline suggestion
-
 # scripts
-set -l __script_suffix '; echo; commandline -t ''; commandline -f repaint-mode'
-bind -M insert \e\; "start-tmux $__script_suffix"
+function bind-script
+    bind -M insert $argv[1] "
+        $argv[2]; echo;
+        commandline -t '';
+        commandline -f repaint-mode;
+        set fish_bind_mode insert;
+    "
+end
+
+[ -z "$TMUX" ]; and bind-script \e\; tmuxizer
+
+bind-script \cp '[ -z "$fish_private_mode" ] && fish --private || echo -e \n(set_color yellow)ALready in private mode !!'

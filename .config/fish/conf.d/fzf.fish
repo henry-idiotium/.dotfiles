@@ -1,7 +1,6 @@
 bind -M insert \ce fzf-search-path
 bind -M insert \cd fzf-home-projects
 
-
 set -gx FZF_DEFAULT_OPTS \
     --ansi \
     --cycle \
@@ -21,92 +20,78 @@ set -gx FZF_DEFAULT_OPTS \
     --color spinner:#F6C177,info:#9CCFD8,separator:#44415A \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
+# NOTE: for FZF execute binds
+set -gx FZF_ADDITIONAL_OPTS \
+    --bind ctrl-y:execute'(echo {} | win32yank.exe -i)'
+
 set -gx FD_DEFAULT_OPTS --follow --hidden
 set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS --files --sortr modified
 
-set -g __fzf_cmd fzf $FZF_DEFAULT_OPTS \
-    # NOTE: setting these in FZF_DEFAULT_OPTS makes `fzf` confused?
-    --bind alt-y:execute'(echo {} | win32yank.exe -i)'
-
-set -g __find_cmd fd $FD_DEFAULT_OPTS
-
-set -g __fzf_home_projects \
+set -gx FZF_HOME_PROJECTS \
     ~/.config/ \
     ~/documents/ \
     ~/documents/works/ \
     ~/documents/projects/ \
     ~/documents/throwaways/ \
-    ~/bin/.local/
+    ~/bin/.local/scripts/
+
+
+set -gx fzf_cmd fzf $FZF_ADDITIONAL_OPTS
+set -gx find_cmd fd $FD_DEFAULT_OPTS
 
 # -------- Actions ------------------------------------------------
 function fzf-home-projects
-    set -fa __fzf_cmd --prompt " > "
-    set -fa __find_cmd
-
     begin
-        string unescape $__fzf_home_projects
-        $__find_cmd -a -d 1 -- . $__fzf_home_projects
+        string unescape $FZF_HOME_PROJECTS
+        $find_cmd -a -d 1 -t d -- . $FZF_HOME_PROJECTS
     end \
         | sort -ur \
         | string replace "$HOME/" '' \
-        | $__fzf_cmd \
+        | $fzf_cmd --prompt " > " \
         | read -l result
     or return
 
-    vicd-path ~/$result
+    __open-path ~/$result
 end
 
 function fzf-search-path
-    set -f token (eval echo -- (commandline -t)) # expand vars & tidle
+    set token (eval echo -- (commandline -t)) # expand vars & tidle
     set token (string unescape -- $token) # unescape to void compromise the path
+
+    set -fa find_cmd --no-require-git
 
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
-    if string match -q -- "*/" $token && test -d "$token"
-        set -fa __find_cmd --base-directory $token
-        set -fa __fzf_cmd --prompt " $token> "
-        set -f result $token($__find_cmd | $__fzf_cmd; or return)
+    if [ -d "$token" ] && string match -q -- "*/" $token
+        set -fa find_cmd --base-directory $token
+        set -fa fzf_cmd --prompt " $token> "
+        set -f result $token($find_cmd | $fzf_cmd; or return)
     else
-        set -fa __fzf_cmd --prompt " > " --query "$token"
-        set -f result ($__find_cmd | $__fzf_cmd; or return)
+        set -fa fzf_cmd --prompt " > " --query "$token"
+        set -f result ($find_cmd | $fzf_cmd; or return)
     end
 
-    vicd-path $result
+    __open-path $result
 end
 
-
-# -------- Helpers ------------------------------------------------
-function vicd-path -d 'FZF helper to open path'
-    set -f path $argv[1]
+function __open-path -d "Open a path in the current directory"
+    set -f path $argv
     set -f token
 
-    if [ -f "$path" -a -w "$path" ] # file
-        set token $EDITOR
-    else if [ -d "$path" ] # dir
-        # not status is-interactive; and set token cd
-    else
-        return
-    end
+    [ -f "$path" -a -w "$path" ]; and set token $EDITOR
 
     set -a token (string replace $HOME '~' (string escape -n $path))
 
-    history-add $token
+    # add to history
+    set -f hist_file ~/.local/share/fish/fish_history
+    echo "- cmd:" (string unescape -n $token) >>$hist_file
+    echo "  when:" (date "+%s") >>$hist_file
+    history --merge # merge history file with (empty) internal history
+
+    # execute command
     eval $token
     set fish_bind_mode insert
     commandline -f repaint-mode
-end
-
-function history-add
-    set -f hist_file $XDG_DATA_HOME/fish/fish_history
-
-    # append our command 
-    begin
-        echo "- cmd:" (string unescape -n $argv)
-        echo "  when:" (date "+%s")
-    end >>$hist_file
-
-    # merge history file with (empty) internal history
-    history --merge
 end
 
 # alias sort-paths "xargs -I {} stat --printf '%Y\t%n\n' '{}' | sort -gr -S 10% --parallel 4 | cut -f2"
