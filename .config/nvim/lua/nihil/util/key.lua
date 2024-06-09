@@ -1,25 +1,31 @@
 ---@diagnostic disable: no-unknown
 local M = {}
 
----@param raw_opts ReolveRawKeymapOpts
-function M.resolve_raw_keymap_opts(raw_opts)
-    local opts = {} ---@type vim.keymap.set.Opts
-    local lhs = raw_opts[1] ---@type string
-    local rhs = raw_opts[2] ---@type string|function
-    local mode = raw_opts.mode or 'n' ---@type string|string[]
+local skip = {
+    mode = true,
+    lhs = true,
+    rhs = true,
+}
 
-    for key, value in pairs(raw_opts) do
-        -- is string and skip key mode
-        local cond = type(key) == 'string' and key ~= 'mode'
-        opts[key] = cond and value or nil
+---@param raw ReolveRawKeymapOpts
+function M.resolve_raw_keymap_opts(raw)
+    local opts = {} ---@type vim.keymap.set.Opts
+    local lhs = raw[1]
+    local rhs = raw[2]
+
+    raw.mode = raw.mode or 'n'
+    local modes = type(raw.mode) == 'table' and raw.mode or { raw.mode }
+
+    for k, v in pairs(raw) do
+        if type(k) ~= 'number' and not skip[k] then opts[k] = v end
     end
 
-    return mode, lhs, rhs, opts
+    return modes, lhs, rhs, opts
 end
 
 return M
 
 ---@class ReolveRawKeymapOpts : vim.keymap.set.Opts
+---@field [1] string
+---@field [2] string|function
 ---@field mode? string|string[]
----@field lhs? string
----@field rhs? string|function

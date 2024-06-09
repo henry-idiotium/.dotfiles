@@ -1,14 +1,15 @@
 not functions -q tide; and return
 
-# prompt config
+# prompt 
 set -U tide_prompt_add_newline_before false
 set -U tide_prompt_color_frame_and_connection 6C6C6C
 set -U tide_prompt_color_separator_same_color 949494
 set -U tide_prompt_min_cols 50
 set -U tide_prompt_pad_items false
 
-# prompt left
 set -U tide_left_prompt_items pwd git character
+set -U tide_left_prompt_prefix ' '
+set -U tide_right_prompt_suffix ' '
 
 # character
 set -U tide_character_color green

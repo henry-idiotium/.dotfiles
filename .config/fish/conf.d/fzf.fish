@@ -1,17 +1,18 @@
 bind -M insert \ce fzf-search-path
 bind -M insert \cd fzf-home-projects
 
+
 set -gx FZF_DEFAULT_OPTS \
     --ansi \
-    --cycle \
-    --reverse \
+    --highlight-line \
     --inline-info \
+    --padding 1,2 \
+    --cycle --reverse \
+    --marker '│' --pointer '┃' \
     # keymaps
-    --bind ctrl-q:abort \
-    --bind ctrl-l:accept \
+    --bind ctrl-q:abort,ctrl-l:accept,ctrl-s:toggle \
     --bind ctrl-i:beginning-of-line,ctrl-a:end-of-line \
     --bind alt-g:first,alt-G:last \
-    --bind tab:toggle+down,btab:toggle+up \
     # theme
     --color header:italic,gutter:-1 \
     --color fg:#908CAA,hl:#EA9A97 \
@@ -20,9 +21,6 @@ set -gx FZF_DEFAULT_OPTS \
     --color spinner:#F6C177,info:#9CCFD8,separator:#44415A \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
-# NOTE: for FZF execute binds
-set -gx FZF_ADDITIONAL_OPTS \
-    --bind ctrl-y:execute'(echo {} | win32yank.exe -i)'
 
 set -gx FD_DEFAULT_OPTS --follow --hidden
 set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS --files --sortr modified
@@ -36,8 +34,20 @@ set -gx FZF_HOME_PROJECTS \
     ~/bin/.local/scripts/
 
 
-set -gx fzf_cmd fzf $FZF_ADDITIONAL_OPTS
-set -gx find_cmd fd $FD_DEFAULT_OPTS
+set -gx fzf_cmd fzf \
+    --bind ctrl-y:execute-silent:'string unescape {} | win32yank.exe -i'
+
+if [ -n "$TMUX" ]
+    set -gxa fzf_cmd \
+        --tmux 100,85% \
+        --border rounded
+end
+
+set -gx find_cmd fd $FD_DEFAULT_OPTS \
+    --ignore-file ~/.config/dotfiles/gitignore \
+    --no-require-git \
+    --no-ignore-vcs
+
 
 # -------- Actions ------------------------------------------------
 function fzf-home-projects
@@ -47,7 +57,7 @@ function fzf-home-projects
     end \
         | sort -ur \
         | string replace "$HOME/" '' \
-        | $fzf_cmd --prompt " > " \
+        | $fzf_cmd --border-label 'Home Projects' \
         | read -l result
     or return
 
@@ -58,16 +68,14 @@ function fzf-search-path
     set token (eval echo -- (commandline -t)) # expand vars & tidle
     set token (string unescape -- $token) # unescape to void compromise the path
 
-    set -fa find_cmd --no-require-git
-
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
     if [ -d "$token" ] && string match -q -- "*/" $token
         set -fa find_cmd --base-directory $token
-        set -fa fzf_cmd --prompt " $token> "
+        set -fa fzf_cmd --border-label $token
         set -f result $token($find_cmd | $fzf_cmd; or return)
     else
-        set -fa fzf_cmd --prompt " > " --query "$token"
+        set -fa fzf_cmd --query "$token" --border-label (string replace $HOME '~' (pwd))
         set -f result ($find_cmd | $fzf_cmd; or return)
     end
 

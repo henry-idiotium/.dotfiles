@@ -2,8 +2,8 @@
 ---@param args ReolveRawKeymapOpts
 local function map(args)
     local mode, lhs, rhs, opts = Nihil.utils.key.resolve_raw_keymap_opts(args)
-    opts.silent = opts.silent or true
-    opts.noremap = opts.noremap or true
+    opts.silent = opts.silent ~= false
+    opts.noremap = opts.noremap ~= false
     vim.keymap.set(mode, lhs, rhs, opts)
 end
 
@@ -57,7 +57,7 @@ map { '<leader>um', ':delm! | delm a-z <cr>', desc = 'Clear Marks in Active Buff
 map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gI<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
 
 -- commands
-map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', silent = true, desc = 'Set File Executable' }
+map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
 
 -- folding
 map { 'z<s-c>', ':setlocal foldlevel=00 <cr>', desc = 'Min Fold Level' }

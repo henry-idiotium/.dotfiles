@@ -19,6 +19,7 @@ set -gx MY_THROWAWAY_HOME ~/documents/throwaways/
 set -gx TERM wezterm # enable undercurl ~/.terminfo/w/wezterm
 set -gx GIT_EDITOR nvim # nvim cus git uses sh internally
 set -gx EDITOR vi
+set -gx PAGER cat
 
 fish_add_path -g ~/.local/bin # third parties' stuffs
 fish_add_path -g ~/bin/.local/scripts # user scripts

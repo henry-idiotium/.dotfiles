@@ -301,7 +301,7 @@ M.lspconfig = {
         { 'gi', '<cmd>FzfLua lsp_implementations <cr>', desc = 'Goto Implementation' },
 
         { '<s-k>', vim.lsp.buf.hover, desc = 'Show Definition' },
-        { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show Signature' },
+        { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show Signature (this is my keymap)' },
         { 'gk', vim.lsp.buf.signature_help, desc = 'Show Signature' },
 
         { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename Symbol' },
@@ -321,7 +321,7 @@ M.conform = {
     },
 }
 
-local prettier_fmt = { 'prettierd' }
+local prettier_fmt = { 'prettierd', 'prettier' }
 ---@type table<string, conform.FiletypeFormatter>
 M.conform.formatters_by_ft = {
     lua = { 'stylua' },
@@ -376,9 +376,10 @@ M.minimal_plugins_filetypes = {
 ---      | { register: table<string, string | string[]> }
 M.filetype = { -- {matching} = {filetype}
     pattern = {
-        ['.env*.local'] = 'sh',
+        ['.env.*'] = 'conf',
     },
     filename = {
+        ['.env'] = 'conf',
         ['.ignore'] = 'gitignore',
         ['Podfile'] = 'ruby',
     },
