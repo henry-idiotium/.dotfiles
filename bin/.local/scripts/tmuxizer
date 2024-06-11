@@ -2,11 +2,11 @@
 
 begin
     string unescape $FZF_HOME_PROJECTS
-    $find_cmd --type dir --absolute-path --max-depth 1 -- . $FZF_HOME_PROJECTS
+    fd -HLa -td -d1 -- . $FZF_HOME_PROJECTS
 end \
     | sort -ur \
     | string replace "$HOME/" '' \
-    | $fzf_cmd --border-label 'New Session' \
+    | $fzf_cmd --border-label ' New Session ' \
     | read -l selected_path
 or return
 

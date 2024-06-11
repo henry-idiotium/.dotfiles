@@ -1,0 +1,89 @@
+#!/usr/bin/env fish
+
+[ -z "$argv" ]; and return 1
+
+set cache_file ([ -n "$XDG_CACHE_HOME" ] && echo $XDG_CACHE_HOME || echo -- ~/.cache)/.tmux-harpoon-sessions
+not [ -f $cache_file ]; and touch $cache_file
+
+function main
+    [ (count $argv) -gt 2 ]; and return 1
+
+    switch "$argv"
+        case --view
+            view_bookmarks
+        case --add
+            add_bookmark
+        case --edit
+            edit_bookmarks
+        case '--index *'
+            goto_bookmark $argv[2]
+        case '-*'
+            tmux display -p "Unknown option $argv"
+            return 0
+    end
+end
+
+
+function add_bookmark
+    echo (_get_session_info) >>$cache_file
+    awk -i inplace '!seen[$0]++' $cache_file # de-duplicate
+    tmux display -d 400 "Tracking session '#{session_name}'"
+end
+
+function edit_bookmarks
+    tmux popup -h 50% -w 70% "$SHELL -c 'export TMUX_POPUP=1; $EDITOR $cache_file'"
+end
+
+function view_bookmarks
+    begin
+        for info in (cat $cache_file)
+            string split = $info | read -L name path
+            set path (string replace $HOME '~' $path)
+            printf "%s %s\n" (set_color -o magenta)$name (set_color -id white)$path
+        end
+    end \
+        | $fzf_cmd \
+        | string split ' ' \
+        | read -L name path
+    or return 0
+
+    if [ -z "$name" -o -z "$path" ]
+        sed -i "/^$name=$path/d" $cache_file
+        return 0
+    end
+
+    _goto_bookmark $name $path
+end
+
+function goto_bookmark
+    set index (math $argv)
+    set bookmarks (cat $cache_file)
+    set bookmark_info $bookmarks[$index]
+    [ -z "$bookmarks[$index]" ]; and return 0
+    string split = $bookmark_info | read -L name path
+    _goto_bookmark $name $path
+end
+
+
+function _goto_bookmark
+    set name $argv[1]
+    set path (string unescape (eval echo -- $argv[2]))
+
+    if not _has_session $name $path
+        tmux new -ds $name -c $dirpath
+    end
+
+    tmux switch-client -t $name
+end
+
+function _get_session_info
+    tmux display -p '#{session_name}=#{session_path}'
+end
+
+function _has_session
+    tmux ls -F '#{session_name}=#{session_path}' | grep -wq "^$argv[1]=$argv[2]"
+    or return 1
+end
+
+
+main $argv

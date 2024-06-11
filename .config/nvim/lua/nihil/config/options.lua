@@ -20,7 +20,6 @@ vim.opt.showcmd = true
 vim.opt.timeoutlen = 500
 vim.opt.showtabline = 1
 vim.opt.scrolloff = 6
-vim.opt.laststatus = 0
 vim.opt.shell = 'fish'
 vim.opt.inccommand = 'split'
 vim.opt.mouse = 'n'

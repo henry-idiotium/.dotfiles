@@ -1,4 +1,4 @@
----@diagnostic disable: no-unknown
+---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 return {
     { -- Maneuvering throught files like the flash
         'ThePrimeagen/harpoon',
@@ -49,8 +49,8 @@ return {
             { ';R', '<cmd>FzfLua grep_cWORD <cr>', desc = 'Grep word' },
             { ';r', '<cmd>FzfLua grep_visual <cr>', desc = 'Grep', mode = 'v' },
             { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
-            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'Document Symbols' },
-            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'Workspace Symbols' },
+            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'Search Document Symbols' },
+            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'Search Workspace Symbols' },
             {
                 '<c-e>',
                 function()
@@ -87,6 +87,9 @@ return {
                     ['<c-d>'] = 'preview-down',
                     ['<a-z>'] = 'toggle-preview-wrap',
                 },
+                fzf = {
+                    ['ctrl-l'] = 'accept',
+                },
             },
 
             fzf_args = vim.env.FZF_DEFAULT_OPTS,
@@ -120,6 +123,11 @@ return {
 
             opts.files.formatter = path_format
             opts.files.actions['alt-h'] = { actions.toggle_ignore }
+
+            -- NOTE: TEMPORARY FIX ONLY
+            -- BUG: 993fce4 make `accept` keybind from FZF_DEFAULT_OPTS env unable to work well.
+            -- FIX: Sanatize `accept` keybind from FZF_DEFAULT_OPTS env.
+            opts.fzf_args = opts.fzf_args:gsub('ctrl%-l:accept,', '')
 
             require('fzf-lua').setup(opts)
         end,
@@ -338,7 +346,8 @@ return {
 
     { -- Easy location list
         'folke/trouble.nvim',
-        cmd = { 'TroubleToggle', 'Trouble' },
+        cmd = 'Trouble',
+        version = '*',
         opts = {
             use_diagnostic_signs = true,
             height = 6,
@@ -350,15 +359,15 @@ return {
             },
         },
         keys = {
-            { '<leader>xx', '<cmd>TroubleToggle document_diagnostics<cr>', desc = 'Document Diagnostics (Trouble)' },
-            { '<leader>x<s-x>', '<cmd>TroubleToggle workspace_diagnostics<cr>', desc = 'Workspace Diagnostics (Trouble)' },
-            { '<leader>x<s-l>', '<cmd>TroubleToggle loclist<cr>', desc = 'Location List (Trouble)' },
-            { '<leader>x<s-q>', '<cmd>TroubleToggle quickfix<cr>', desc = 'Quickfix List (Trouble)' },
+            { '<leader>xx', '<cmd>Trouble diagnostics toggle <cr>', desc = 'Diagnostics (Trouble)' },
+            { '<leader>xl', '<cmd>Trouble loclist toggle <cr>', desc = 'Location List (Trouble)' },
+            { '<leader>xq', '<cmd>Trouble quickfix toggle <cr>', desc = 'Quickfix List (Trouble)' },
+            { '<leader>cs', '<cmd>Trouble symbols toggle focus=false <cr>', desc = 'Symbols (Trouble)' },
             {
                 '[q',
                 function()
                     if require('trouble').is_open() then
-                        require('trouble').previous { skip_groups = true, jump = true }
+                        require('trouble').prev { skip_groups = true, jump = true }
                     else
                         local ok, err = pcall(vim.cmd.cprev)
                         if not ok then vim.notify(err or 'Trouble error', vim.log.levels.ERROR) end

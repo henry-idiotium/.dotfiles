@@ -118,39 +118,6 @@ return {
         },
     },
 
-    { -- symbols outline
-        'hedyhli/outline.nvim',
-        keys = { { '<leader>cs', '<cmd>Outline<cr>', desc = 'Symbols Outline' } },
-        cmd = { 'Outline', 'OutlineOpen' },
-        opts = {
-            outline_window = {
-                position = 'right',
-            },
-            keymaps = {
-                -- show_help = '?',
-                -- peek_location = 'o',
-                -- restore_location = '<c-g>',
-                -- hover_symbol = '<c-space>',
-                -- rename_symbol = 'r',
-                -- code_actions = 'a',
-
-                close = { '<esc>', 'q', '<c-q>' },
-                goto_location = { '<cr>', '<c-l>', 'l' },
-                goto_and_close = '<s-cr>',
-                toggle_preview = 'K',
-                fold = { 'h', 'zc' },
-                unfold = 'zo',
-                fold_toggle = 'zm',
-                fold_toggle_all = 'zM',
-                fold_all = 'zC',
-                unfold_all = 'zO',
-                fold_reset = 'zr',
-                down_and_jump = '<c-j>',
-                up_and_jump = '<c-k>',
-            },
-        },
-    },
-
     { -- display typescript type
         'marilari88/twoslash-queries.nvim',
         ft = { 'typescript', 'javascript' },
@@ -164,6 +131,15 @@ return {
             multi_line = true, -- to print types in multi line mode
             is_enabled = false, -- to keep disabled at startup and enable it on request with the TwoslashQueriesEnable
             highlight = 'Type', -- to set up a highlight group for the virtual text
+        },
+    },
+
+    { -- change case
+        'johmsalas/text-case.nvim',
+        keys = { 'cc' },
+        opts = {
+            default_keymappings_enabled = true,
+            prefix = 'cc',
         },
     },
 }

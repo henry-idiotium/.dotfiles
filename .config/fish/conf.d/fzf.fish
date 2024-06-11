@@ -8,9 +8,9 @@ set -gx FZF_DEFAULT_OPTS \
     --inline-info \
     --padding 1,2 \
     --cycle --reverse \
-    --marker '│' --pointer '┃' \
+    --marker │ --pointer ┃ \
     # keymaps
-    --bind ctrl-q:abort,ctrl-l:accept,ctrl-s:toggle \
+    --bind ctrl-l:accept,ctrl-q:abort,ctrl-s:toggle \
     --bind ctrl-i:beginning-of-line,ctrl-a:end-of-line \
     --bind alt-g:first,alt-G:last \
     # theme
@@ -22,8 +22,13 @@ set -gx FZF_DEFAULT_OPTS \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
 
-set -gx FD_DEFAULT_OPTS --follow --hidden
-set -gx RG_DEFAULT_OPTS $FD_DEFAULT_OPTS --files --sortr modified
+set -gx FD_DEFAULT_OPTS \
+    --follow --hidden \
+    --ignore-file $GLOBAL_IGNORE_FILE
+
+set -gx RG_DEFAULT_OPTS \
+    --follow --hidden --files --sortr modified \
+    --ignore-file $GLOBAL_IGNORE_FILE
 
 set -gx FZF_HOME_PROJECTS \
     ~/.config/ \
@@ -33,15 +38,11 @@ set -gx FZF_HOME_PROJECTS \
     ~/documents/throwaways/ \
     ~/bin/.local/scripts/
 
-
 set -gx fzf_cmd fzf \
-    --bind ctrl-y:execute-silent:'string unescape {} | win32yank.exe -i'
+    --bind ctrl-y:execute-silent'(echo {} | win32yank.exe -i)'
 
-if [ -n "$TMUX" ]
-    set -gxa fzf_cmd \
-        --tmux 100,85% \
-        --border rounded
-end
+[ -n "$TMUX" ]
+and set -gxa fzf_cmd --tmux 70%,85% --border rounded
 
 set -gx find_cmd fd $FD_DEFAULT_OPTS \
     --ignore-file ~/.config/dotfiles/gitignore \
@@ -57,7 +58,7 @@ function fzf-home-projects
     end \
         | sort -ur \
         | string replace "$HOME/" '' \
-        | $fzf_cmd --border-label 'Home Projects' \
+        | $fzf_cmd --border-label ' Home Projects ' \
         | read -l result
     or return
 
@@ -71,12 +72,16 @@ function fzf-search-path
     # If the current token is a directory and has a trailing slash,
     # then use it as fd's base directory.
     if [ -d "$token" ] && string match -q -- "*/" $token
-        set -fa find_cmd --base-directory $token
-        set -fa fzf_cmd --border-label $token
-        set -f result $token($find_cmd | $fzf_cmd; or return)
+        $find_cmd --base-directory $token \
+            | $fzf_cmd --border-label " $token " \
+            | awk "{print $token\$1}" \
+            | read -f result
+        or return 1
     else
-        set -fa fzf_cmd --query "$token" --border-label (string replace $HOME '~' (pwd))
-        set -f result ($find_cmd | $fzf_cmd; or return)
+        $find_cmd \
+            | $fzf_cmd --query "$token" --border-label " $(string replace $HOME '~' (pwd)) " \
+            | read -f result
+        or return 1
     end
 
     __open-path $result
@@ -86,15 +91,32 @@ function __open-path -d "Open a path in the current directory"
     set -f path $argv
     set -f token
 
-    [ -f "$path" -a -w "$path" ]; and set token $EDITOR
+    # NOTE: avoid possible multiple results (avoid fzf print action)
+    if [ (count $argv) -gt 1 ]
+        echo (set_color red)'fish fzf: too many arguments:'(set_color normal)
+        for arg in $argv
+            echo -e "\t->$arg"
+        end
+        return
+    end
 
+    # handlers
+    [ -f "$path" -a -w "$path" ]; and set token $EDITOR # file
+    #[ -d "$path" ]; and set token cd # dir
+
+    # prettify path
     set -a token (string replace $HOME '~' (string escape -n $path))
 
-    # add to history
-    set -f hist_file ~/.local/share/fish/fish_history
-    echo "- cmd:" (string unescape -n $token) >>$hist_file
-    echo "  when:" (date "+%s") >>$hist_file
-    history --merge # merge history file with (empty) internal history
+    # add to history (if not in private mode)
+    if [ -z "$fish_private_mode" ]
+        set -f hist_file ~/.local/share/fish/fish_history
+
+        echo '- cmd:' (string unescape -n $token) >>$hist_file
+        echo '  when:' (date '+%s') >>$hist_file
+
+        # merge history file with (empty) internal history
+        history --merge
+    end
 
     # execute command
     eval $token

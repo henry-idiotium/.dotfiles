@@ -53,12 +53,14 @@ return {
             require('lazy.core.loader').add_to_rtp(plugin)
             require 'nvim-treesitter.query_predicates'
 
-            vim.filetype.add(Nihil.settings.filetype)
-            for ft, ext in pairs(Nihil.settings.filetype.register) do
+            vim.filetype.add(Nihil.settings.filetype.vim)
+            for ft, ext in pairs(Nihil.settings.filetype.treesitter.register) do
                 vim.treesitter.language.register(ft, ext)
             end
         end,
 
-        config = function(_, opts) require('nvim-treesitter.configs').setup(opts) end,
+        config = function(_, opts)
+            require('nvim-treesitter.configs').setup(vim.tbl_deep_extend('force', opts, Nihil.settings.filetype.devicon))
+        end,
     },
 }

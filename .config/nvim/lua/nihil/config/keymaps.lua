@@ -54,14 +54,14 @@ map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 
 map { '<leader>um', ':delm! | delm a-z <cr>', desc = 'Clear Marks in Active Buffer' }
 
-map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gI<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
+map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
 
 -- folding
-map { 'z<s-c>', ':setlocal foldlevel=00 <cr>', desc = 'Min Fold Level' }
-map { 'z<s-o>', ':setlocal foldlevel=10 <cr>', desc = 'Max Fold Level' }
+map { 'zC', ':setlocal foldlevel=00 <cr>', desc = 'Min Fold Level' }
+map { 'zO', ':setlocal foldlevel=60 <cr>', desc = 'Max Fold Level' }
 map { 'zl', ':<c-u>let &l:foldlevel = v:count<cr>', desc = 'Set Fold Level' }
 map { 'zi', ':%g/ /norm! zf%<c-left><c-left><bs>', desc = 'Fold with Pattern', silent = false }
 
@@ -102,8 +102,8 @@ map { '<s-a-j>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate 
 map { '<s-a-k>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Up' }
 
 ---- Quickfix/Localtion list
-map { '<leader>xl', ':lopen 5 <cr>', desc = 'Location List' }
-map { '<leader>xq', ':copen 5 <cr>', desc = 'Quickfix List' }
+map { '<leader>xL', ':lopen <cr>', desc = 'Location List' }
+map { '<leader>xQ', ':copen <cr>', desc = 'Quickfix List' }
 
 map { '[q', ':cprev <cr>', desc = 'Previous Quickfix' }
 map { ']q', ':cnext <cr>', desc = 'Next Quickfix' }

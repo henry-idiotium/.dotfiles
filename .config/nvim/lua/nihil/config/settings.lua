@@ -133,6 +133,7 @@ M.lspconfig = {
         gopls = {},
         pyright = {},
         prismals = {},
+        tailwindcss = {},
 
         markdown_oxide = {
             workspace = {
@@ -142,34 +143,16 @@ M.lspconfig = {
             },
         },
 
-        tailwindcss = {
-            filetypes = {
-                'astro',
-                'django-html',
-                'htmldjango',
-                'html',
-                'css',
-                'less',
-                'postcss',
-                'sass',
-                'scss',
-                'stylus',
-                'sugarss',
-                'javascript',
-                'javascriptreact',
-                'rescript',
-                'typescript',
-                'typescriptreact',
-                'vue',
-                'svelte',
-            },
-        },
-
         tsserver = {
             single_file_support = false,
             root_dir = function(...)
                 return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...)
             end,
+            init_options = {
+                preferences = {
+                    importModuleSpecifierPreference = 'non-relative',
+                },
+            },
             settings = {
                 typescript = {
                     inlayHints = {
@@ -177,17 +160,6 @@ M.lspconfig = {
                         includeInlayParameterNameHintsWhenArgumentMatchesName = false,
                         includeInlayFunctionParameterTypeHints = true,
                         includeInlayVariableTypeHints = false,
-                        includeInlayPropertyDeclarationTypeHints = true,
-                        includeInlayFunctionLikeReturnTypeHints = true,
-                        includeInlayEnumMemberValueHints = true,
-                    },
-                },
-                javascript = {
-                    inlayHints = {
-                        includeInlayParameterNameHints = 'all',
-                        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                        includeInlayFunctionParameterTypeHints = true,
-                        includeInlayVariableTypeHints = true,
                         includeInlayPropertyDeclarationTypeHints = true,
                         includeInlayFunctionLikeReturnTypeHints = true,
                         includeInlayEnumMemberValueHints = true,
@@ -295,12 +267,12 @@ M.lspconfig = {
     },
 
     keymaps = {
-        { 'gd', '<cmd>FzfLua lsp_finder <cr>', desc = 'Goto Definition' },
-        { 'g<s-d>', '<cmd>FzfLua lsp_declarations <cr>', desc = 'Goto Declaration' },
-        { 'gr', '<cmd>FzfLua lsp_references <cr>', desc = 'Goto Reference' },
-        { 'gi', '<cmd>FzfLua lsp_implementations <cr>', desc = 'Goto Implementation' },
+        { 'gd', '<cmd>Trouble lsp_definitions <cr>', desc = 'Goto Definition' },
+        { 'gD', '<cmd>Trouble lsp_declarations <cr>', desc = 'Goto Declaration' },
+        { 'gr', '<cmd>Trouble lsp_references <cr>', desc = 'Goto Reference' },
+        { 'gi', '<cmd>Trouble lsp_implementations <cr>', desc = 'Goto Implementation' },
 
-        { '<s-k>', vim.lsp.buf.hover, desc = 'Show Definition' },
+        { 'K', vim.lsp.buf.hover, desc = 'Show Definition' },
         { '<c-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Show Signature (this is my keymap)' },
         { 'gk', vim.lsp.buf.signature_help, desc = 'Show Signature' },
 
@@ -346,7 +318,7 @@ M.conform.formatters_by_ft = {
 }
 
 --- Exclude filetypes
-M.minimal_plugins_filetypes = {
+M.excluded_filetypes = {
     'PlenaryTestPopup',
     'neotest-output-panel',
     'neotest-output',
@@ -355,6 +327,7 @@ M.minimal_plugins_filetypes = {
     'spectre_panel',
     'startuptime',
     'checkhealth',
+    'tsplayground',
     'Trouble',
     'lspinfo',
     'lazy',
@@ -372,31 +345,50 @@ M.minimal_plugins_filetypes = {
 }
 
 --- vim filetype settings
----@type vim.filetype.add.filetypes
----      | { register: table<string, string | string[]> }
-M.filetype = { -- {matching} = {filetype}
-    pattern = {
-        ['.env.*'] = 'conf',
+M.filetype = {
+    ---@type vim.filetype.add.filetypes
+    -- {matching} = {filetype}
+    vim = {
+        pattern = {
+            ['.env.*'] = 'conf',
+        },
+        filename = {
+            ['.env'] = 'conf',
+            ['.ignore'] = 'gitignore',
+            ['Podfile'] = 'ruby',
+        },
+        extension = {
+            mdx = 'mdx',
+            astro = 'astro',
+            tmux = 'tmux',
+            prisma = function(_, bufnr)
+                vim.b[bufnr].comment_string = '// %s'
+                return 'prisma'
+            end,
+        },
     },
-    filename = {
-        ['.env'] = 'conf',
-        ['.ignore'] = 'gitignore',
-        ['Podfile'] = 'ruby',
+
+    treesitter = {
+        -- Register a parser named {lang} to be used for {filetype}(s).
+        register = {
+            markdown = 'mdx',
+        },
     },
-    extension = {
-        mdx = 'mdx',
-        astro = 'astro',
-        tmux = 'tmux',
-        prisma = function(_, bufnr)
-            vim.b[bufnr].comment_string = '// %s'
-            return 'prisma'
-        end,
-    },
-    -- Register a parser named {lang} to be used for {filetype}(s).
-    register = {
-        markdown = 'mdx',
+
+    devicon = {
+        override = { -- by filetype
+            -- zsh = { icon = '', color = '#428850', cterm_color = '65', name = 'Zsh', },
+        },
+        override_by_filename = {
+            -- ['.gitignore'] = { icon = '', color = '#f1502f', name = 'Gitignore', },
+        },
+        override_by_extension = {
+            -- ['log'] = { icon = '', color = '#81e043', name = 'Log' },
+        },
     },
 }
+
+M.minimal_mode_enabled = vim.env.TMUX_POPUP ~= nil
 
 _G.Nihil.settings = M
 return M

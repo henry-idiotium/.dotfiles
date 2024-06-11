@@ -1,4 +1,4 @@
----@diagnostic disable: no-unknown
+---@diagnostic disable: no-unknown, missing-return-value
 return {
     {
         'stevearc/conform.nvim',
@@ -36,7 +36,7 @@ return {
                 vim[vim_loc].disable_autoformat = not vim[vim_loc].disable_autoformat
                 vim.notify(
                     string.format(
-                        '📄 %s  Auto Format (%s) !',
+                        '📄 %s Auto Format (%s) !',
                         vim[vim_loc].disable_autoformat and 'Disabled' or 'Enabled',
                         args.bang and 'global' or 'local'
                     )
@@ -49,13 +49,13 @@ return {
             format_on_save = function(bufnr)
                 -- for files in a certain path
                 local bufname = vim.api.nvim_buf_get_name(bufnr)
-                if bufname:match '/node_modules/' or bufname:match '/dist/' then return {} end
+                if bufname:match '/node_modules/' or bufname:match '/dist/' then return end
 
                 -- on certain filetypes
-                if vim.tbl_contains(Nihil.settings.minimal_plugins_filetypes, vim.bo[bufnr].filetype) then return {} end
+                if vim.tbl_contains(Nihil.settings.excluded_filetypes, vim.bo[bufnr].filetype) then return end
 
                 -- toggle
-                if vim.g.disable_autoformat or vim.b.disable_autoformat then return {} end
+                if vim.g.disable_autoformat or vim.b.disable_autoformat then return end
 
                 return Nihil.settings.conform.format_on_save
             end,

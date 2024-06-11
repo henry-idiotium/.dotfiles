@@ -5,20 +5,24 @@ return {
         event = 'InsertEnter',
         version = false,
         dependencies = {
-            'hrsh7th/cmp-path',
-            'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-cmdline',
             'saadparwaiz1/cmp_luasnip',
             'L3MON4D3/LuaSnip',
             {
                 'rafamadriz/friendly-snippets',
                 config = function() require('luasnip.loaders.from_vscode').lazy_load() end,
             },
+            {
+                'roobert/tailwindcss-colorizer-cmp.nvim',
+                opts = { color_square_width = 2 },
+            },
         },
         opts = {
             completion = {
-                autocomplete = false,
+                -- autocomplete = false,
                 completeopt = 'menu,menuone,noinsert',
             },
             snippet = {
@@ -41,9 +45,13 @@ return {
             opts.formatting = { ---@type cmp.FormattingConfig
                 expandable_indicator = false,
                 fields = { 'kind', 'abbr', 'menu' },
-                format = function(_, item)
+                format = function(entry, item)
+                    local tw = require('tailwindcss-colorizer-cmp').formatter(entry, item)
+                    if tw.kind == 'XX' then return tw end
+
                     item.menu = item.menu or item.kind or ''
                     item.kind = icons[item.kind] or ''
+
                     return item
                 end,
             }
@@ -85,7 +93,6 @@ return {
             ---- Sources
             opts.sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
-                { name = 'supermaven' },
                 { name = 'luasnip' },
             }, {
                 { name = 'buffer' },
@@ -99,6 +106,10 @@ return {
             opts.sorting = { ---@type cmp.SortingConfig
                 priority_weight = 1,
                 comparators = {
+                    compare.exact,
+                    compare.locality,
+                    compare.recently_used,
+
                     function(entry1, entry2) -- kind priority
                         local prio1 = kinds_priority[cmp_lsp_kind[entry1:get_kind()]]
                         local prio2 = kinds_priority[cmp_lsp_kind[entry2:get_kind()]]
@@ -107,8 +118,8 @@ return {
                         return diff > 0
                     end,
 
-                    compare.locality,
-                    compare.recently_used,
+                    compare.offset,
+                    compare.score,
                     compare.order,
                     compare.kind,
                     compare.sort_text,

@@ -9,4 +9,4 @@ set WINDOWS_HOME (wslpath (cmd.exe /c '<nul set /p=%UserProfile%' 2>/dev/null))
 set WINDOWS_CONFIG_PATH $WINDOWS_HOME/.config/wezterm/wezterm.lua
 set WSL_CONFIG_PATH ~/.config/wezterm/wezterm.lua
 
-command cat $WINDOWS_CONFIG_PATH >$WSL_CONFIG_PATH
+cat $WINDOWS_CONFIG_PATH >$WSL_CONFIG_PATH

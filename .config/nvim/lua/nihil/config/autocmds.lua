@@ -5,8 +5,7 @@ local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
     group = augroup 'checktime',
     callback = function()
-        if vim.o.buftype == 'nofile' then return end
-        vim.cmd.checktime()
+        if vim.o.buftype ~= 'nofile' then vim.cmd.checktime() end
     end,
 })
 
@@ -24,11 +23,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- spell
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_spell',
-    command = 'setlocal spell',
-    pattern = {
-        'markdown',
-        'text',
-    },
+    pattern = { '*.txt', '*.tex', '*.typ', 'gitcommit', 'markdown' },
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.spell = true
+    end,
 })
 
 -- concealment
@@ -55,7 +54,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Easy closing
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'easy_closing',
-    pattern = Nihil.settings.minimal_plugins_filetypes,
+    pattern = Nihil.settings.excluded_filetypes,
     callback = function(event)
         vim.bo[event.buf].buflisted = false
         local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
@@ -68,7 +67,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('BufReadPost', {
     group = augroup 'last_loc',
     callback = function(event)
-        if vim.tbl_contains(Nihil.settings.minimal_plugins_filetypes, vim.bo.filetype) then return end
+        if vim.tbl_contains(Nihil.settings.excluded_filetypes, vim.bo.filetype) then return end
 
         local buf = event.buf
         local has_mark, mark = pcall(vim.api.nvim_buf_get_mark, buf, '"')

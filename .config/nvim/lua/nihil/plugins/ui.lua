@@ -2,6 +2,7 @@
 return {
     { -- better vim.ui
         'stevearc/dressing.nvim',
+        cond = not Nihil.settings.minimal_mode_enabled,
         lazy = true,
         event = 'VeryLazy',
         init = function()
@@ -42,6 +43,7 @@ return {
 
     { -- better vim.notify
         'rcarriga/nvim-notify',
+        cond = not Nihil.settings.minimal_mode_enabled,
         lazy = false,
         event = 'VeryLazy',
         keys = {
@@ -63,6 +65,7 @@ return {
 
     { -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
         'folke/noice.nvim',
+        cond = not Nihil.settings.minimal_mode_enabled,
         event = 'VeryLazy',
         lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
@@ -101,6 +104,14 @@ return {
 
             ---@type table<any, NoiceRouteConfig>
             routes = {
+                {
+                    filter = {
+                        event = 'notify',
+                        find = 'No information available',
+                    },
+                    opts = { skip = true },
+                },
+
                 { -- show messages in mini
                     view = 'mini',
                     filter = {
@@ -158,6 +169,7 @@ return {
 
     { -- Statusline
         'nvim-lualine/lualine.nvim',
+        cond = not Nihil.settings.minimal_mode_enabled,
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
             if vim.fn.argc(2) > 0 then
@@ -371,8 +383,8 @@ return {
         keys = {
             { ']t', function() require('todo-comments').jump_next() end, desc = 'Next Todo Comment' },
             { '[t', function() require('todo-comments').jump_prev() end, desc = 'Previous Todo Comment' },
-            { '<leader>xt', '<cmd>TodoTrouble<cr>', desc = 'Todo (Trouble)' },
-            { '<leader>x<s-t>', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
+            { '<leader>xt', '<cmd>TodoTrouble <cr>', desc = 'Todo (Trouble)' },
+            { '<leader>xT', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME <cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
         },
 
         opts = {
