@@ -1,15 +1,14 @@
 ---@diagnostic disable: no-unknown
----@param args ReolveRawKeymapOpts
+---@param args ResolveRawKeymapOptions
 local function map(args)
-    local mode, lhs, rhs, opts = Nihil.utils.key.resolve_raw_keymap_opts(args)
+    local mode, lhs, rhs, opts = Nihil.util.keymap.resolve_raw_options(args)
     opts.silent = opts.silent ~= false
     opts.noremap = opts.noremap ~= false
     vim.keymap.set(mode, lhs, rhs, opts)
 end
 
-vim.keymap.set('n', 'K', '<nop>')
+map { 'K', '<nop>' }
 
------ Bindings
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
 map { '<c-q>', '<c-c>', mode = 'c' }
@@ -17,14 +16,13 @@ map { '<c-a>', 'gg<s-v><s-g>' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
 
+map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
+
 -- better up/down
 map { 'j', [[v:count == 0 ? 'gj' : 'j']], mode = { 'n', 'x' }, expr = true }
 map { 'k', [[v:count == 0 ? 'gk' : 'k']], mode = { 'n', 'x' }, expr = true }
-map { '<c-k>', '5k', mode = { 'n', 'v' }, nowait = true }
-map { '<c-j>', '5j', mode = { 'n', 'v' }, nowait = true }
-
--- highlights under cursor
-map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
+map { '<c-k>', '5kzz', mode = { 'n', 'v' }, nowait = true }
+map { '<c-j>', '5jzz', mode = { 'n', 'v' }, nowait = true }
 
 -- Better Next/Prev (https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n)
 map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Result' }
@@ -35,16 +33,11 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 ---- Editor
 map { '<c-q>', function() pcall(vim.cmd.close) end, desc = 'Close Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
-map { '<c-s>', '<cmd>w<cr><esc>', mode = { 'i', 'x', 'n', 's' }, desc = 'Save File' }
-
-map { '<c-z>', vim.cmd.undo, mode = { 'n', 'i', 'v' } }
-map { '<c-y>', vim.cmd.redo, mode = { 'n', 'i', 'v' } }
+map { '<c-s>', '<cmd>write<cr><esc>', mode = { 'i', 'x', 'n', 's' }, desc = 'Save File' }
 
 map { 'o', 'o<esc>', remap = true, desc = 'Open Line' }
 map { 'O', 'O<esc>', remap = true, desc = 'Open Line Above' }
 map { 'p', 'P', remap = true, mode = 'v', desc = 'Paste Line' }
-
-map { '<a-z>', ':setlocal wrap! <cr>', desc = 'Toggle Wrap' }
 
 map { '+', '<c-a>', mode = { 'n', 'v' }, desc = 'Increase Number' }
 map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
@@ -52,9 +45,24 @@ map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
 map { '<', '<gv', mode = 'v', desc = 'Indent' }
 map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 
-map { '<leader>um', ':delm! | delm a-z <cr>', desc = 'Clear Marks in Active Buffer' }
-
 map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
+
+---- UI/Toggle
+map { '<leader>uc', function() Nihil.util.toggle.option('conceallevel', false, { 0, 3 }) end, desc = 'Toggle Conceal' }
+map { '<leader>us', function() Nihil.util.toggle.option 'spell' end, desc = 'Toggle Spell' }
+map { '<leader>uw', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
+map { '<a-z>', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
+map { '<leader>um', ':delm! | delm a-z <cr>', desc = 'Clear Marks in Active Buffer' }
+map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
+local function clear_ui_noises()
+    vim.cmd.nohlsearch() -- Clear the search highlighting
+    vim.cmd.diffupdate() -- Redraw the screen
+    vim.cmd.redraw() -- Update the diff highlighting and folds.
+    pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
+    require('notify').dismiss { silent = true, pending = true } -- Clear notifications
+end
+map { '<leader>ul', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
+map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -69,22 +77,6 @@ map { 'zi', ':%g/ /norm! zf%<c-left><c-left><bs>', desc = 'Fold with Pattern', s
 map { 'x', '"_x', mode = { 'n', 's', 'x' }, desc = 'Void yank x' }
 map { ',', '"_', mode = { 'n', 's', 'x', 'o' }, desc = 'Void Reigster' }
 map { ',s', '"+', mode = { 'n', 's', 'x', 'o' }, desc = 'System Clipboard Register' }
-
--- Clear search, diff update and redraw
-map {
-    '<leader>uc',
-    function()
-        require('notify').dismiss { silent = true, pending = true }
-        vim.cmd [[
-            nohlsearch     " Clear the search highlighting
-            diffupdate     " Redraw the screen
-            redraw         " Update the diff highlighting and folds.
-            NoiceDismiss   " Clear noice mini view
-        ]]
-    end,
-    desc = 'Clear UI Noises',
-    nowait = true,
-}
 
 -- move lines
 map { '<a-j>', ':m .+1<cr>==', desc = 'Move Down' }

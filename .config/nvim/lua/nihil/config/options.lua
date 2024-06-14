@@ -38,6 +38,9 @@ vim.opt.completeopt = 'menu,menuone,noselect'
 vim.opt.confirm = true
 vim.opt.conceallevel = 0
 vim.opt.shortmess = 'ltToOCFWIcCm'
+vim.opt.spelllang = { 'en' }
+vim.opt.spelloptions:append 'noplainbuffer'
+vim.opt.wrap = false
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4

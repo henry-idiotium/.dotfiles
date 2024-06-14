@@ -4,7 +4,13 @@ return {
     { 'windwp/nvim-ts-autotag', lazy = true, config = true },
 
     -- Delimiter pairs
-    { 'windwp/nvim-autopairs', event = 'InsertEnter', config = true },
+    {
+        'windwp/nvim-autopairs',
+        event = 'InsertEnter',
+        config = {
+            disable_in_visualblock = true,
+        },
+    },
     { -- Delimiter pairs surroundability
         'kylechui/nvim-surround',
         version = false,
@@ -43,8 +49,8 @@ return {
             { 'F', desc = 'Hop backward to a given char', mode = { 'n', 'x', 'o' } },
             { 't', desc = 'Hop forward before a given char', mode = { 'n', 'x', 'o' } },
             { 'T', desc = 'Hop backward before a given char', mode = { 'n', 'x', 'o' } },
-            { '<a-;>', desc = 'Repeat hop forward to a last given char', mode = { 'n', 'x', 'o' } },
-            { '<a-,>', desc = 'Repeat hop backward to a last given char', mode = { 'n', 'x', 'o' } },
+            { '<a-p>', desc = 'Repeat hop forward to a last given char', mode = { 'n', 'x', 'o' } },
+            { '<a-n>', desc = 'Repeat hop backward to a last given char', mode = { 'n', 'x', 'o' } },
         },
         config = function(_, opts)
             local ft = require 'improved-ft'
@@ -56,8 +62,8 @@ return {
             map('F', ft.hop_backward_to_char)
             map('t', ft.hop_forward_to_pre_char)
             map('T', ft.hop_backward_to_pre_char)
-            map('<a-;>', ft.repeat_forward)
-            map('<a-,>', ft.repeat_backward)
+            map('<a-p>', ft.repeat_forward)
+            map('<a-n>', ft.repeat_backward)
         end,
     },
 

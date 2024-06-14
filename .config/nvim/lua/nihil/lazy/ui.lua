@@ -2,7 +2,6 @@
 return {
     { -- better vim.ui
         'stevearc/dressing.nvim',
-        cond = not Nihil.settings.minimal_mode_enabled,
         lazy = true,
         event = 'VeryLazy',
         init = function()
@@ -43,7 +42,6 @@ return {
 
     { -- better vim.notify
         'rcarriga/nvim-notify',
-        cond = not Nihil.settings.minimal_mode_enabled,
         lazy = false,
         event = 'VeryLazy',
         keys = {
@@ -65,7 +63,6 @@ return {
 
     { -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
         'folke/noice.nvim',
-        cond = not Nihil.settings.minimal_mode_enabled,
         event = 'VeryLazy',
         lazy = false,
         dependencies = { 'MunifTanjim/nui.nvim' },
@@ -98,7 +95,7 @@ return {
                     format = 'lsp_progress',
                     format_done = 'lsp_progress_done',
                     -- throttle = 1000 / 30,
-                    view = 'notify',
+                    view = 'mini',
                 },
             },
 
@@ -169,7 +166,6 @@ return {
 
     { -- Statusline
         'nvim-lualine/lualine.nvim',
-        cond = not Nihil.settings.minimal_mode_enabled,
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
             if vim.fn.argc(2) > 0 then
@@ -284,9 +280,8 @@ return {
 
                 diagnostics = 'nvim_lsp',
                 diagnostics_indicator = function(_, _, diag)
-                    local icons = Nihil.settings.icons.diagnostics
-                    local ret = (diag.error and icons.error .. diag.error .. ' ' or '')
-                        .. (diag.warning and icons.warn .. diag.warning or '')
+                    local icons = Nihil.config.icons.diagnostics
+                    local ret = (diag.error and icons.error .. diag.error .. ' ' or '') .. (diag.warning and icons.warn .. diag.warning or '')
                     return vim.trim(ret)
                 end,
 

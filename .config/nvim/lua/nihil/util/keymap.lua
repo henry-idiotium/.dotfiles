@@ -7,8 +7,8 @@ local skip = {
     rhs = true,
 }
 
----@param raw ReolveRawKeymapOpts
-function M.resolve_raw_keymap_opts(raw)
+---@param raw ResolveRawKeymapOptions
+function M.resolve_raw_options(raw)
     local opts = {} ---@type vim.keymap.set.Opts
     local lhs = raw[1]
     local rhs = raw[2]
@@ -25,7 +25,7 @@ end
 
 return M
 
----@class ReolveRawKeymapOpts : vim.keymap.set.Opts
+---@class ResolveRawKeymapOptions : vim.keymap.set.Opts
 ---@field [1] string
 ---@field [2] string|function
 ---@field mode? string|string[]

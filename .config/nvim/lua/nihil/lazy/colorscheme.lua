@@ -24,7 +24,7 @@ return {
                 Folded = { bg = 'base' },
                 VertSplit = { fg = 'overlay', bg = 'muted' },
                 Search = { bg = 'highlight_med', fg = 'none' },
-                IncSearch = { bg = 'highlight_med', fg = 'none' },
+                IncSearch = { bg = 'gold', fg = 'black' },
                 CurSearch = { bg = 'highlight_low', fg = 'none', underline = true },
                 Visual = { bg = '#343242' },
                 Normal = { bg = 'none' },

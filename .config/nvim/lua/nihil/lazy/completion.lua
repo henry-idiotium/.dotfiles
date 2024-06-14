@@ -22,7 +22,7 @@ return {
         },
         opts = {
             completion = {
-                -- autocomplete = false,
+                autocomplete = false,
                 completeopt = 'menu,menuone,noinsert',
             },
             snippet = {
@@ -40,21 +40,14 @@ return {
         config = function(_, opts)
             local cmp = require 'cmp'
 
-            ---- UI, Icon
-            local icons = Nihil.settings.icons.kinds
-            opts.formatting = { ---@type cmp.FormattingConfig
-                expandable_indicator = false,
-                fields = { 'kind', 'abbr', 'menu' },
-                format = function(entry, item)
-                    local tw = require('tailwindcss-colorizer-cmp').formatter(entry, item)
-                    if tw.kind == 'XX' then return tw end
-
-                    item.menu = item.menu or item.kind or ''
-                    item.kind = icons[item.kind] or ''
-
-                    return item
-                end,
-            }
+            ---- Sources
+            opts.sources = cmp.config.sources({
+                { name = 'nvim_lsp' },
+                { name = 'luasnip' },
+            }, {
+                { name = 'buffer' },
+                { name = 'path' },
+            })
 
             ---- Keybinds
             local cmp_select = { behavior = cmp.SelectBehavior.Select }
@@ -90,37 +83,42 @@ return {
                 end,
             }
 
-            ---- Sources
-            opts.sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' },
-            }, {
-                { name = 'buffer' },
-                { name = 'path' },
-            })
+            ---- UI, Icon
+            opts.formatting = { ---@type cmp.FormattingConfig
+                expandable_indicator = false,
+                fields = { 'kind', 'abbr' },
+                format = function(entry, item)
+                    local tw = require('tailwindcss-colorizer-cmp').formatter(entry, item)
+                    if tw.kind == 'XX' then return tw end
+
+                    item.kind = Nihil.config.icons.kinds[item.kind][1] or '' -- icon
+                    return item
+                end,
+            }
 
             ---- Order/Sorting
             local compare = cmp.config.compare
             local cmp_lsp_kind = require('cmp.types').lsp.CompletionItemKind
-            local kinds_priority = Nihil.settings.kinds.priority
+            local kinds_priority = Nihil.config.icons.kinds
             opts.sorting = { ---@type cmp.SortingConfig
                 priority_weight = 1,
                 comparators = {
-                    compare.exact,
-                    compare.locality,
-                    compare.recently_used,
-
                     function(entry1, entry2) -- kind priority
-                        local prio1 = kinds_priority[cmp_lsp_kind[entry1:get_kind()]]
-                        local prio2 = kinds_priority[cmp_lsp_kind[entry2:get_kind()]]
-                        if not (prio1 or prio2) and prio1 == prio2 then return end
-                        local diff = prio1 - prio2
-                        return diff > 0
+                        local kind1 = cmp_lsp_kind[entry1:get_kind()]
+                        local kind2 = cmp_lsp_kind[entry2:get_kind()]
+                        local prio1 = kinds_priority[kind1][2]
+                        local prio2 = kinds_priority[kind2][2]
+
+                        local diff = prio2 - prio1
+                        -- d < 0 -> true;  d > 0 -> false;  d * -> nil
+                        return diff < 0 or not (diff > 0) and nil
                     end,
 
+                    compare.exact,
                     compare.offset,
                     compare.score,
-                    compare.order,
+                    compare.locality,
+                    compare.recently_used,
                     compare.kind,
                     compare.sort_text,
                 },
@@ -134,8 +132,22 @@ return {
         'supermaven-inc/supermaven-nvim',
         event = 'VeryLazy',
         lazy = false,
+        init = function() vim.g.supermaven_enabled = true end,
         keys = {
-            { '<leader>us', '<cmd>SupermavenToggle <cr>', desc = 'Toggle Smart Suggestion' },
+            {
+                '<leader>ua',
+                function()
+                    vim.g.supermaven_enabled = not vim.g.supermaven_enabled
+                    if vim.g.supermaven_enabled then
+                        vim.cmd.SupermavenStart()
+                        Nihil.log.info 'Enabled Supermaven'
+                    else
+                        vim.cmd.SupermavenStop()
+                        Nihil.log.warn 'Disabled Supermaven'
+                    end
+                end,
+                desc = 'Toggle Smart Suggestion',
+            },
         },
         opts = {
             disable_inline_completion = false,

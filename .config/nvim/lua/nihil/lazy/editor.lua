@@ -11,10 +11,10 @@ return {
             { '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
             { '<c-a-[>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
-            { '<c-a-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
-            { '<c-a-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
-            { '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
-            { '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
+            { '<a-s-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
+            { '<a-s-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
+            { '<a-s-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
+            { '<a-s-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
         },
         config = function()
             local harpoon = require 'harpoon'
@@ -66,20 +66,10 @@ return {
         },
 
         opts = {
-            width = 0.8,
-            height = 0.8,
-            sort_lastused = true,
-
-            winopts = {
-                preview = {
-                    wrap = 'nowrap',
-                    hidden = 'hidden',
-                    vertical = 'down:40%',
-                    horizontal = 'right:50%',
-                    scrollchars = { '┃', '' },
-                },
-            },
+            fzf_args = vim.env.FZF_DEFAULT_OPTS,
+            winopts = { preview = { wrap = 'nowrap', hidden = 'hidden' } },
             keymap = {
+                fzf = {},
                 builtin = {
                     ['<a-/>'] = 'toggle-help',
                     ['<a-p>'] = 'toggle-preview',
@@ -87,30 +77,24 @@ return {
                     ['<c-d>'] = 'preview-down',
                     ['<a-z>'] = 'toggle-preview-wrap',
                 },
-                fzf = {
-                    ['ctrl-l'] = 'accept',
-                },
             },
-
-            fzf_args = vim.env.FZF_DEFAULT_OPTS,
-
             -- PROVIDERS
-            lsp_finder = {},
-            live_grep = {},
-            grep = {},
             files = {
                 -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
-                cmd = 'rg --no-require-git ' .. vim.env.RG_DEFAULT_OPTS,
+                cmd = 'rg --no-require-git --follow --hidden --files --sortr modified'
+                    .. (vim.env.GLOBAL_IGNORE_FILE and ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE or ''),
                 cwd_prompt = false,
-                prompt = ' Files❯ ',
-                actions = {
-                    ['ctrl-g'] = false,
-                },
                 winopts = {
                     width = 0.6,
                     preview = { layout = 'vertical' },
                 },
+                actions = {
+                    ['ctrl-g'] = false,
+                },
             },
+            lsp_finder = {},
+            live_grep = {},
+            grep = {},
         },
 
         config = function(_, opts)
@@ -124,10 +108,10 @@ return {
             opts.files.formatter = path_format
             opts.files.actions['alt-h'] = { actions.toggle_ignore }
 
-            -- NOTE: TEMPORARY FIX ONLY
-            -- BUG: 993fce4 make `accept` keybind from FZF_DEFAULT_OPTS env unable to work well.
-            -- FIX: Sanatize `accept` keybind from FZF_DEFAULT_OPTS env.
+            --BUG: 993fce4 make any `accept` binds from FZF_DEFAULT_OPTS unable to work normally.
+            --NOTE: TEMPORARY FIX ONLY. Replacing `ctrl-l:accept` is still kinda hard coded.
             opts.fzf_args = opts.fzf_args:gsub('ctrl%-l:accept,', '')
+            opts.keymap.fzf = { ['ctrl-l'] = 'accept' }
 
             require('fzf-lua').setup(opts)
         end,
@@ -138,10 +122,11 @@ return {
 
         cmd = 'Neotree',
         keys = {
-            { ';s', '<cmd>Neotree reveal <cr>', desc = 'File Explorer Reveal Current File' },
-            { ';f', '<cmd>Neotree filesystem float <cr>', desc = 'File Explorer Reveal Current File' },
-            { 'sf', '<cmd>Neotree toggle float <cr>', desc = 'File Explorer' },
+            { 'ss', '<cmd>execute "Neotree reveal " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
+            { ';f', '<cmd>execute "Neotree filesystem " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
+            { 'sf', '<cmd>execute "Neotree toggle " . g:neotree_position <cr>', desc = 'File Explorer' },
             { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Popup)' },
+            { '<leader>ue', function() Nihil.util.toggle.var('neotree_position', { 'right', 'float' }) end, desc = 'File Explorer (Popup)' },
         },
 
         deactivate = function() vim.cmd [[Neotree close]] end,
@@ -150,10 +135,12 @@ return {
                 local stat = vim.uv.fs_stat(vim.fn.argv(0)) ---@diagnostic disable-line: param-type-mismatch
                 if stat and stat.type == 'directory' then require 'neo-tree' end
             end
+
+            vim.g.neotree_position = 'right'
         end,
 
         opts = {
-            sources = { 'filesystem', 'git_status', 'buffers' },
+            sources = { 'filesystem', 'git_status' },
             source_selector = { winbar = true },
             hide_root_node = true,
             show_path = 'relative',
@@ -169,7 +156,8 @@ return {
             },
 
             commands = {
-                open_with_file_explorer = function(state) vim.ui.open(state.tree:get_node().path) end,
+                open_with_file_explorer = function(state) pcall(vim.ui.open, state.tree:get_node().path) end,
+
                 -- https://github.com/nvim-neo-tree/neo-tree.nvim/discussions/370#discussioncomment-4144005
                 path_copy_selector = function(state)
                     local node = state.tree:get_node()
@@ -187,10 +175,7 @@ return {
                         ['Path relative to CWD'] = modify(filepath, ':.'),
                     }
 
-                    local options = vim.tbl_filter(
-                        function(val) return not options_map[val] or options_map[val] ~= '' end,
-                        vim.tbl_keys(options_map)
-                    )
+                    local options = vim.tbl_filter(function(val) return not options_map[val] or options_map[val] ~= '' end, vim.tbl_keys(options_map))
                     if vim.tbl_isempty(options) then
                         vim.notify('No values to copy', vim.log.levels.WARN)
                         return
@@ -232,7 +217,6 @@ return {
             -- neo-tree neo-tree-popup
             use_default_mappings = false,
             window = {
-                position = 'float',
                 mappings = {
                     ['?'] = 'show_help',
                     ['sf'] = 'close_window',
@@ -248,22 +232,22 @@ return {
                     ['o'] = 'open_without_losing_focus',
                     ['<cr>'] = 'open',
                     ['t'] = 'open_tabnew',
-                    ['<a-s>'] = 'open_split',
-                    ['<a-v>'] = 'open_vsplit',
+                    ['<c-s>'] = 'open_split',
+                    ['<c-v>'] = 'open_vsplit',
                     ['z<s-c>'] = 'close_all_nodes',
                     ['z<s-o>'] = 'expand_all_nodes',
 
-                    ['<a-i>'] = 'show_file_details',
-                    ['<a-y>'] = 'path_copy_selector',
+                    ['<c-i>'] = 'show_file_details',
+                    ['<c-y>'] = 'path_copy_selector',
                     ['<a-s-o>'] = 'open_with_file_explorer',
 
-                    ['<a-o>c'] = 'order_by_created',
-                    ['<a-o>d'] = 'order_by_diagnostics',
-                    ['<a-o>g'] = 'order_by_git_status',
-                    ['<a-o>m'] = 'order_by_modified',
-                    ['<a-o>n'] = 'order_by_name',
-                    ['<a-o>s'] = 'order_by_size',
-                    ['<a-o>t'] = 'order_by_type',
+                    ['<c-o>c'] = 'order_by_created',
+                    ['<c-o>d'] = 'order_by_diagnostics',
+                    ['<c-o>g'] = 'order_by_git_status',
+                    ['<c-o>m'] = 'order_by_modified',
+                    ['<c-o>n'] = 'order_by_name',
+                    ['<c-o>s'] = 'order_by_size',
+                    ['<c-o>t'] = 'order_by_type',
 
                     ----
                     -- ['P'] = 'toggle_preview',
@@ -280,25 +264,26 @@ return {
                 window = {
                     mappings = {
                         -- none, relative, absolute
-                        ['<a-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
-                        ['<a-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
-                        ['<a-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
-                        ['<a-d>'] = 'delete',
-                        ['<a-r>'] = 'rename',
+                        ['<c-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
+                        ['<c-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
+                        ['<c-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
+                        ['<c-d>'] = 'delete',
+                        ['<c-r>'] = 'rename',
 
-                        ['<a-p>'] = 'paste_from_clipboard',
-                        ['<a-x>'] = 'cut_to_clipboard',
+                        ['<c-p>'] = 'paste_from_clipboard',
+                        ['<c-x>'] = 'cut_to_clipboard',
 
-                        ['<c-c>'] = 'clear_filter',
-                        ['/'] = 'fuzzy_finder',
-                        ['#'] = 'fuzzy_sorter',
-                        ['<a-f>'] = 'filter_on_submit',
+                        ['<c-f>'] = 'filter_on_submit',
                         ['<c-h>'] = 'toggle_hidden',
-                        -- ['A'] = 'add_directory',
-                        -- ['D'] = 'fuzzy_finder_directory',
 
                         ['H'] = 'navigate_up',
                         ['.'] = 'set_root',
+                        --
+                        -- ['/'] = 'fuzzy_finder',
+                        -- ['#'] = 'fuzzy_sorter',
+                        -- ['<c-c>'] = 'clear_filter',
+                        -- ['A'] = 'add_directory',
+                        -- ['D'] = 'fuzzy_finder_directory',
                     },
                 },
             },
@@ -410,17 +395,13 @@ return {
         config = function(_, opts)
             require('illuminate').configure(opts)
 
-            ---@param dir string
             local function map(key, dir, buffer)
-                local action = 'goto_' .. dir .. '_reference'
-                vim.keymap.set('n', key, function() require('illuminate')[action](false) end, {
-                    desc = 'illuminate ' .. action,
+                vim.keymap.set('n', key, function() require('illuminate')['goto_next_reference'](false) end, {
+                    desc = 'Illuminate ' .. dir .. ' Reference',
                     buffer = buffer,
                 })
             end
 
-            map(']]', 'next')
-            map('[[', 'prev')
             -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
             vim.api.nvim_create_autocmd('FileType', {
                 callback = function()

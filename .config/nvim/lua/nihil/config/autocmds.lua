@@ -33,7 +33,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- concealment
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'content_concealment',
-    command = 'setlocal conceallevel=2',
+    command = 'setlocal conceallevel=3',
     pattern = {
         'markdown',
         'notify',
@@ -54,12 +54,13 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Easy closing
 vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'easy_closing',
-    pattern = Nihil.settings.excluded_filetypes,
-    callback = function(event)
-        vim.bo[event.buf].buflisted = false
-        local function map(m, lhs) vim.keymap.set(m, lhs, '<cmd>close<cr>', { buffer = event.buf, silent = true }) end
-        map('n', '<c-q>')
-        map('n', 'q')
+    pattern = Nihil.config.excluded_filetypes,
+    callback = function(e)
+        local buf = e.buf
+        vim.bo[e.buf].buflisted = false
+        local function map(l) vim.keymap.set('n', l, '<cmd>close<cr>', { buffer = buf, silent = true }) end
+        map '<c-q>'
+        map 'q'
     end,
 })
 
@@ -67,7 +68,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('BufReadPost', {
     group = augroup 'last_loc',
     callback = function(event)
-        if vim.tbl_contains(Nihil.settings.excluded_filetypes, vim.bo.filetype) then return end
+        if vim.tbl_contains(Nihil.config.excluded_filetypes, vim.bo.filetype) then return end
 
         local buf = event.buf
         local has_mark, mark = pcall(vim.api.nvim_buf_get_mark, buf, '"')
@@ -95,4 +96,20 @@ vim.api.nvim_create_autocmd('FileType', {
     group = augroup 'bugfix_bun_hot_reload',
     pattern = { 'javascript', 'typescript' },
     command = 'setlocal backupcopy=yes',
+})
+
+-- Settings for the greatest script of all time
+vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup('nihil_greatest_script_settings', { clear = true }),
+    pattern = 'tmux-harpoon', -- in config.filetype
+    callback = function(e)
+        vim.opt.showmode = false
+        vim.opt.ruler = false
+        vim.opt.laststatus = 0
+        vim.opt.showcmd = false
+
+        local function map(m, l, r) vim.keymap.set(m, l, r, { buffer = e.buf, silent = true }) end
+        map('n', '<c-q>', '<cmd>quit <cr>')
+        map('n', '<c-s>', '<cmd>write | quit <cr>')
+    end,
 })

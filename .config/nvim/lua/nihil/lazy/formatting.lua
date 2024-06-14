@@ -7,7 +7,7 @@ return {
 
         dependencies = {
             'WhoIsSethDaniel/mason-tool-installer.nvim',
-            opts = { ensure_installed = Nihil.settings.conform.mason_ensure_installed },
+            opts = { ensure_installed = Nihil.config.conform.mason_ensure_installed },
             lazy = false,
         },
 
@@ -15,13 +15,13 @@ return {
         keys = {
             {
                 '<a-s-f>',
-                function() require('conform').format(Nihil.settings.conform.format_on_save) end,
+                function() require('conform').format(Nihil.config.conform.format_on_save) end,
                 mode = { 'i', 'n', 'v' },
                 desc = 'Format buffer',
             },
             {
                 '<leader>cf',
-                function() require('conform').format(Nihil.settings.conform.format_on_save) end,
+                function() require('conform').format(Nihil.config.conform.format_on_save) end,
                 mode = { 'n', 'v' },
                 desc = 'Format buffer',
             },
@@ -52,15 +52,15 @@ return {
                 if bufname:match '/node_modules/' or bufname:match '/dist/' then return end
 
                 -- on certain filetypes
-                if vim.tbl_contains(Nihil.settings.excluded_filetypes, vim.bo[bufnr].filetype) then return end
+                if vim.tbl_contains(Nihil.config.excluded_filetypes, vim.bo[bufnr].filetype) then return end
 
                 -- toggle
                 if vim.g.disable_autoformat or vim.b.disable_autoformat then return end
 
-                return Nihil.settings.conform.format_on_save
+                return Nihil.config.conform.format_on_save
             end,
         },
 
-        config = function(_, opts) require('conform').setup(vim.tbl_deep_extend('force', {}, Nihil.settings.conform, opts)) end,
+        config = function(_, opts) require('conform').setup(vim.tbl_deep_extend('force', {}, Nihil.config.conform, opts)) end,
     },
 }

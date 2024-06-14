@@ -1,7 +1,12 @@
 ---@diagnostic disable: missing-fields, no-unknown
 local M = {}
 
-M.theme = 'rose-pine'
+M.colorscheme = 'rose-pine'
+
+--stylua: ignore
+M.minimal_mode_enabled =
+    vim.env.NVIM_MINIMAL_MODE ~= nil
+    or vim.env.TMUX_POPUP ~= nil 
 
 --- Icons used by plugins
 M.icons = {
@@ -26,72 +31,40 @@ M.icons = {
         modified = ' ',
         removed = ' ',
     },
+    --NOTE: NO order `as written in source` in lua
     kinds = {
-        Text = '',
-        Method = '',
-        Function = '',
-        Constructor = '',
-        Field = '',
-        Variable = '',
-        Class = '',
-        Interface = '',
-        Module = '',
-        Property = '',
-        Unit = '',
-        Value = '',
-        Enum = '',
-        Keyword = '',
-        Color = '',
-        File = '',
-        Reference = '',
-        Folder = '',
-        EnumMember = '',
-        Constant = '',
-        Struct = '',
-        Event = '',
-        Operator = '',
-        TypeParameter = '',
+        Variable = { '', 100 },
+        Reference = { '', 95 },
+        Constant = { '', 90 },
+        Interface = { '', 90 },
+        TypeParameter = { '', 90 },
+        Function = { '', 85 },
+        Field = { '', 85 },
+        Method = { '', 85 },
+        Class = { '', 85 },
+        Property = { '', 80 },
+        Enum = { '', 75 },
+        EnumMember = { '', 75 },
+        Constructor = { '', 75 },
+        Struct = { '', 70 },
+        Module = { '', 70 },
 
-        Supermaven = ' ',
-        Codeium = '󰘦 ',
-        TabNine = '󰏚 ',
-        Copilot = ' ',
-        Snippet = ' ',
-    },
-}
+        Color = { '', 60 },
+        Unit = { '', 60 },
+        Value = { '', 60 },
+        File = { '', 55 },
+        Folder = { '', 55 },
+        Event = { '', 40 },
+        Operator = { '', 40 },
+        Keyword = { '', 30 },
 
--- kinds
-M.kinds = {
-    --NOTE: lua has no concepts of in-order array (order as written in source)
-    priority = {
-        Variable = 80,
-        Reference = 78,
-        Constant = 76,
-        Interface = 74,
-        TypeParameter = 72,
-        Function = 70,
-        Class = 66,
-        Property = 63,
-        Field = 62,
-        Method = 61,
+        Supermaven = { ' ', 20 },
+        Codeium = { '󰘦 ', 20 },
+        TabNine = { '󰏚 ', 20 },
+        Copilot = { ' ', 20 },
 
-        Enum = 60,
-        EnumMember = 57,
-        Constructor = 56,
-        Struct = 54,
-        Module = 53,
-
-        Color = 30,
-        Unit = 28,
-        Keyword = 27,
-        Value = 24,
-        File = 22,
-        Folder = 20,
-        Event = 18,
-        Operator = 17,
-
-        Snippet = 10,
-        Text = 0,
+        Snippet = { ' ', 15 },
+        Text = { '', 0 },
     },
 }
 
@@ -145,9 +118,7 @@ M.lspconfig = {
 
         tsserver = {
             single_file_support = false,
-            root_dir = function(...)
-                return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...)
-            end,
+            root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
             init_options = {
                 preferences = {
                     importModuleSpecifierPreference = 'non-relative',
@@ -188,8 +159,7 @@ M.lspconfig = {
 
             -- lazy-load schemastore when needed
             on_new_config = function(new_config)
-                new_config.settings.yaml.schemas =
-                    vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
+                new_config.settings.yaml.schemas = vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
             end,
             settings = {
                 redhat = { telemetry = { enabled = false } },
@@ -302,6 +272,7 @@ M.conform.formatters_by_ft = {
     python = { 'isort', 'black' },
     fish = { 'fish_indent' },
     markdown = prettier_fmt,
+    mdx = prettier_fmt,
     typescript = prettier_fmt,
     typescriptreact = prettier_fmt,
     javascript = prettier_fmt,
@@ -317,13 +288,13 @@ M.conform.formatters_by_ft = {
     ['_'] = { 'trim_whitespace' },
 }
 
---- Exclude filetypes
 M.excluded_filetypes = {
     'PlenaryTestPopup',
     'neotest-output-panel',
     'neotest-output',
-    'no-neck-pain',
     'neotest-summary',
+    'neo-tree-popup',
+    'no-neck-pain',
     'spectre_panel',
     'startuptime',
     'checkhealth',
@@ -342,12 +313,13 @@ M.excluded_filetypes = {
     'svn',
     'vim',
     'qf',
+
+    'tmux-harpoon',
 }
 
 --- vim filetype settings
 M.filetype = {
     ---@type vim.filetype.add.filetypes
-    -- {matching} = {filetype}
     vim = {
         pattern = {
             ['.env.*'] = 'conf',
@@ -356,13 +328,14 @@ M.filetype = {
             ['.env'] = 'conf',
             ['.ignore'] = 'gitignore',
             ['Podfile'] = 'ruby',
+            [vim.env.TMUX_HARPOON_CACHE_FILE] = 'tmux-harpoon',
         },
         extension = {
             mdx = 'mdx',
             astro = 'astro',
             tmux = 'tmux',
-            prisma = function(_, bufnr)
-                vim.b[bufnr].comment_string = '// %s'
+            prisma = function(_, buf)
+                vim.b[buf].comment_string = '// %s'
                 return 'prisma'
             end,
         },
@@ -372,6 +345,7 @@ M.filetype = {
         -- Register a parser named {lang} to be used for {filetype}(s).
         register = {
             markdown = 'mdx',
+            conf = 'tmux-harpoon',
         },
     },
 
@@ -388,7 +362,12 @@ M.filetype = {
     },
 }
 
-M.minimal_mode_enabled = vim.env.TMUX_POPUP ~= nil
+-- Don't know where to put this
+vim.filetype.add(M.filetype.vim)
+for lang, ft in pairs(M.filetype.treesitter.register) do
+    vim.treesitter.language.register(lang, ft)
+end
 
-_G.Nihil.settings = M
+vim.treesitter.language.register('conf', 'tmux-harpoon')
+
 return M
