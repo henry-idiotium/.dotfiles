@@ -21,6 +21,7 @@ set -gx MY_PROJECT_HOME ~/documents/projects/
 set -gx MY_WORK_HOME ~/documents/works/
 set -gx MY_THROWAWAY_HOME ~/documents/throwaways/
 set -gx GLOBAL_IGNORE_FILE ~/.config/dotfiles/gitignore
+set -gx TMUX_HARPOON_CACHE_FILE $XDG_CACHE_HOME/.tmux-harpoon-sessions
 
 fish_add_path -g ~/.local/bin # third parties' stuffs
 fish_add_path -g ~/bin/.local/scripts # user scripts

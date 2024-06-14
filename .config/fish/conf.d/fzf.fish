@@ -21,13 +21,8 @@ set -gx FZF_DEFAULT_OPTS \
     --color spinner:#F6C177,info:#9CCFD8,separator:#44415A \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
-
 set -gx FD_DEFAULT_OPTS \
     --follow --hidden \
-    --ignore-file $GLOBAL_IGNORE_FILE
-
-set -gx RG_DEFAULT_OPTS \
-    --follow --hidden --files --sortr modified \
     --ignore-file $GLOBAL_IGNORE_FILE
 
 set -gx FZF_HOME_PROJECTS \
@@ -111,8 +106,12 @@ function __open-path -d "Open a path in the current directory"
     if [ -z "$fish_private_mode" ]
         set -f hist_file ~/.local/share/fish/fish_history
 
-        echo '- cmd:' (string unescape -n $token) >>$hist_file
-        echo '  when:' (date '+%s') >>$hist_file
+        begin
+            echo '- cmd:' (string unescape -n $token)
+            echo '  when:' (date '+%s')
+            echo '  path:'
+            echo '    - ' (pwd)
+        end >>$hist_file
 
         # merge history file with (empty) internal history
         history --merge
