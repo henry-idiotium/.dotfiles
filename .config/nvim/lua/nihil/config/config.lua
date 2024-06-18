@@ -5,8 +5,8 @@ M.colorscheme = 'rose-pine'
 
 --stylua: ignore
 M.minimal_mode_enabled =
-    vim.env.NVIM_MINIMAL_MODE ~= nil
-    or vim.env.TMUX_POPUP ~= nil 
+    vim.env.NVIM_MINIMAL_MODE == 1
+    or vim.env.TMUX_POPUP == 1
 
 --- Icons used by plugins
 M.icons = {
@@ -33,38 +33,38 @@ M.icons = {
     },
     --NOTE: NO order `as written in source` in lua
     kinds = {
-        Variable = { '', 100 },
-        Reference = { '', 95 },
-        Constant = { '', 90 },
-        Interface = { '', 90 },
-        TypeParameter = { '', 90 },
-        Function = { '', 85 },
-        Field = { '', 85 },
-        Method = { '', 85 },
-        Class = { '', 85 },
-        Property = { '', 80 },
-        Enum = { '', 75 },
-        EnumMember = { '', 75 },
-        Constructor = { '', 75 },
-        Struct = { '', 70 },
-        Module = { '', 70 },
+        Variable = { icon = '', piority = 100 },
+        Reference = { icon = '', piority = 95 },
+        Constant = { icon = '', piority = 90 },
+        Interface = { icon = '', piority = 90 },
+        TypeParameter = { icon = '', piority = 90 },
+        Function = { icon = '', piority = 85 },
+        Field = { icon = '', piority = 85 },
+        Method = { icon = '', piority = 85 },
+        Class = { icon = '', piority = 85 },
+        Property = { icon = '', piority = 80 },
+        Enum = { icon = '', piority = 75 },
+        EnumMember = { icon = '', piority = 75 },
+        Constructor = { icon = '', piority = 75 },
+        Struct = { icon = '', piority = 70 },
+        Module = { icon = '', piority = 70 },
 
-        Color = { '', 60 },
-        Unit = { '', 60 },
-        Value = { '', 60 },
-        File = { '', 55 },
-        Folder = { '', 55 },
-        Event = { '', 40 },
-        Operator = { '', 40 },
-        Keyword = { '', 30 },
+        Color = { icon = '', piority = 60 },
+        Unit = { icon = '', piority = 60 },
+        Value = { icon = '', piority = 60 },
+        File = { icon = '', piority = 55 },
+        Folder = { icon = '', piority = 55 },
+        Event = { icon = '', piority = 40 },
+        Operator = { icon = '', piority = 40 },
+        Keyword = { icon = '', piority = 30 },
 
-        Supermaven = { ' ', 20 },
-        Codeium = { '󰘦 ', 20 },
-        TabNine = { '󰏚 ', 20 },
-        Copilot = { ' ', 20 },
+        Supermaven = { icon = ' ', piority = 20 },
+        Codeium = { icon = '󰘦 ', piority = 20 },
+        TabNine = { icon = '󰏚 ', piority = 20 },
+        Copilot = { icon = ' ', piority = 20 },
 
-        Snippet = { ' ', 15 },
-        Text = { '', 0 },
+        Snippet = { icon = ' ', piority = 15 },
+        Text = { icon = '', piority = 0 },
     },
 }
 
@@ -116,6 +116,14 @@ M.lspconfig = {
             },
         },
 
+        -- TODO: add eslint (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/linting/eslint.lua)
+        eslint = {
+            settings = {
+                -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
+                workingDirectories = { mode = 'auto' },
+            },
+        },
+
         tsserver = {
             single_file_support = false,
             root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
@@ -124,6 +132,9 @@ M.lspconfig = {
                     importModuleSpecifierPreference = 'non-relative',
                 },
             },
+
+            on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
+
             settings = {
                 typescript = {
                     inlayHints = {
@@ -248,7 +259,18 @@ M.lspconfig = {
 
         { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename Symbol' },
         { '<leader>cd', vim.diagnostic.open_float, desc = 'Open Diagnostics' },
-        { '<leader>ca', '<cmd>FzfLua lsp_code_actions<cr>', mode = { 'n', 'v' }, desc = 'Code actions' },
+        {
+            '<leader>ca',
+            function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
+            mode = { 'n', 'v' },
+            desc = 'Code actions',
+        },
+        {
+            '🔥',
+            function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
+            mode = { 'n', 'v' },
+            desc = 'Code actions',
+        },
     },
 }
 

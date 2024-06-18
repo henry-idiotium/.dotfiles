@@ -1,16 +1,27 @@
 ---@diagnostic disable: no-unknown
 return {
-    -- Automatically add closing tags for HTML and JSX
-    { 'windwp/nvim-ts-autotag', lazy = true, config = true },
-
-    -- Delimiter pairs
     {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        cmd = 'LazyDev',
+        opts = {
+            library = {
+                { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+                { path = 'LazyVim', words = { 'LazyVim' } },
+                { path = 'lazy.nvim', words = { 'LazyVim' } },
+            },
+        },
+    },
+    { 'Bilal2453/luvit-meta', lazy = true },
+
+    { -- Delimiter pairs
         'windwp/nvim-autopairs',
         event = 'InsertEnter',
         config = {
             disable_in_visualblock = true,
         },
     },
+
     { -- Delimiter pairs surroundability
         'kylechui/nvim-surround',
         version = false,
@@ -124,23 +135,7 @@ return {
         },
     },
 
-    { -- display typescript type
-        'marilari88/twoslash-queries.nvim',
-        ft = { 'typescript', 'javascript' },
-        cmd = {
-            'TwoslashQueriesEnable',
-            'TwoslashQueriesDisable',
-            'TwoslashQueriesInspect',
-            'TwoslashQueriesRemove',
-        },
-        opts = {
-            multi_line = true, -- to print types in multi line mode
-            is_enabled = false, -- to keep disabled at startup and enable it on request with the TwoslashQueriesEnable
-            highlight = 'Type', -- to set up a highlight group for the virtual text
-        },
-    },
-
-    { -- change case
+    { -- Change case
         'johmsalas/text-case.nvim',
         keys = { 'cc' },
         opts = {

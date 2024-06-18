@@ -1,3 +1,5 @@
+if vim.loader then vim.loader.enable() end
+
 ---@diagnostic disable: missing-fields, no-unknown
 -- Global
 _G.Nihil = {
@@ -29,10 +31,13 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup {
     ---@type LazySpec
-    spec = {
-        import = 'nihil.lazy',
-        enabled = not Nihil.config.minimal_mode_enabled,
-    },
+    spec = not Nihil.config.minimal_mode_enabled and {
+        { import = 'nihil.lazy' },
+        { import = 'nihil.lazy.coding' },
+        { import = 'nihil.lazy.ui' },
+        { import = 'nihil.lazy.editor' },
+        { import = 'nihil.lazy.lang' },
+    } or {},
     change_detection = { notify = false },
     performance = {
         cache = { enabled = true },

@@ -1,6 +1,7 @@
 ---@diagnostic disable: no-unknown
 local M = {}
 
+---@param option string
 ---@param silent boolean?
 ---@param values? {[1]:any, [2]:any}
 function M.option(option, silent, values)
@@ -10,27 +11,23 @@ function M.option(option, silent, values)
     end
 
     vim.opt_local[option] = not vim.opt_local[option]:get()
-    if not silent then
-        if vim.opt_local[option]:get() then
-            Nihil.log.info('Enabled ' .. option, { title = 'Option' })
-        else
-            Nihil.log.warn('Disabled ' .. option, { title = 'Option' })
-        end
-    end
+    if not silent then Nihil.log.info((vim.opt_local[option]:get() and 'Enabled ' or 'Disabled ') .. option, { title = 'Option' }) end
 end
 
+---@param var string
 ---@param values? {[1]:any, [2]:any}
 ---@param scope? 'g'|'b'|'w'|'t'|'v' default: 'g'
-function M.var(name, values, scope)
+function M.var(var, values, scope)
     scope = scope or 'g'
-    local old_val = vim[scope][name]
+    local old_val = vim[scope][var]
 
     if values then
-        vim[scope][name] = (old_val == values[1]) and values[2] or values[1]
-        return Nihil.log.info('Set ' .. name .. ' to ' .. vim[scope][name], { title = 'Option' })
+        vim[scope][var] = (old_val == values[1]) and values[2] or values[1]
+        return Nihil.log.info(string.format('Set %s to %s', var, vim[scope][var]), { title = 'Option' })
     end
 
-    vim[scope][name] = not old_val
+    vim[scope][var] = not old_val
+    Nihil.log.info((vim[scope][var] and 'Enabled ' or 'Disabled ') .. var, { title = 'Option' })
 end
 
 function M.diagnostics()

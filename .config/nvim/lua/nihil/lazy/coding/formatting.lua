@@ -25,8 +25,8 @@ return {
                 mode = { 'n', 'v' },
                 desc = 'Format buffer',
             },
-            { '<leader>uf', '<cmd>ToggleAutoFormat <cr>', desc = 'Toggle Auto Format (local)' },
-            { '<leader>uF', '<cmd>ToggleAutoFormat! <cr>', desc = 'Toggle Auto Format (global)' },
+            { '<leader><leader>f', '<cmd>ToggleAutoFormat <cr>', desc = 'Toggle Auto Format (local)' },
+            { '<leader><leader>F', '<cmd>ToggleAutoFormat! <cr>', desc = 'Toggle Auto Format (global)' },
         },
 
         init = function()
@@ -35,11 +35,7 @@ return {
                 local vim_loc = args.bang and 'g' or 'b'
                 vim[vim_loc].disable_autoformat = not vim[vim_loc].disable_autoformat
                 vim.notify(
-                    string.format(
-                        '📄 %s Auto Format (%s) !',
-                        vim[vim_loc].disable_autoformat and 'Disabled' or 'Enabled',
-                        args.bang and 'global' or 'local'
-                    )
+                    string.format('📄 %s Auto Format (%s) !', vim[vim_loc].disable_autoformat and 'Disabled' or 'Enabled', args.bang and 'global' or 'local')
                 )
             end, { bang = true })
         end,

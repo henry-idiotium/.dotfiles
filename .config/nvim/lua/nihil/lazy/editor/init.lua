@@ -66,10 +66,12 @@ return {
         },
 
         opts = {
-            fzf_args = vim.env.FZF_DEFAULT_OPTS,
-            winopts = { preview = { wrap = 'nowrap', hidden = 'hidden' } },
+            --BUG: 993fce4 make any `accept` binds from FZF_DEFAULT_OPTS unable to work normally.
+            --NOTE: TEMPORARY FIX ONLY. Replacing `ctrl-l:accept` is still kinda hard coded.
+            fzf_args = vim.env.FZF_DEFAULT_OPTS:gsub('ctrl%-l:accept,', ''),
+
             keymap = {
-                fzf = {},
+                fzf = { ['ctrl-l'] = 'accept' },
                 builtin = {
                     ['<a-/>'] = 'toggle-help',
                     ['<a-p>'] = 'toggle-preview',
@@ -78,11 +80,16 @@ return {
                     ['<a-z>'] = 'toggle-preview-wrap',
                 },
             },
+            winopts = {
+                preview = { wrap = 'nowrap', hidden = 'hidden' },
+            },
+
             -- PROVIDERS
             files = {
                 -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
                 cmd = 'rg --no-require-git --follow --hidden --files --sortr modified'
                     .. (vim.env.GLOBAL_IGNORE_FILE and ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE or ''),
+                formatter = 'path.filename_first',
                 cwd_prompt = false,
                 winopts = {
                     width = 0.6,
@@ -90,31 +97,16 @@ return {
                 },
                 actions = {
                     ['ctrl-g'] = false,
+                    ['alt-h'] = { function() return require('fzf-lua.actions').toggle_ignore() end },
                 },
             },
-            lsp_finder = {},
-            live_grep = {},
-            grep = {},
+            live_grep = {
+                formatter = 'path.filename_first',
+            },
+            grep = {
+                formatter = 'path.filename_first',
+            },
         },
-
-        config = function(_, opts)
-            local actions = require 'fzf-lua.actions'
-            local path_format = 'path.filename_first'
-
-            opts.lsp_finder.formatter = path_format
-            opts.live_grep.formatter = path_format
-            opts.grep.formatter = path_format
-
-            opts.files.formatter = path_format
-            opts.files.actions['alt-h'] = { actions.toggle_ignore }
-
-            --BUG: 993fce4 make any `accept` binds from FZF_DEFAULT_OPTS unable to work normally.
-            --NOTE: TEMPORARY FIX ONLY. Replacing `ctrl-l:accept` is still kinda hard coded.
-            opts.fzf_args = opts.fzf_args:gsub('ctrl%-l:accept,', '')
-            opts.keymap.fzf = { ['ctrl-l'] = 'accept' }
-
-            require('fzf-lua').setup(opts)
-        end,
     },
 
     { -- File explorer
@@ -125,8 +117,8 @@ return {
             { 'ss', '<cmd>execute "Neotree reveal " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
             { ';f', '<cmd>execute "Neotree filesystem " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
             { 'sf', '<cmd>execute "Neotree toggle " . g:neotree_position <cr>', desc = 'File Explorer' },
-            { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Popup)' },
-            { '<leader>ue', function() Nihil.util.toggle.var('neotree_position', { 'right', 'float' }) end, desc = 'File Explorer (Popup)' },
+            { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Full)' },
+            { '<leader><leader>n', function() Nihil.util.toggle.var('neotree_position', { 'right', 'float' }) end, desc = 'Change File Explorer Position' },
         },
 
         deactivate = function() vim.cmd [[Neotree close]] end,
@@ -135,8 +127,6 @@ return {
                 local stat = vim.uv.fs_stat(vim.fn.argv(0)) ---@diagnostic disable-line: param-type-mismatch
                 if stat and stat.type == 'directory' then require 'neo-tree' end
             end
-
-            vim.g.neotree_position = 'right'
         end,
 
         opts = {
@@ -148,8 +138,9 @@ return {
             popup_border_style = 'rounded',
 
             default_component_configs = {
+                git_status = { symbols = { unstaged = '󰄱', staged = '󰱒' } },
                 indent = {
-                    with_markers = false,
+                    with_markers = true,
                     indent_size = 2,
                     padding = 0,
                 },
@@ -223,7 +214,7 @@ return {
                     ['q'] = 'close_window',
                     ['<c-q>'] = 'close_window',
                     ['<esc>'] = 'cancel',
-                    ['<s-r>'] = 'refresh',
+                    ['R'] = 'refresh',
                     ['<'] = 'prev_source',
                     ['>'] = 'next_source',
 
@@ -232,27 +223,22 @@ return {
                     ['o'] = 'open_without_losing_focus',
                     ['<cr>'] = 'open',
                     ['t'] = 'open_tabnew',
-                    ['<c-s>'] = 'open_split',
-                    ['<c-v>'] = 'open_vsplit',
+                    ['<a-s>'] = 'open_split',
+                    ['<a-v>'] = 'open_vsplit',
                     ['z<s-c>'] = 'close_all_nodes',
                     ['z<s-o>'] = 'expand_all_nodes',
 
-                    ['<c-i>'] = 'show_file_details',
-                    ['<c-y>'] = 'path_copy_selector',
-                    ['<a-s-o>'] = 'open_with_file_explorer',
+                    ['<a-i>'] = 'show_file_details',
+                    ['<a-y>'] = 'path_copy_selector',
+                    ['<c-a-o>'] = 'open_with_file_explorer',
 
-                    ['<c-o>c'] = 'order_by_created',
-                    ['<c-o>d'] = 'order_by_diagnostics',
-                    ['<c-o>g'] = 'order_by_git_status',
-                    ['<c-o>m'] = 'order_by_modified',
-                    ['<c-o>n'] = 'order_by_name',
-                    ['<c-o>s'] = 'order_by_size',
-                    ['<c-o>t'] = 'order_by_type',
-
-                    ----
-                    -- ['P'] = 'toggle_preview',
-                    -- ['l'] = 'focus_preview',
-                    -- ['e'] = 'toggle_auto_expand_width',
+                    ['<a-o>c'] = 'order_by_created',
+                    ['<a-o>d'] = 'order_by_diagnostics',
+                    ['<a-o>g'] = 'order_by_git_status',
+                    ['<a-o>m'] = 'order_by_modified',
+                    ['<a-o>n'] = 'order_by_name',
+                    ['<a-o>s'] = 'order_by_size',
+                    ['<a-o>t'] = 'order_by_type',
                 },
             },
 
@@ -264,34 +250,26 @@ return {
                 window = {
                     mappings = {
                         -- none, relative, absolute
-                        ['<c-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
-                        ['<c-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
-                        ['<c-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
-                        ['<c-d>'] = 'delete',
-                        ['<c-r>'] = 'rename',
+                        ['<a-n>'] = { 'add', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-c>'] = { 'copy', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-m>'] = { 'move', nowait = true, config = { show_path = 'relative' } },
+                        ['<a-d>'] = 'delete',
+                        ['<a-r>'] = 'rename',
 
-                        ['<c-p>'] = 'paste_from_clipboard',
-                        ['<c-x>'] = 'cut_to_clipboard',
+                        ['<a-p>'] = 'paste_from_clipboard',
+                        ['<a-x>'] = 'cut_to_clipboard',
 
-                        ['<c-f>'] = 'filter_on_submit',
-                        ['<c-h>'] = 'toggle_hidden',
+                        ['<a-f>'] = 'filter_on_submit',
+                        ['<a-h>'] = 'toggle_hidden',
 
                         ['H'] = 'navigate_up',
                         ['.'] = 'set_root',
-                        --
+
                         -- ['/'] = 'fuzzy_finder',
                         -- ['#'] = 'fuzzy_sorter',
                         -- ['<c-c>'] = 'clear_filter',
                         -- ['A'] = 'add_directory',
                         -- ['D'] = 'fuzzy_finder_directory',
-                    },
-                },
-            },
-            git_status = {
-                window = {
-                    mappings = {
-                        ['['] = 'prev_git_modified',
-                        [']'] = 'next_git_modified',
                     },
                 },
             },
@@ -420,3 +398,4 @@ return {
         opts = { open_fold_hl_timeout = 0 },
     },
 }
+

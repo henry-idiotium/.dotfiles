@@ -47,13 +47,9 @@ map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 
 map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
 
----- UI/Toggle
-map { '<leader>uc', function() Nihil.util.toggle.option('conceallevel', false, { 0, 3 }) end, desc = 'Toggle Conceal' }
-map { '<leader>us', function() Nihil.util.toggle.option 'spell' end, desc = 'Toggle Spell' }
-map { '<leader>uw', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
-map { '<a-z>', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
-map { '<leader>um', ':delm! | delm a-z <cr>', desc = 'Clear Marks in Active Buffer' }
+---- UI
 map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
+map { '<leader>um', ':delm! | delm a-zA-Z <cr>', desc = 'Clear Marks in Active Buffer' }
 local function clear_ui_noises()
     vim.cmd.nohlsearch() -- Clear the search highlighting
     vim.cmd.diffupdate() -- Redraw the screen
@@ -61,8 +57,13 @@ local function clear_ui_noises()
     pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
     require('notify').dismiss { silent = true, pending = true } -- Clear notifications
 end
-map { '<leader>ul', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
+map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
 map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
+---- Toggle
+map { '<leader><leader>c', function() Nihil.util.toggle.option('conceallevel', false, { 0, 3 }) end, desc = 'Toggle Conceal' }
+map { '<leader><leader>s', function() Nihil.util.toggle.option 'spell' end, desc = 'Toggle Spell' }
+map { '<leader><leader>w', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
+map { '<a-z>', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -124,10 +125,9 @@ map { '<leader>b<s-d>', ':%bd | e# <cr>', desc = 'Delete all buffers except acti
 map { '<leader>mm', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
 map { '<leader>ms', '<cmd>Mason <cr>', desc = 'Mason Menu' }
 map { '<leader>ml', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
-map { '<leader>mc', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
+map { '<leader>mf', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
 
 ---- Diagnostics
----@param dir 'next'|'prev'
 ---@param severity? vim.diagnostic.Severity
 local function diag_go(dir, severity)
     local go = vim.diagnostic['goto_' .. dir]

@@ -443,7 +443,7 @@ return {
         'shortcuts/no-neck-pain.nvim',
         version = '*',
         keys = {
-            { '<leader>uz', '<cmd>NoNeckPain <cr>', desc = 'Focus Mode' },
+            { '<leader><leader>z', '<cmd>NoNeckPain <cr>', desc = 'Focus Mode' },
         },
         opts = {
             width = 130,
@@ -455,3 +455,4 @@ return {
         },
     },
 }
+

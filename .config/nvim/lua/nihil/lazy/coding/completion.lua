@@ -44,12 +44,15 @@ return {
             opts.sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },
+                { name = 'lazydev', group_index = 0 },
             }, {
                 { name = 'buffer' },
                 { name = 'path' },
             })
 
             ---- Keybinds
+            local sm = require 'supermaven-nvim.completion_preview'
+            local ls = require 'luasnip'
             local cmp_select = { behavior = cmp.SelectBehavior.Select }
             local cmp_close = {
                 i = cmp.mapping.abort(),
@@ -59,16 +62,12 @@ return {
                 ['<c-space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
                 ['<c-j>'] = cmp.mapping.select_next_item(cmp_select),
                 ['<c-k>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<c-y>'] = cmp.mapping.confirm { select = true },
                 ['<cr>'] = cmp.mapping.confirm { select = true },
                 ['<c-q>'] = cmp_close,
                 ['<c-e>'] = cmp_close,
 
-                ['<c-g>'] = function() return cmp.visible_docs() and cmp.close_docs() or cmp.open_docs() end,
+                ['<c-y>'] = function() return cmp.visible() and sm.has_suggestion() and sm.on_accept_suggestion() end,
                 ['<tab>'] = function(fallback)
-                    local sm = require 'supermaven-nvim.completion_preview'
-                    local ls = require 'luasnip'
-
                     if not cmp.visible() and sm.has_suggestion() then
                         sm.on_accept_suggestion()
                     elseif cmp.visible() then
@@ -83,7 +82,7 @@ return {
                 end,
             }
 
-            ---- UI, Icon
+            ---- Appearance
             opts.formatting = { ---@type cmp.FormattingConfig
                 expandable_indicator = false,
                 fields = { 'kind', 'abbr' },
@@ -91,7 +90,7 @@ return {
                     local tw = require('tailwindcss-colorizer-cmp').formatter(entry, item)
                     if tw.kind == 'XX' then return tw end
 
-                    item.kind = Nihil.config.icons.kinds[item.kind][1] or '' -- icon
+                    item.kind = Nihil.config.icons.kinds[item.kind].icon or ''
                     return item
                 end,
             }
@@ -103,22 +102,23 @@ return {
             opts.sorting = { ---@type cmp.SortingConfig
                 priority_weight = 1,
                 comparators = {
-                    function(entry1, entry2) -- kind priority
-                        local kind1 = cmp_lsp_kind[entry1:get_kind()]
-                        local kind2 = cmp_lsp_kind[entry2:get_kind()]
-                        local prio1 = kinds_priority[kind1][2]
-                        local prio2 = kinds_priority[kind2][2]
-
-                        local diff = prio2 - prio1
-                        -- d < 0 -> true;  d > 0 -> false;  d * -> nil
-                        return diff < 0 or not (diff > 0) and nil
-                    end,
-
                     compare.exact,
                     compare.offset,
                     compare.score,
-                    compare.locality,
-                    compare.recently_used,
+
+                    function(entry1, entry2) -- kind priority
+                        local kind1 = cmp_lsp_kind[entry1:get_kind()]
+                        local kind2 = cmp_lsp_kind[entry2:get_kind()]
+                        local prio1 = kinds_priority[kind1].piority
+                        local prio2 = kinds_priority[kind2].piority
+                        local diff = prio2 - prio1
+
+                        local is_local = compare.locality(entry1, entry2)
+
+                        -- <0 -> true;  >0 -> false;  * -> nil
+                        return is_local or (diff < 0 or not (diff > 0) and nil)
+                    end,
+
                     compare.kind,
                     compare.sort_text,
                 },
@@ -135,7 +135,7 @@ return {
         init = function() vim.g.supermaven_enabled = true end,
         keys = {
             {
-                '<leader>ua',
+                '<leader><leader>p',
                 function()
                     vim.g.supermaven_enabled = not vim.g.supermaven_enabled
                     if vim.g.supermaven_enabled then

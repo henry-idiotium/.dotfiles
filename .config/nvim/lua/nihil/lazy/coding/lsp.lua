@@ -5,10 +5,6 @@ return {
         dependencies = {
             { 'williamboman/mason.nvim', opts = { ui = { border = 'rounded' } } },
             'williamboman/mason-lspconfig.nvim',
-
-            { 'folke/neodev.nvim', event = 'VeryLazy', config = true },
-            { 'folke/neoconf.nvim', event = 'VeryLazy', cmd = 'Neoconf', config = true },
-
             'hrsh7th/cmp-nvim-lsp',
         },
 
@@ -29,10 +25,10 @@ return {
             require('mason-lspconfig').setup {
                 ensure_installed = vim.tbl_keys(opts.servers),
                 handlers = {
-                    function(server_name)
-                        require('lspconfig')[server_name].setup(vim.tbl_deep_extend('force', {}, opts.servers[server_name], {
+                    function(server)
+                        require('lspconfig')[server].setup(vim.tbl_deep_extend('force', {
                             capabilities = capabilities,
-                        }))
+                        }, opts.servers[server] or {}))
                     end,
                 },
             }
@@ -49,10 +45,7 @@ return {
 
             Nihil.util.lsp.on_attach(attach_keymaps)
 
-            ---- Setup diagnostic
-            local diag_opts = opts.diagnostics
             local register_capability = vim.lsp.handlers['client/registerCapability']
-
             vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
                 local ret = register_capability(err, res, ctx)
                 local buffer = vim.api.nvim_get_current_buf()
@@ -61,17 +54,10 @@ return {
                 return ret
             end
 
-            vim.diagnostic.config(diag_opts)
-
-            -- inlay hints
-            if opts.inlay_hints.enabled then
-                Nihil.util.lsp.on_attach(function(client, buffer)
-                    if client.supports_method 'textDocument/inlayHint' then Nihil.util.lsp.toggle.inlay_hints(buffer, true) end
-                end)
-            end
-
+            ---- Setup diagnostic
+            vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
             -- diagnostics signs
-            for severity, icon in pairs(diag_opts.signs.text) do
+            for severity, icon in pairs(opts.diagnostics.signs.text) do
                 local name = vim.diagnostic.severity[severity]:lower():gsub('^%l', string.upper)
                 name = 'DiagnosticSign' .. name
                 vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })
