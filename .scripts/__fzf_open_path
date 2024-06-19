@@ -1,0 +1,33 @@
+#!/usr/bin/env fish
+
+# Avoid possible multiple results (avoid fzf print action).
+if [ (count $argv) -gt 1 ]
+    echo (set_color red)'fish fzf: too many arguments:'
+    return 1
+end
+
+set -f path $argv[1]
+set -f token
+
+## Handlers
+[ -f "$path" -a -w "$path" ]; and set token $EDITOR # file
+# [ -d "$path" ]; and set token cd # dir
+
+## Prettify path
+set -a token (string replace $HOME '~' (string escape -n $path))
+
+# Update history (if not in private mode)
+if [ -z "$fish_private_mode" ]
+    begin
+        echo '- cmd:' (string unescape -n $token)
+        echo '  when:' (date '+%s')
+    end >>~/.local/share/fish/fish_history
+
+    # merge history file with (empty) internal history
+    history --merge
+end
+
+# execute command
+eval $token
+set fish_bind_mode insert
+commandline -f repaint-mode
