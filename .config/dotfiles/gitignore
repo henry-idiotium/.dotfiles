@@ -2,6 +2,7 @@
 
 .git/
 .dotfiles/
+*.local.*
 
 ## typescript projects
 # dependencies
