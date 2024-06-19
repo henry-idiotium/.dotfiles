@@ -36,48 +36,42 @@ function add_bookmark
 end
 
 function edit_bookmarks
-    tmux popup -h 40% -w 40% -E "$SHELL -c 'export TMUX_POPUP=1; $EDITOR $cache_file'"
+    tmux popup -h 40% -w 60% -E "$SHELL -c 'export TMUX_POPUP=1; $EDITOR $cache_file'"
 end
 
 function view_bookmarks
     set -fa fzf_cmd \
+        --border-label (_c cyan)' Tmux Harpoon ' \
         # crazy, IK
-        --header (set_color -i cyan)':: <'(set_color yellow)'ctrl-e'(set_color cyan)'> to '(set_color red)'Edit Bookmarks' \
+        --header (_c -i cyan)':: <'(_c yellow)'ctrl-e'(_c cyan)'> to '(_c red)'Edit Bookmarks' \
         --bind ctrl-e:become:'tmux-harpoon --edit'
 
-    set index 1
     begin
         for info in (cat $cache_file)
             string split = $info | read -L name path
 
-            set is_in_use _is_attached $name $path
-            set is_online _has_session $name $path
-            if $is_in_use
-                set -f indication (set_color -o yellow)
-            else if $is_online
-                set -f indication (set_color -o brgreen)
+            set item \
+                (_c -o magenta)$name \
+                (_c -io brblack)(string replace $HOME '~' $path) \
+                $indicator
+
+            if _is_attached $name $path
+                set -a item (_c -o yellow)
+            else if _has_session $name $path
+            else
+                set item '\e[9m'(string join -n '\e[9m ' $item)
             end
 
-            set reset (set_color normal)
-            echo \
-                (set_color -d white)"$index:"$reset \
-                (set_color -o magenta)$name$reset \
-                (set_color -id white)(string replace $HOME '~' $path)$reset \
-                $indication
-
-            set index (math $index + 1)
+            echo -e $item(_c normal)
         end
     end \
+        | awk '{ print NR ": " $0 }' \
         | $fzf_cmd \
         | awk '{ print $2,$3 }' \
         | read -t name path
     or return 1
 
-    if [ -z "$name" -o -d "$(realpath $path)" ]
-        sed -i "/^$name=$path/d" $cache_file
-        tmux display -p "Removed invalid bookmark $name (path: $path)"
-        return 1
-    end
+    [ -z "$name" -o -d "$(realpath $path)" ]; and return 1
 
     _goto_bookmark $name $path
 end
@@ -114,6 +108,9 @@ end
 function _is_attached
     tmux ls -F "#{session_name}=#{session_path}: #{?session_attached,attached,not attached}" | grep -wq "^$argv[1]=$argv[2]: attached"
     or return 1
+end
+function _c
+    set_color $argv
 end
 
 
