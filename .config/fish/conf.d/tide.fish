@@ -1,5 +1,3 @@
-not functions -q tide; and return
-
 # prompt config
 set -U tide_prompt_add_newline_before false
 set -U tide_prompt_color_frame_and_connection 6C6C6C
