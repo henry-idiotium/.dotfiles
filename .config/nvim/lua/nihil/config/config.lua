@@ -5,8 +5,8 @@ M.colorscheme = 'rose-pine'
 
 --stylua: ignore
 M.minimal_mode_enabled =
-    vim.env.NVIM_MINIMAL_MODE == 1
-    or vim.env.TMUX_POPUP == 1
+    vim.env.NVIM_MINIMAL_MODE == '1'
+    or vim.env.TMUX_POPUP == '1'
 
 --- Icons used by plugins
 M.icons = {
@@ -33,38 +33,38 @@ M.icons = {
     },
     --NOTE: NO order `as written in source` in lua
     kinds = {
-        Variable = { icon = '', piority = 100 },
-        Reference = { icon = '', piority = 95 },
-        Constant = { icon = '', piority = 90 },
-        Interface = { icon = '', piority = 90 },
-        TypeParameter = { icon = '', piority = 90 },
-        Function = { icon = '', piority = 85 },
-        Field = { icon = '', piority = 85 },
-        Method = { icon = '', piority = 85 },
-        Class = { icon = '', piority = 85 },
-        Property = { icon = '', piority = 80 },
-        Enum = { icon = '', piority = 75 },
-        EnumMember = { icon = '', piority = 75 },
-        Constructor = { icon = '', piority = 75 },
-        Struct = { icon = '', piority = 70 },
-        Module = { icon = '', piority = 70 },
+        Variable = { icon = '', priority = 100 },
+        Reference = { icon = '', priority = 95 },
+        Constant = { icon = '', priority = 90 },
+        Interface = { icon = '', priority = 90 },
+        TypeParameter = { icon = '', priority = 90 },
+        Function = { icon = '', priority = 85 },
+        Field = { icon = '', priority = 85 },
+        Method = { icon = '', priority = 85 },
+        Class = { icon = '', priority = 85 },
+        Property = { icon = '', priority = 80 },
+        Enum = { icon = '', priority = 75 },
+        EnumMember = { icon = '', priority = 75 },
+        Constructor = { icon = '', priority = 75 },
+        Struct = { icon = '', priority = 70 },
+        Module = { icon = '', priority = 70 },
 
-        Color = { icon = '', piority = 60 },
-        Unit = { icon = '', piority = 60 },
-        Value = { icon = '', piority = 60 },
-        File = { icon = '', piority = 55 },
-        Folder = { icon = '', piority = 55 },
-        Event = { icon = '', piority = 40 },
-        Operator = { icon = '', piority = 40 },
-        Keyword = { icon = '', piority = 30 },
+        Color = { icon = '', priority = 60 },
+        Unit = { icon = '', priority = 60 },
+        Value = { icon = '', priority = 60 },
+        File = { icon = '', priority = 55 },
+        Folder = { icon = '', priority = 55 },
+        Event = { icon = '', priority = 40 },
+        Operator = { icon = '', priority = 40 },
+        Keyword = { icon = '', priority = 30 },
 
-        Supermaven = { icon = ' ', piority = 20 },
-        Codeium = { icon = '󰘦 ', piority = 20 },
-        TabNine = { icon = '󰏚 ', piority = 20 },
-        Copilot = { icon = ' ', piority = 20 },
+        Supermaven = { icon = ' ', priority = 20 },
+        Codeium = { icon = '󰘦 ', priority = 20 },
+        TabNine = { icon = '󰏚 ', priority = 20 },
+        Copilot = { icon = ' ', priority = 20 },
 
-        Snippet = { icon = ' ', piority = 15 },
-        Text = { icon = '', piority = 0 },
+        Snippet = { icon = ' ', priority = 15 },
+        Text = { icon = '', priority = 0 },
     },
 }
 

@@ -1,4 +1,4 @@
----@diagnostic disable: no-unknown, missing-return-value
+---@diagnostic disable: missing-return-value
 return {
     {
         'stevearc/conform.nvim',
@@ -33,8 +33,8 @@ return {
             vim.opt.formatexpr = "v:lua.require'conform'.formatexpr()"
             vim.api.nvim_create_user_command('ToggleAutoFormat', function(args)
                 local vim_loc = args.bang and 'g' or 'b'
-                vim[vim_loc].disable_autoformat = not vim[vim_loc].disable_autoformat
-                vim.notify(
+                vim[vim_loc].disable_autoformat = not vim[vim_loc].disable_autoformat ---@diagnostic disable-line: no-unknown
+                Nihil.debug.info(
                     string.format('📄 %s Auto Format (%s) !', vim[vim_loc].disable_autoformat and 'Disabled' or 'Enabled', args.bang and 'global' or 'local')
                 )
             end, { bang = true })

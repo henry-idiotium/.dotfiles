@@ -6,13 +6,14 @@ return {
         cmd = 'LazyDev',
         opts = {
             library = {
-                { path = 'luvit-meta/library', words = { 'vim%.uv' } },
-                { path = 'LazyVim', words = { 'LazyVim' } },
-                { path = 'lazy.nvim', words = { 'LazyVim' } },
+                'lazy.nvim',
+                { path = 'luvit-meta/library', words = { 'vim%.uv', 'vim%.loop' } },
+                { path = 'wezterm-types', mods = { 'wezterm' } },
             },
         },
     },
     { 'Bilal2453/luvit-meta', lazy = true },
+    { 'justinsgithub/wezterm-types', lazy = true },
 
     { -- Delimiter pairs
         'windwp/nvim-autopairs',
@@ -83,13 +84,7 @@ return {
         event = 'VeryLazy',
         opts = { snippet_engine = 'luasnip' },
         keys = {
-            {
-                '<leader>cg',
-                function() require('neogen').generate {} end,
-                desc = 'Neogen Comment',
-                noremap = true,
-                silent = true,
-            },
+            { '<leader>cg', function() require('neogen').generate {} end, desc = 'Neogen Comment' },
         },
     },
 

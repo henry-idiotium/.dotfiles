@@ -33,9 +33,6 @@ require('lazy').setup {
     ---@type LazySpec
     spec = not Nihil.config.minimal_mode_enabled and {
         { import = 'nihil.lazy' },
-        { import = 'nihil.lazy.coding' },
-        { import = 'nihil.lazy.ui' },
-        { import = 'nihil.lazy.editor' },
         { import = 'nihil.lazy.lang' },
     } or {},
     change_detection = { notify = false },

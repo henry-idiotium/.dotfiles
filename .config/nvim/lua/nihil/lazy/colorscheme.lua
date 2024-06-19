@@ -3,7 +3,6 @@ return {
     { -- Rose Pine
         'rose-pine/neovim',
         name = 'rose-pine',
-        priority = 1000,
         opts = {
             variant = 'auto', -- auto, main, moon, or dawn
             dark_variant = 'main', -- main, moon, or dawn
@@ -52,7 +51,7 @@ return {
     { -- Catppuccin
         'catppuccin/nvim',
         name = 'catppuccin',
-        priority = 1000,
+        cond = false,
         opts = {
             flavour = 'mocha', -- latte, frappe, macchiato, mocha
             transparent_background = true,
@@ -67,7 +66,7 @@ return {
 
     { -- Nightfox
         'EdenEast/nightfox.nvim',
-        priority = 1000,
+        cond = false,
         opts = {
             options = {
                 transparent = true,

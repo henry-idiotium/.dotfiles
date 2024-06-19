@@ -2,7 +2,6 @@ return {
     -- Automatically add closing tags for HTML and JSX
     { 'windwp/nvim-ts-autotag', lazy = true, config = true },
 
-
     { -- display typescript type
         'marilari88/twoslash-queries.nvim',
         ft = { 'typescript', 'typescriptreact' },
@@ -24,9 +23,19 @@ return {
         },
     },
 
-    { 
+    {
         'dmmulroy/ts-error-translator.nvim',
-        lazy = true,
-        opts = {}
-    }
+        ft = {
+            'typescript',
+            'typescriptreact',
+            'javascript',
+            'javascriptreact',
+            'astro',
+            'vue',
+            'svelte',
+        },
+        opts = {
+            auto_override_publish_diagnostics = true,
+        },
+    },
 }
