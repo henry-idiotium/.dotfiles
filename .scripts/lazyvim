@@ -1,4 +1,0 @@
-#!/usr/bin/env fish
-
-# lazyvim - lazy version of vim
-NVIM_APPNAME=lazyvim nvim $argv
