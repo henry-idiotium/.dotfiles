@@ -13,3 +13,7 @@ function get-window-home
 
     wslpath -u $path
 end
+
+function open-wezterm-config
+    $EDITOR (get-window-home)/.config/wezterm/wezterm.lua
+end

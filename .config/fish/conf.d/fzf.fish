@@ -2,7 +2,7 @@ set -gx FZF_DEFAULT_OPTS \
     --padding 1 \
     --cycle --reverse \
     --marker │ --pointer ┃ \
-    --ansi --highlight-line --inline-info \
+    --ansi --inline-info \
     # keymaps -------------------
     --bind ctrl-l:accept,ctrl-q:abort,ctrl-s:toggle \
     --bind ctrl-i:beginning-of-line,ctrl-a:end-of-line \
@@ -21,7 +21,7 @@ set -gx FD_DEFAULT_OPTS \
     --ignore-file $GLOBAL_IGNORE_FILE
 
 set -gx FZF_HOME_PROJECTS \
-    $MY_WORK_HOME $MY_PROJECT_HOME $MY_THROWAWAY_HOME $MY_SCRIPT_HOME \
+    $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
     ~/.config/ ~/documents/
 
 
