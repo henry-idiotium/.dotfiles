@@ -317,17 +317,18 @@ return {
     },
 
     { -- Git status in line number
-        'lewis6991/gitsigns.nvim',
-        opts = {
-            signs = {
+        'gitsigns.nvim',
+        opts = function(_, opts)
+            opts.signs = {
                 add = { text = '│' },
                 change = { text = '│' },
                 delete = { text = '' },
                 topdelete = { text = '' },
                 changedelete = { text = '│' },
                 untracked = { text = '│' },
-            },
-            on_attach = function(buffer)
+            }
+
+            opts.on_attach = function(buffer)
                 local gs = package.loaded.gitsigns
 
                 local function map(mode, l, r, desc) vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc }) end
@@ -343,8 +344,8 @@ return {
                 map('n', '<leader>gh<s-s>', gs.stage_buffer, 'Stage Buffer')
                 map({ 'n', 'v' }, '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', 'Reset Hunk')
                 map('n', '<leader>gh<s-r>', gs.reset_buffer, 'Reset Buffer')
-            end,
-        },
+            end
+        end,
     },
 
     { -- Easy location list

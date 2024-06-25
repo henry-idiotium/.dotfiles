@@ -1,3 +1,4 @@
+_G._debug = { count = 0 }
 return {
     { -- better vim.ui
         'stevearc/dressing.nvim',
@@ -141,41 +142,31 @@ return {
     },
 
     { -- Statusline
-        'nvim-lualine/lualine.nvim',
-        init = function()
-            vim.g.lualine_laststatus = vim.o.laststatus
-            if vim.fn.argc(2) > 0 then
-                vim.o.statusline = ' ' -- set an empty statusline till lualine loads
-            else
-                vim.o.laststatus = 0 -- hide the statusline on the starter page
-            end
-
-            -- PERF: we don't need this lualine require madness 🤷
-            require('lualine_require').require = require
+        'lualine.nvim',
+        init = function(self)
+            _G._debug.count = _G._debug.count + 1
+            if self then self.init() end
 
             -- recording cmp: init refresh to avoid delay
             local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
             vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
-            vim.api.nvim_create_autocmd(
-                'RecordingLeave',
-                { callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end }
-            )
+            vim.api.nvim_create_autocmd('RecordingLeave', {
+                callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end,
+            })
         end,
 
         opts = function(_, opts)
             opts.options.component_separators = { left = '', right = '' }
             opts.options.section_separators = { left = '', right = '' }
 
-            opts.sections.lualine_b = { 'branch', 'diff' }
-
             table.insert(opts.sections.lualine_x, {
                 -- word count
                 function()
                     local wc = vim.fn.wordcount()
-                    return wc.words .. 'w-' .. wc.chars .. 'c'
+                    return wc.words .. 'w ' .. wc.chars .. 'c'
                 end,
                 cond = function() return vim.tbl_contains({ 'markdown', 'vimwiki', 'latex', 'text', 'tex' }, vim.bo.ft) end,
-                color = { fg = '#9e6e80', gui = 'italic' },
+                color = { fg = '#9E6E80', gui = 'italic' },
             })
 
             opts.sections.lualine_y = {

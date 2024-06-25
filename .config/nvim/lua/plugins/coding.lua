@@ -1,7 +1,8 @@
+---@diagnostic disable: no-unknown
 return {
     { -- lsp servers
         'nvim-lspconfig',
-        opts = require 'nihil.lsp',
+        opts = function(_, opts) opts = vim.tbl_deep_extend('force', {}, opts, require 'nihil.lsp') end,
         init = function()
             local keys = require('lazyvim.plugins.lsp.keymaps').get()
             keys[#keys + 1] = {
@@ -113,6 +114,8 @@ return {
                     compare.offset,
                     compare.score,
 
+                    ---@param entry1 cmp.Entry
+                    ---@param entry2 cmp.Entry
                     function(entry1, entry2) -- kind priority
                         local kind1 = cmp_lsp_kind[entry1:get_kind()]
                         local kind2 = cmp_lsp_kind[entry2:get_kind()]
@@ -123,8 +126,7 @@ return {
                         local is_local = compare.locality(entry1, entry2)
 
                         local diff = prio2 - prio1
-                        -- d < 0 -> true;  d > 0 -> false;  d * -> nil
-                        return is_local or (diff < 0 or not (diff > 0) and nil)
+                        return is_local or (diff < 0 or not diff > 0 and nil)
                     end,
 
                     compare.offset,
@@ -143,7 +145,7 @@ return {
         lazy = false,
         init = function() vim.g.supermaven_enabled = true end,
         keys = {
-            { '<leader><leader>a', require('utils.toggle').var 'supermaven_enabled', desc = 'Toggle Smart Suggestion' },
+            { '<leader><leader>a', function() require('utils.toggle').var 'supermaven_enabled' end, desc = 'Toggle Smart Suggestion' },
         },
         opts = {
             disable_inline_completion = false,
