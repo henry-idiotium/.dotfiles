@@ -7,3 +7,4 @@ call_parentheses = 'None'                     # Always, NoSingleString, NoSingle
 
 [sort_requires]
 enabled = true
+

@@ -5,9 +5,9 @@ return {
         branch = 'harpoon2',
         dependencies = { 'folke/which-key.nvim', opts = function(_, opts) opts.defaults['<leader>h'] = { name = '+harpoon' } end },
         keys = {
-            { ';h', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
-            { '<leader>hp', function() require('harpoon'):list():prepend() end, desc = 'Harpoon prepend' },
-            { '<leader>ha', function() require('harpoon'):list():add() end, desc = 'Harpoon add' },
+            { ';hh', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'Harpoon list' },
+            { ';hp', function() require('harpoon'):list():prepend() end, desc = 'Harpoon prepend' },
+            { ';ha', function() require('harpoon'):list():add() end, desc = 'Harpoon add' },
             { '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
             { '<c-a-[>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
@@ -38,39 +38,40 @@ return {
         end,
     },
 
-    { -- Fuzzy picker
-        'ibhagwan/fzf-lua',
-        cmd = 'FzfLua',
-        version = false,
-        keys = {
-            { '\\\\', '<cmd>FzfLua resume <cr>' },
-            { ';b', '<cmd>FzfLua buffers <cr>', desc = 'Find Current Buffers' },
-            { ';r', '<cmd>FzfLua live_grep <cr>', desc = 'Grep' },
-            { ';R', '<cmd>FzfLua grep_cWORD <cr>', desc = 'Grep word' },
-            { ';r', '<cmd>FzfLua grep_visual <cr>', desc = 'Grep', mode = 'v' },
-            { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
-            { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'Search Document Symbols' },
-            { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'Search Workspace Symbols' },
-            {
-                '<c-e>',
-                function()
-                    require('fzf-lua').files {
-                        winopts = {
-                            title = string.format('  %s  ', vim.fn.getcwd():gsub(vim.env.HOME, '~')),
-                            title_pos = 'center',
-                        },
-                    }
-                end,
-                desc = 'Find files',
+    {
+        'folke/flash.nvim',
+        event = 'VeryLazy',
+        vscode = true,
+        ---@type Flash.Config
+        opts = {
+            modes = {
+                char = {
+                    jump_labels = true,
+                },
+            },
+            search = {
+                multi_window = false,
+                wrap = true,
+                mode = 'fuzzy',
             },
         },
+        keys = function()
+            return {
+                { 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash' },
+                { 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash' },
+                { '<c-s>', function() require('flash').toggle() end, mode = { 'c' }, desc = 'Toggle Flash Search' },
+            }
+        end,
+    },
 
-        opts = {
+    { -- Fuzzy picker
+        'ibhagwan/fzf-lua',
+        opts = function(_, opts)
             --BUG: 993fce4 make any `accept` binds from FZF_DEFAULT_OPTS unable to work normally.
             --NOTE: TEMPORARY FIX ONLY. Replacing `ctrl-l:accept` is still kinda hard coded.
-            fzf_args = vim.env.FZF_DEFAULT_OPTS:gsub('ctrl%-l:accept,', ''),
+            opts.fzf_args = vim.env.FZF_DEFAULT_OPTS:gsub('ctrl%-l:accept,', '')
 
-            keymap = {
+            opts.keymap = {
                 fzf = { ['ctrl-l'] = 'accept' },
                 builtin = {
                     ['<a-/>'] = 'toggle-help',
@@ -79,16 +80,17 @@ return {
                     ['<c-d>'] = 'preview-down',
                     ['<a-z>'] = 'toggle-preview-wrap',
                 },
-            },
-            winopts = {
-                preview = { wrap = 'nowrap', hidden = 'hidden' },
-            },
+            }
+
+            opts.winopts = { preview = { wrap = 'nowrap', hidden = 'hidden' } }
 
             -- PROVIDERS
-            files = {
+            opts.live_grep = { formatter = 'path.filename_first' }
+            opts.grep = { formatter = 'path.filename_first' }
+
+            opts.files = {
                 -- cmd = 'fd --type f --no-require-git ' .. vim.env.FD_DEFAULT_OPTS,
-                cmd = 'rg --no-require-git --follow --hidden --files --sortr modified'
-                    .. (vim.env.GLOBAL_IGNORE_FILE and ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE or ''),
+                cmd = 'rg --no-require-git --follow --hidden --files --sortr modified',
                 formatter = 'path.filename_first',
                 cwd_prompt = false,
                 winopts = {
@@ -99,34 +101,71 @@ return {
                     ['ctrl-g'] = false,
                     ['alt-h'] = { function() return require('fzf-lua.actions').toggle_ignore() end },
                 },
-            },
-            live_grep = {
-                formatter = 'path.filename_first',
-            },
-            grep = {
-                formatter = 'path.filename_first',
-            },
-        },
+            }
+
+            if vim.env.GLOBAL_IGNORE_FILE then opts.files.cmd = opts.files.cmd .. ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE end
+        end,
+        dependencies = { 'which-key.nvim', opts = function(_, opts) opts.defaults[';x'] = { name = '+extras' } end },
+        keys = function()
+            local function symbols_filter(entry, ctx)
+                if ctx.symbols_filter == nil then ctx.symbols_filter = LazyVim.config.get_kind_filter(ctx.bufnr) or false end
+                if ctx.symbols_filter == false then return true end
+                return vim.tbl_contains(ctx.symbols_filter, entry.kind)
+            end
+
+            return {
+                { '\\\\', '<cmd>FzfLua resume <cr>' },
+                {
+                    '<c-e>',
+                    function() require('fzf-lua').files { winopts = { title_pos = 'center', title = vim.g.nihil_pretty_pwd } } end,
+                    desc = 'Find files',
+                },
+                { ';b', '<cmd>FzfLua buffers sort_mru=true sort_lastused=true <cr>', desc = 'Find Buffer' },
+                { ';r', LazyVim.pick('live_grep', { root = false }), desc = 'Grep (cwd)' },
+                { ';R', LazyVim.pick 'live_grep', desc = 'Grep' },
+                { ';w', LazyVim.pick('grep_cword', { root = false }), desc = 'Word (cwd)' },
+                { ';W', LazyVim.pick 'grep_cword', desc = 'Word (Root Dir)' },
+                { ';w', LazyVim.pick('grep_visual', { root = false }), mode = 'v', desc = 'Selection (cwd)' },
+                { ';W', LazyVim.pick 'grep_visual', mode = 'v', desc = 'Selection (Root Dir)' },
+                { ';xc', LazyVim.pick 'colorschemes', desc = 'Colorscheme with Preview' },
+                { ';xb', '<cmd>FzfLua grep_curbuf <cr>', desc = 'Buffer' },
+
+                { ';:', '<cmd>FzfLua commands <cr>', desc = 'Commands' },
+                { ';t', '<cmd>FzfLua help_tags <cr>', desc = 'Search Help Tags' },
+                { ';xh', '<cmd>FzfLua highlights <cr>', desc = 'Search Help Tags' },
+                { ';xl', '<cmd>FzfLua loclist <cr>', desc = 'Location List' },
+                { ';xq', '<cmd>FzfLua quickfix <cr>', desc = 'Location List' },
+                { ';xk', '<cmd>FzfLua keymaps <cr>', desc = 'Location List' },
+
+                { ';o', '<cmd>FzfLua lsp_document_symbols <cr>', desc = 'Search Document Symbols' },
+                { ';O', '<cmd>FzfLua lsp_workspace_symbols <cr>', desc = 'Search Workspace Symbols' },
+                { ';d', '<cmd>FzfLua diagnostics_document<cr>', desc = 'Document Diagnostics' },
+                { ';D', '<cmd>FzfLua diagnostics_workspace<cr>', desc = 'Workspace Diagnostics' },
+                { ';s', function() require('fzf-lua').lsp_document_symbols { regex_filter = symbols_filter } end, desc = 'Goto Symbol' },
+                { ';S', function() require('fzf-lua').lsp_live_workspace_symbols { regex_filter = symbols_filter } end, desc = 'Goto Symbol (Workspace)' },
+
+                { ';g', '<cmd>FzfLua git_files <cr>', desc = 'Find Files (git-files)' },
+                { ';e', LazyVim.pick('oldfiles', { cwd = vim.uv.cwd() }), desc = 'Recent (cwd)' },
+                { ';E', '<cmd>FzfLua oldfiles <cr>', desc = 'Recent' },
+            }
+        end,
     },
 
     { -- File explorer
         'nvim-neo-tree/neo-tree.nvim',
 
-        cmd = 'Neotree',
-        keys = {
-            { 'ss', '<cmd>execute "Neotree reveal " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
-            { ';f', '<cmd>execute "Neotree filesystem " . g:neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
-            { 'sf', '<cmd>execute "Neotree toggle " . g:neotree_position <cr>', desc = 'File Explorer' },
-            { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Full)' },
-            { '<leader><leader>n', function() Nihil.util.toggle.var('neotree_position', { 'right', 'float' }) end, desc = 'Change File Explorer Position' },
-        },
-
-        deactivate = function() vim.cmd [[Neotree close]] end,
-        init = function()
-            if vim.fn.argc(-1) == 1 then
-                local stat = vim.uv.fs_stat(vim.fn.argv(0)) ---@diagnostic disable-line: param-type-mismatch
-                if stat and stat.type == 'directory' then require 'neo-tree' end
-            end
+        keys = function()
+            return {
+                { 'ss', '<cmd>execute "Neotree reveal " . g:nihil_neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
+                { ';f', '<cmd>execute "Neotree filesystem " . g:nihil_neotree_position <cr>', desc = 'File Explorer Reveal Current File' },
+                { 'sf', '<cmd>execute "Neotree toggle " . g:nihil_neotree_position <cr>', desc = 'File Explorer' },
+                { 'sF', '<cmd>Neotree current <cr>', desc = 'File Explorer (Full)' },
+                {
+                    '<leader><leader>n',
+                    function() require('utils.toggle').var('nihil_neotree_position', { 'right', 'float' }) end,
+                    desc = 'Change File Explorer Position',
+                },
+            }
         end,
 
         opts = {
@@ -140,6 +179,7 @@ return {
             default_component_configs = {
                 git_status = { symbols = { unstaged = '󰄱', staged = '󰱒' } },
                 indent = {
+                    with_expanders = false,
                     with_markers = true,
                     indent_size = 2,
                     padding = 0,
@@ -309,8 +349,7 @@ return {
 
     { -- Easy location list
         'folke/trouble.nvim',
-        cmd = 'Trouble',
-        version = '*',
+
         opts = {
             use_diagnostic_signs = true,
             height = 6,
@@ -353,43 +392,41 @@ return {
         },
     },
 
-    { -- Highlight symbols on cursor
-        'RRethy/vim-illuminate',
-        event = 'VeryLazy',
-        lazy = false,
-
-        keys = {
-            { ']]', function() require('illuminate')['goto_next_reference'](false) end, desc = 'Next Reference' },
-            { '[[', function() require('illuminate')['goto_prev_reference'](false) end, desc = 'Prev Reference' },
-        },
-
-        opts = {
-            delay = 200,
-            large_file_cutoff = 2000,
-            large_file_overrides = { providers = { 'lsp' } },
-            filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help' },
-        },
-
-        config = function(_, opts)
-            require('illuminate').configure(opts)
-
-            local function map(key, dir, buffer)
-                vim.keymap.set('n', key, function() require('illuminate')['goto_next_reference'](false) end, {
-                    desc = 'Illuminate ' .. dir .. ' Reference',
-                    buffer = buffer,
-                })
-            end
-
-            -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
-            vim.api.nvim_create_autocmd('FileType', {
-                callback = function()
-                    local buffer = vim.api.nvim_get_current_buf()
-                    map(']]', 'next', buffer)
-                    map('[[', 'prev', buffer)
-                end,
-            })
-        end,
-    },
+    -- { -- Highlight symbols on cursor
+    --     'RRethy/vim-illuminate',
+    --
+    --     keys = {
+    --         { ']]', function() require('illuminate')['goto_next_reference'](false) end, desc = 'Next Reference' },
+    --         { '[[', function() require('illuminate')['goto_prev_reference'](false) end, desc = 'Prev Reference' },
+    --     },
+    --
+    --     opts = {
+    --         delay = 200,
+    --         large_file_cutoff = 2000,
+    --         large_file_overrides = { providers = { 'lsp' } },
+    --         filetypes_denylist = { 'dirbuf', 'dirvish', 'fugitive', 'help' },
+    --     },
+    --
+    --     config = function(_, opts)
+    --         require('illuminate').configure(opts)
+    --
+    --         local function map(key, dir, buffer)
+    --             vim.keymap.set('n', key, function() require('illuminate')['goto_next_reference'](false) end, {
+    --                 desc = 'Illuminate ' .. dir .. ' Reference',
+    --                 buffer = buffer,
+    --             })
+    --         end
+    --
+    --         -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
+    --         vim.api.nvim_create_autocmd('FileType', {
+    --             callback = function()
+    --                 local buffer = vim.api.nvim_get_current_buf()
+    --                 map(']]', 'next', buffer)
+    --                 map('[[', 'prev', buffer)
+    --             end,
+    --         })
+    --     end,
+    -- },
 
     { -- VSCode like folding
         'kevinhwang91/nvim-ufo',
@@ -398,4 +435,3 @@ return {
         opts = { open_fold_hl_timeout = 0 },
     },
 }
-

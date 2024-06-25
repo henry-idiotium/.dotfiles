@@ -30,6 +30,10 @@ return {
                 NormalFloat = { bg = 'none' },
                 PmenuSel = { bg = 'highlight_low', fg = 'none' },
 
+                LspReferenceText = { bg = 'highlight_low', fg = 'none' },
+                LspReferenceRead = { bg = 'highlight_low', fg = 'none' },
+                LspReferenceWrite = { bg = 'highlight_low', fg = 'none' },
+
                 TroubleNormal = { bg = 'none' },
                 VirtColumn = { fg = 'base' },
                 IlluminatedWordText = { bg = 'highlight_low' },
@@ -63,6 +67,8 @@ return {
             },
         },
     },
+
+    { 'tokyonight.nvim', cond = false },
 
     { -- Nightfox
         'EdenEast/nightfox.nvim',

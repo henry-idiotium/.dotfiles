@@ -1,10 +1,13 @@
----@diagnostic disable: no-unknown
----@param args ResolveRawKeymapOptions
+---@class LoptKeymapFunArgs : vim.keymap.set.Opts, table
+---@field [1] string
+---@field [2] function|string
+---@field mode? table|string
+---@param args LoptKeymapFunArgs
 local function map(args)
-    local mode, lhs, rhs, opts = Nihil.util.keymap.resolve_raw_options(args)
+    local opts = require('lazy.core.handler.keys').opts(args) ---@class table
     opts.silent = opts.silent ~= false
     opts.noremap = opts.noremap ~= false
-    vim.keymap.set(mode, lhs, rhs, opts)
+    vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
 end
 
 map { 'K', '<nop>' }
@@ -21,6 +24,7 @@ map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
 -- better up/down
 map { 'j', [[v:count == 0 ? 'gj' : 'j']], mode = { 'n', 'x' }, expr = true }
 map { 'k', [[v:count == 0 ? 'gk' : 'k']], mode = { 'n', 'x' }, expr = true }
+
 map { '<c-k>', '5kzz', mode = { 'n', 'v' }, nowait = true }
 map { '<c-j>', '5jzz', mode = { 'n', 'v' }, nowait = true }
 
@@ -55,15 +59,20 @@ local function clear_ui_noises()
     vim.cmd.diffupdate() -- Redraw the screen
     vim.cmd.redraw() -- Update the diff highlighting and folds.
     pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
-    require('notify').dismiss { silent = true, pending = true } -- Clear notifications
+    pcall(require('notify').dismiss, { silent = true, pending = true }) -- Clear notifications
 end
 map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
 map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
----- Toggle
-map { '<leader><leader>c', function() Nihil.util.toggle.option('conceallevel', false, { 0, 3 }) end, desc = 'Toggle Conceal' }
-map { '<leader><leader>s', function() Nihil.util.toggle.option 'spell' end, desc = 'Toggle Spell' }
-map { '<leader><leader>w', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
-map { '<a-z>', function() Nihil.util.toggle.option 'wrap' end, desc = 'Toggle Wrap' }
+
+---- Toggles
+map { '<leader><leader>c', function() LazyVim.toggle('conceallevel', false, { 0, 3 }) end, desc = 'Toggle Conceal' }
+map { '<leader><leader>s', function() LazyVim.toggle 'spell' end, desc = 'Toggle Spell' }
+map { '<leader><leader>w', function() LazyVim.toggle 'wrap' end, desc = 'Toggle Wrap' }
+map { '<a-z>', function() LazyVim.toggle 'wrap' end, desc = 'Toggle Wrap' }
+map { '<leader><leader>f', function() LazyVim.format.toggle() end, desc = 'Toggle Auto Format (Global)' }
+map { '<leader><leader>F', function() LazyVim.format.toggle(true) end, desc = 'Toggle Auto Format (Buffer)' }
+map { '<leader><leader>d', function() LazyVim.toggle.diagnostics() end, desc = 'Toggle Diagnostics' }
+map { '<leader><leader>h', function() LazyVim.toggle.inlay_hints() end, desc = 'Toggle Inlay Hints' }
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -71,7 +80,7 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 -- folding
 map { 'zC', ':setlocal foldlevel=00 <cr>', desc = 'Min Fold Level' }
 map { 'zO', ':setlocal foldlevel=60 <cr>', desc = 'Max Fold Level' }
-map { 'zl', ':<c-u>let &l:foldlevel = v:count<cr>', desc = 'Set Fold Level' }
+map { 'zl', ':<c-u>let &l:foldlevel = v:count <cr>', desc = 'Set Fold Level' }
 map { 'zi', ':%g/ /norm! zf%<c-left><c-left><bs>', desc = 'Fold with Pattern', silent = false }
 
 -- register
